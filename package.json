@@ -1,0 +1,27 @@
+{
+  "name": "super-app-api",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/app.ts",
+    "start": "bun src/app.ts",
+    "db:generate": "drizzle-kit generate:pg",
+    "db:migrate": "bash scripts/migrate.sh",
+    "db:studio": "drizzle-kit studio",
+    "db:push": "drizzle-kit push:pg",
+    "test": "bun run test-api.ts",
+    "test:watch": "bun --watch test-api.ts"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.2.0",
+    "better-auth": "^1.4.18",
+    "drizzle-orm": "^0.30.0",
+    "hono": "^4.0.0",
+    "postgres": "^3.4.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "drizzle-kit": "^0.20.0"
+  }
+}
