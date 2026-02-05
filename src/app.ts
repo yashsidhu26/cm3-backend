@@ -6,7 +6,7 @@ import { ZodError } from 'zod';
 import { errorResponse } from './core/utils/response';
 import { injectUser } from './core/auth/middleware';
 import { readdirSync, statSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 
 /**
  * Super App API - Main Entry Point
@@ -59,7 +59,8 @@ app.get('/health', (c) => {
  * This eliminates manual registration of new modules
  */
 async function loadModules() {
-  const modulesPath = join(import.meta.dir, 'modules');
+  // Use cwd so bundled app (e.g. dist/app.js) still finds src/modules
+  const modulesPath = join(process.cwd(), 'src', 'modules');
   const modules: string[] = [];
 
   try {
@@ -75,18 +76,19 @@ async function loadModules() {
         const routeFile = files.find((f) => f.endsWith('.routes.ts'));
 
         if (routeFile) {
-          const routePath = join(modulePath, routeFile);
+          const routePath = resolve(modulePath, routeFile);
           
           try {
-            // Dynamic import of the route module
+            // Dynamic import of the route module (absolute path for bundle compatibility)
             const module = await import(routePath);
             const routeHandler = module.default;
 
             if (routeHandler) {
-              // Mount the module with /api/[module-name] prefix
-              app.route(`/api/${dir}`, routeHandler);
+              // Mount the module with /api/[module-name] prefix (gmail-auth mounts at /auth)
+              const mountPath = dir === 'gmail-auth' ? '/auth' : `/api/${dir}`;
+              app.route(mountPath, routeHandler);
               modules.push(dir);
-              console.log(`✓ Loaded module: ${dir} -> /api/${dir}`);
+              console.log(`✓ Loaded module: ${dir} -> ${mountPath}`);
             }
           } catch (error) {
             console.error(`✗ Failed to load module ${dir}:`, error);

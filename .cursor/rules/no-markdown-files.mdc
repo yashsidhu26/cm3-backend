@@ -1,0 +1,9 @@
+---
+description: Do not create markdown documentation files unless explicitly required
+alwaysApply: true
+---
+
+# No Markdown Files
+
+- Do **not** create `.md` files (README, docs, guides, etc.) unless the user explicitly asks for one.
+- Prefer in-code comments, existing docs, or inline explanations over adding new markdown files.
