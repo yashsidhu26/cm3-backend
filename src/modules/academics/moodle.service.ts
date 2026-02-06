@@ -75,7 +75,6 @@ export class MoodleClient {
     try {
       console.log(`[Moodle] Authenticating user: ${username}`);
 
-      // Placeholder: Replace with actual Moodle authentication
       const response = await fetch(`${this.baseUrl}/login/token.php`, {
         method: 'POST',
         headers: {
@@ -84,19 +83,12 @@ export class MoodleClient {
         body: new URLSearchParams({
           username,
           password,
-          service: 'moodle_mobile_app', // Moodle web service name
+          service: 'moodle_mobile_app',
         }),
         signal: AbortSignal.timeout(this.timeout),
       });
 
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new MoodleError(
-            'Invalid Moodle credentials',
-            'INVALID_CREDENTIALS',
-            401
-          );
-        }
         throw new MoodleError(
           'Failed to authenticate with Moodle',
           'AUTH_FAILED',
@@ -104,26 +96,34 @@ export class MoodleClient {
         );
       }
 
-      const data = await response.json();
+      const data = await response.json() as any;
 
       // Moodle returns error in response body even with 200 status
       if (data.error) {
+        if (data.errorcode === 'invalidlogin') {
+          throw new MoodleError(
+            'Invalid username or password',
+            'INVALID_CREDENTIALS',
+            401
+          );
+        }
         throw new MoodleError(
           data.error,
           'MOODLE_API_ERROR',
-          401
+          400
         );
       }
 
-      // Mock response for development
-      // TODO: Remove this when implementing actual Moodle integration
-      const mockResponse: MoodleAuthResponse = {
-        token: data.token || 'mock_token_' + Date.now(),
-        userId: data.userid || username,
-      };
-
       console.log('[Moodle] Authentication successful');
-      return mockResponse;
+
+      // We don't get the user ID in the token response, only the token
+      // We need to make another call to get site info to get the user ID
+      const siteInfo = await this.getSiteInfo(data.token);
+
+      return {
+        token: data.token,
+        userId: siteInfo.userid.toString(),
+      };
 
     } catch (error: any) {
       if (error instanceof MoodleError) {
@@ -328,29 +328,75 @@ export class MoodleClient {
   }
 
   /**
+   * Get site info to retrieve user ID
+   */
+  async getSiteInfo(token: string): Promise<any> {
+    const response = await fetch(
+      `${this.baseUrl}/webservice/rest/server.php?` +
+      new URLSearchParams({
+        wstoken: token,
+        wsfunction: 'core_webservice_get_site_info',
+        moodlewsrestformat: 'json',
+      }),
+      {
+        method: 'GET',
+        signal: AbortSignal.timeout(this.timeout),
+      }
+    );
+
+    if (!response.ok) {
+      throw new MoodleError('Failed to get site info', 'SITE_INFO_FAILED', response.status);
+    }
+
+    const data = await response.json();
+    if (data.exception) {
+      throw new MoodleError(data.message, 'MOODLE_API_ERROR', 400);
+    }
+
+    return data;
+  }
+
+  /**
+   * Fetch notifications from Moodle works
+   */
+  async fetchNotifications(token: string, userId: string): Promise<any[]> {
+    try {
+      // Fetch popup notifications
+      const response = await fetch(
+        `${this.baseUrl}/webservice/rest/server.php?` +
+        new URLSearchParams({
+          wstoken: token,
+          wsfunction: 'message_popup_get_popup_notifications',
+          moodlewsrestformat: 'json',
+          useridto: userId,
+        }),
+        {
+          method: 'GET',
+          signal: AbortSignal.timeout(this.timeout),
+        }
+      );
+
+      if (!response.ok) return [];
+
+      const data = await response.json() as any;
+      if (data.exception) return [];
+
+      return data.notifications || [];
+
+    } catch (error) {
+      console.error('[Moodle] Failed to fetch notifications:', error);
+      return [];
+    }
+  }
+
+  /**
    * Validate Moodle token
    * Checks if the token is still valid
    */
   async validateToken(token: string): Promise<boolean> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/webservice/rest/server.php?` +
-        new URLSearchParams({
-          wstoken: token,
-          wsfunction: 'core_webservice_get_site_info',
-          moodlewsrestformat: 'json',
-        }),
-        {
-          method: 'GET',
-          signal: AbortSignal.timeout(5000),
-        }
-      );
-
-      if (!response.ok) return false;
-
-      const data = await response.json();
-      return !data.exception;
-
+      await this.getSiteInfo(token);
+      return true;
     } catch {
       return false;
     }
