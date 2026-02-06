@@ -21,8 +21,8 @@
     "better-auth": "^1.4.18",
     "drizzle-orm": "^0.30.0",
     "extend": "^3.0.2",
-    "googleapis": "^144.0.0",
-    "hono": "file:./vendor/hono",
+    "googleapis": "^171.4.0",
+    "hono": "^4.11.7",
     "postgres": "^3.4.0",
     "zod": "^3.22.0"
   },

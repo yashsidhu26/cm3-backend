@@ -1,91 +1,190 @@
-import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
+import { describe, test, expect, beforeEach, mock } from 'bun:test';
+import { Hono } from 'hono';
 import gmailAuthRoutes from './gmail-auth.routes';
-import { clearTokenStoreForTesting } from './gmail-auth.service';
+import * as service from './gmail-auth.service';
+
+/**
+ * Gmail Auth Routes Tests
+ * Tests authentication requirements and user-scoped functionality
+ */
 
 describe('gmail-auth.routes', () => {
-  const savedEnv: Record<string, string | undefined> = {};
+  let app: Hono;
 
   beforeEach(() => {
-    clearTokenStoreForTesting();
-    savedEnv.GMAIL_CLIENT_ID = process.env.GMAIL_CLIENT_ID;
-    savedEnv.GMAIL_CLIENT_SECRET = process.env.GMAIL_CLIENT_SECRET;
-    savedEnv.GMAIL_REDIRECT_URI = process.env.GMAIL_REDIRECT_URI;
+    app = new Hono();
+    app.route('/auth', gmailAuthRoutes);
   });
 
-  afterEach(() => {
-    if (savedEnv.GMAIL_CLIENT_ID !== undefined) process.env.GMAIL_CLIENT_ID = savedEnv.GMAIL_CLIENT_ID;
-    else delete process.env.GMAIL_CLIENT_ID;
-    if (savedEnv.GMAIL_CLIENT_SECRET !== undefined) process.env.GMAIL_CLIENT_SECRET = savedEnv.GMAIL_CLIENT_SECRET;
-    else delete process.env.GMAIL_CLIENT_SECRET;
-    if (savedEnv.GMAIL_REDIRECT_URI !== undefined) process.env.GMAIL_REDIRECT_URI = savedEnv.GMAIL_REDIRECT_URI;
-    else delete process.env.GMAIL_REDIRECT_URI;
+  describe('Authentication Requirements', () => {
+    test('GET /auth/url returns 401 without authentication', async () => {
+      const res = await app.request('/auth/url');
+      expect(res.status).toBe(401);
+      const body = await res.json();
+      expect(body.code).toBe('UNAUTHORIZED');
+    });
+
+    test('GET /auth/status returns 401 without authentication', async () => {
+      const res = await app.request('/auth/status');
+      expect(res.status).toBe(401);
+      const body = await res.json();
+      expect(body.code).toBe('UNAUTHORIZED');
+    });
+
+    test('DELETE /auth/revoke returns 401 without authentication', async () => {
+      const res = await app.request('/auth/revoke', { method: 'DELETE' });
+      expect(res.status).toBe(401);
+      const body = await res.json();
+      expect(body.code).toBe('UNAUTHORIZED');
+    });
+
+    test('GET /auth/email returns 401 without authentication', async () => {
+      const res = await app.request('/auth/email');
+      expect(res.status).toBe(401);
+      const body = await res.json();
+      expect(body.code).toBe('UNAUTHORIZED');
+    });
+
+    test('GET /auth/callback returns 401 without authentication', async () => {
+      const res = await app.request('/auth/callback?code=test');
+      expect(res.status).toBe(401);
+    });
   });
 
-  test('GET /url returns 500 when env missing', async () => {
-    delete process.env.GMAIL_CLIENT_ID;
-    delete process.env.GMAIL_CLIENT_SECRET;
-    delete process.env.GMAIL_REDIRECT_URI;
-    const res = await gmailAuthRoutes.request('http://localhost/url');
-    expect(res.status).toBe(500);
-    const data = (await res.json()) as { error?: string };
-    expect(data.error).toBeDefined();
-  });
+  describe('Authenticated Routes', () => {
+    const mockUser = { id: 'user-123', email: 'test@example.com', name: 'Test User' };
 
-  test('GET /url returns authUrl when env set', async () => {
-    process.env.GMAIL_CLIENT_ID = 'test-client-id';
-    process.env.GMAIL_CLIENT_SECRET = 'test-secret';
-    process.env.GMAIL_REDIRECT_URI = 'http://localhost:3000/auth/callback';
-    const res = await gmailAuthRoutes.request('http://localhost/url');
-    expect(res.status).toBe(200);
-    const data = (await res.json()) as { authUrl?: string };
-    expect(data.authUrl).toBeDefined();
-    expect(data.authUrl).toContain('accounts.google.com');
-  });
-
-  test('GET /status returns JSON with required fields', async () => {
-    const res = await gmailAuthRoutes.request('http://localhost/status');
-    expect(res.status).toBe(200);
-    const data = (await res.json()) as {
-      tokensStored?: boolean;
-      envTokenPresent?: boolean;
-      storageType?: string;
-      storageConnected?: boolean;
+    // Helper to create authenticated request
+    const createAuthenticatedApp = () => {
+      const authApp = new Hono();
+      // Mock the protect middleware to inject user
+      authApp.use('*', async (c, next) => {
+        c.set('user', mockUser);
+        await next();
+      });
+      authApp.route('/auth', gmailAuthRoutes);
+      return authApp;
     };
-    expect(typeof data.tokensStored).toBe('boolean');
-    expect(typeof data.envTokenPresent).toBe('boolean');
-    expect(data.storageType).toBeDefined();
-    expect(typeof data.storageConnected).toBe('boolean');
+
+    test('GET /auth/url returns auth URL when authenticated', async () => {
+      const authApp = createAuthenticatedApp();
+
+      // Mock environment variables
+      process.env.GMAIL_CLIENT_ID = 'test-client-id';
+      process.env.GMAIL_CLIENT_SECRET = 'test-secret';
+      process.env.GMAIL_REDIRECT_URI = 'http://localhost:3000/auth/callback';
+
+      const res = await authApp.request('/auth/url');
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.authUrl).toBeDefined();
+      expect(body.authUrl).toContain('accounts.google.com');
+    });
+
+    test('GET /auth/status returns user-specific status when authenticated', async () => {
+      const authApp = createAuthenticatedApp();
+
+      // Mock getAuthStatus to return user-specific data
+      const mockGetAuthStatus = mock(() => Promise.resolve({
+        connected: true,
+        email: 'user@gmail.com',
+        scope: 'gmail.readonly gmail.modify',
+      }));
+
+      mock.module('./gmail-auth.service', () => ({
+        ...service,
+        getAuthStatus: mockGetAuthStatus,
+      }));
+
+      const res = await authApp.request('/auth/status');
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.connected).toBe(true);
+      expect(body.email).toBe('user@gmail.com');
+    });
+
+    test('DELETE /auth/revoke calls service with correct user ID', async () => {
+      const authApp = createAuthenticatedApp();
+
+      const mockRevokeTokens = mock(() => Promise.resolve());
+      mock.module('./gmail-auth.service', () => ({
+        ...service,
+        revokeTokens: mockRevokeTokens,
+      }));
+
+      const res = await authApp.request('/auth/revoke', { method: 'DELETE' });
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.success).toBe(true);
+      expect(mockRevokeTokens).toHaveBeenCalledWith(mockUser.id);
+    });
+
+    test('GET /auth/email returns connected email for authenticated user', async () => {
+      const authApp = createAuthenticatedApp();
+
+      const mockGetGmailEmail = mock(() => Promise.resolve('user@gmail.com'));
+      mock.module('./gmail-auth.service', () => ({
+        ...service,
+        getGmailEmail: mockGetGmailEmail,
+      }));
+
+      const res = await authApp.request('/auth/email');
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.email).toBe('user@gmail.com');
+      expect(mockGetGmailEmail).toHaveBeenCalledWith(mockUser.id);
+    });
+
+    test('GET /auth/callback associates tokens with authenticated user', async () => {
+      const authApp = createAuthenticatedApp();
+
+      const mockExchangeCodeForTokens = mock(() => Promise.resolve());
+      mock.module('./gmail-auth.service', () => ({
+        ...service,
+        exchangeCodeForTokens: mockExchangeCodeForTokens,
+      }));
+
+      const res = await authApp.request('/auth/callback?code=test-code-123');
+      expect(res.status).toBe(200);
+      expect(mockExchangeCodeForTokens).toHaveBeenCalledWith('test-code-123', mockUser.id);
+    });
   });
 
-  test('GET /callback without code returns 400 and HTML', async () => {
-    const res = await gmailAuthRoutes.request('http://localhost/callback');
-    expect(res.status).toBe(400);
-    expect(res.headers.get('content-type')).toContain('text/html');
-    const html = await res.text();
-    expect(html).toContain('Missing code');
-    expect(html).toContain('gmail-auth-done');
-  });
+  describe('User Isolation', () => {
+    test('Different users get different tokens', async () => {
+      const user1 = { id: 'user-1', email: 'user1@example.com', name: 'User 1' };
+      const user2 = { id: 'user-2', email: 'user2@example.com', name: 'User 2' };
 
-  test('GET /callback with code exchanges and returns success HTML (mock)', async () => {
-    process.env.GMAIL_CLIENT_ID = 'test-id';
-    process.env.GMAIL_CLIENT_SECRET = 'test-secret';
-    process.env.GMAIL_REDIRECT_URI = 'http://localhost:3000/auth/callback';
-    const res = await gmailAuthRoutes.request('http://localhost/callback?code=any-code');
-    expect(res.status).toBe(200);
-    const html = await res.text();
-    expect(html).toContain('Gmail authorized');
-    expect(html).toContain('gmail-auth-done');
-  });
+      const mockExchangeCodeForTokens = mock(() => Promise.resolve());
+      mock.module('./gmail-auth.service', () => ({
+        ...service,
+        exchangeCodeForTokens: mockExchangeCodeForTokens,
+      }));
 
-  test('GET / returns login page HTML', async () => {
-    const res = await gmailAuthRoutes.request('http://localhost:3000/');
-    expect(res.status).toBe(200);
-    expect(res.headers.get('content-type')).toContain('text/html');
-    const html = await res.text();
-    expect(html).toContain('Gmail 1-Click Login');
-    expect(html).toContain('Authorize Gmail');
-    expect(html).toContain("'/status'");
-    expect(html).toContain("'/url'");
-    expect(html).toContain('gmail-auth-done');
+      // User 1 authenticates
+      const app1 = new Hono();
+      app1.use('*', async (c, next) => {
+        c.set('user', user1);
+        await next();
+      });
+      app1.route('/auth', gmailAuthRoutes);
+
+      await app1.request('/auth/callback?code=code-for-user1');
+      expect(mockExchangeCodeForTokens).toHaveBeenCalledWith('code-for-user1', user1.id);
+
+      // User 2 authenticates
+      const app2 = new Hono();
+      app2.use('*', async (c, next) => {
+        c.set('user', user2);
+        await next();
+      });
+      app2.route('/auth', gmailAuthRoutes);
+
+      await app2.request('/auth/callback?code=code-for-user2');
+      expect(mockExchangeCodeForTokens).toHaveBeenCalledWith('code-for-user2', user2.id);
+
+      // Verify different user IDs were used
+      expect(user1.id).not.toBe(user2.id);
+    });
   });
 });
