@@ -8,7 +8,7 @@
     "build": "bun build src/app.ts --outfile=dist/app.js --target=bun",
     "start:dist": "bun dist/app.js",
     "db:generate": "drizzle-kit generate:pg",
-    "db:migrate": "bash scripts/migrate.sh",
+    "db:migrate": "bun scripts/migrate.ts",
     "db:up": "drizzle-kit up:pg",
     "db:studio": "drizzle-kit studio",
     "db:push": "drizzle-kit push:pg",
