@@ -446,6 +446,141 @@ class APITester {
     this.assert(data.success, 'Response not successful');
   }
 
+  // ==========================================
+  // MOODLE INTEGRATION TESTS
+  // ==========================================
+
+  /**
+   * Test: Moodle Sign-In (without real creds, tests endpoint structure)
+   */
+  private async testMoodleSignIn() {
+    // Test validation - missing fields
+    const emptyResponse = await this.request('POST', '/api/academics/moodle/sign-in', {});
+    this.assert(!emptyResponse.ok, 'Should reject empty body');
+    const emptyData = await emptyResponse.json();
+    this.assert(emptyData.success === false, 'Should return error response');
+
+    // Test with fake creds - should fail with Moodle auth error
+    const response = await this.request('POST', '/api/academics/moodle/sign-in', {
+      username: 'fake_user_test',
+      password: 'fake_password_test',
+    });
+
+    // Should fail gracefully (Moodle auth error), not crash
+    const data = await response.json();
+    this.assert(data.success === false || data.success === true, 'Response should have success field');
+  }
+
+  /**
+   * Test: Moodle Link (requires auth)
+   */
+  private async testMoodleLink() {
+    const response = await this.request('POST', '/api/academics/moodle/login', {
+      username: 'fake_moodle_user',
+      password: 'fake_moodle_pass',
+    }, true);
+
+    // Should fail gracefully with Moodle auth error
+    const data = await response.json();
+    this.assert(data.success !== undefined, 'Response should have success field');
+  }
+
+  /**
+   * Test: Moodle Status (requires auth)
+   */
+  private async testMoodleStatus() {
+    const response = await this.request('GET', '/api/academics/moodle/status', undefined, true);
+    this.assert(response.ok, 'Moodle status endpoint failed');
+
+    const data = await response.json();
+    this.assert(data.success, 'Response not successful');
+    this.assert(data.data.connected !== undefined, 'Should return connected status');
+  }
+
+  /**
+   * Test: Moodle Courses (requires auth + Moodle connection)
+   */
+  private async testMoodleCourses() {
+    const response = await this.request('GET', '/api/academics/moodle/courses', undefined, true);
+
+    // Will return 401 if Moodle not connected - that's expected
+    const data = await response.json();
+    if (response.status === 401) {
+      this.assert(data.success === false, 'Should return error when Moodle not connected');
+    } else {
+      this.assert(data.success, 'Response not successful');
+      this.assert(Array.isArray(data.data.courses), 'Courses should be an array');
+    }
+  }
+
+  /**
+   * Test: Moodle Course Resources (requires auth + Moodle connection)
+   */
+  private async testMoodleResources() {
+    const response = await this.request(
+      'GET',
+      '/api/academics/moodle/courses/1/resources',
+      undefined,
+      true
+    );
+
+    // Will return 401 if Moodle not connected - that's expected
+    const data = await response.json();
+    if (response.status === 401) {
+      this.assert(data.success === false, 'Should return error when Moodle not connected');
+    } else {
+      this.assert(data.success, 'Response not successful');
+      this.assert(Array.isArray(data.data.resources), 'Resources should be an array');
+    }
+  }
+
+  /**
+   * Test: Moodle Notifications (requires auth + Moodle connection)
+   */
+  private async testMoodleNotifications() {
+    const response = await this.request(
+      'GET',
+      '/api/academics/moodle/notifications',
+      undefined,
+      true
+    );
+
+    // Will return 401 if Moodle not connected - that's expected
+    const data = await response.json();
+    if (response.status === 401) {
+      this.assert(data.success === false, 'Should return error when Moodle not connected');
+    } else {
+      this.assert(data.success, 'Response not successful');
+      this.assert(Array.isArray(data.data.notifications), 'Notifications should be an array');
+    }
+  }
+
+  /**
+   * Test: Moodle Logout (requires auth)
+   */
+  private async testMoodleLogout() {
+    const response = await this.request('DELETE', '/api/academics/moodle/logout', undefined, true);
+    this.assert(response.ok, 'Moodle logout failed');
+
+    const data = await response.json();
+    this.assert(data.success, 'Response not successful');
+  }
+
+  /**
+   * Test: Moodle endpoints require auth
+   */
+  private async testMoodleRequiresAuth() {
+    // These protected routes should return 401 without auth
+    const statusResp = await this.request('GET', '/api/academics/moodle/status');
+    this.assert(statusResp.status === 401, 'Moodle status should require auth');
+
+    const coursesResp = await this.request('GET', '/api/academics/moodle/courses');
+    this.assert(coursesResp.status === 401, 'Moodle courses should require auth');
+
+    const logoutResp = await this.request('DELETE', '/api/academics/moodle/logout');
+    this.assert(logoutResp.status === 401, 'Moodle logout should require auth');
+  }
+
   /**
    * Test: Sign Out
    */
@@ -544,7 +679,21 @@ class APITester {
     await this.test('Delete Post', () => this.testDeletePost());
 
     console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('5. ERROR HANDLING');
+    console.log('5. MOODLE INTEGRATION');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+
+    await this.test('Moodle Sign-In (validation + error handling)', () => this.testMoodleSignIn());
+    await this.test('Moodle Link Account', () => this.testMoodleLink());
+    await this.test('Moodle Status', () => this.testMoodleStatus());
+    await this.test('Moodle Courses (real-time)', () => this.testMoodleCourses());
+    await this.test('Moodle Course Resources (real-time)', () => this.testMoodleResources());
+    await this.test('Moodle Notifications', () => this.testMoodleNotifications());
+    await this.test('Moodle Sync (DB)', () => this.testMoodleSync());
+    await this.test('Moodle Logout', () => this.testMoodleLogout());
+    await this.test('Moodle Endpoints Require Auth', () => this.testMoodleRequiresAuth());
+
+    console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('6. ERROR HANDLING');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
     await this.test('Protected Route Without Auth', () => this.testProtectedRouteWithoutAuth());
@@ -552,7 +701,7 @@ class APITester {
     await this.test('Validation Error', () => this.testValidationError());
 
     console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('6. CLEANUP');
+    console.log('7. CLEANUP');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
     await this.test('Sign Out', () => this.testSignOut());

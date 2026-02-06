@@ -69,10 +69,10 @@ export class AcademicsService {
 
       console.log('[Sync] Moodle authentication successful');
 
-      // Step 2: Fetch courses from Moodle
+      // Step 2: Fetch courses from Moodle (pass userId for core_enrol_get_users_courses)
       let moodleCourses: MoodleCourse[];
       try {
-        moodleCourses = await moodleClient.fetchCourses(authResponse.token);
+        moodleCourses = await moodleClient.fetchCourses(authResponse.token, authResponse.userId);
       } catch (error: any) {
         if (error instanceof MoodleError) {
           throw new Error(`Failed to fetch Moodle courses: ${error.message}`);
@@ -146,8 +146,8 @@ export class AcademicsService {
             console.log(`[Sync] Created enrollment for course: ${moodleCourse.shortname}`);
           }
 
-          // Step 5: Optionally sync resources (commented out for performance)
-          // await this.syncCourseResources(courseId, moodleCourse.id, authResponse.token);
+          // Step 5: Sync resources for each course
+          await this.syncCourseResources(courseId, moodleCourse.id, authResponse.token);
 
         } catch (error: any) {
           console.error(`[Sync] Error processing course ${moodleCourse.shortname}:`, error);
