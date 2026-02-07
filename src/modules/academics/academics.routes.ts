@@ -6,12 +6,17 @@ import { successResponse, errorResponse, createdResponse } from '../../core/util
 import { protect, requireAdmin } from '../../core/auth/middleware';
 import { MoodleError } from './moodle.service';
 
+import moodleRouter from './moodle.router';
+
 /**
  * Academics Module Routes
  * Handles all academic-related endpoints including Moodle sync
  */
 
 const academics = new Hono();
+
+// Mount Moodle routes
+academics.route('/moodle', moodleRouter);
 
 /**
  * Validation Schemas
