@@ -3,6 +3,9 @@ import { Hono } from 'hono';
 import { protect } from '../../core/auth/middleware';
 import { moodleClient, MoodleError } from './moodle.service';
 import * as moodleAuth from './moodle-auth.service';
+import * as studyDeckAuth from './studydeck-auth.service';
+import { academicsService } from './academics.service';
+import { sectionsService } from './sections.service';
 import { auth } from '../../core/auth/auth';
 import { db } from '../../core/database/client';
 import { user as userTable, session as sessionTable } from '../auth/auth.schema';
@@ -87,7 +90,30 @@ app.post('/sign-in', async (c) => {
         // 4. Store encrypted Moodle token
         await moodleAuth.login(localUser.id, username, password);
 
-        // 5. Create a Better Auth session directly
+        // 5. Automatically sync courses from Moodle
+        const syncResult = await academicsService.syncCoursesWithToken(
+            localUser.id,
+            moodleResponse.token,
+            moodleResponse.userId
+        );
+        console.log('[Moodle Sign-in] Course sync completed:', syncResult);
+
+        // 5.5. Auto-sync sections from StudyDeck (uses STUDYDECK_JWT_TOKEN from env)
+        let sectionsSyncResult = null;
+        if (process.env.STUDYDECK_JWT_TOKEN) {
+            console.log('[Moodle Sign-in] Auto-syncing sections from StudyDeck...');
+            try {
+                sectionsSyncResult = await sectionsService.autoSyncAllCourses(localUser.id);
+                console.log('[Moodle Sign-in] Sections sync completed:', sectionsSyncResult);
+            } catch (error: any) {
+                console.error('[Moodle Sign-in] Sections sync failed:', error);
+                // Don't fail the sign-in if sections sync fails
+            }
+        } else {
+            console.log('[Moodle Sign-in] Skipping sections sync (STUDYDECK_JWT_TOKEN not set)');
+        }
+
+        // 6. Create a Better Auth session directly
         const sessionToken = randomBytes(24).toString('base64url'); // Match Better Auth token format
         const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
@@ -104,7 +130,7 @@ app.post('/sign-in', async (c) => {
         const signature = createHmac('sha256', secret).update(sessionToken).digest('base64');
         const signedToken = `${sessionToken}.${signature}`;
 
-        // Set session cookie (matches Better Auth's cookie format)
+        // 7. Set session cookie (matches Better Auth's cookie format)
         c.header('set-cookie', `super-app.session_token=${encodeURIComponent(signedToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`);
 
         return successResponse(c, {
@@ -120,6 +146,18 @@ app.post('/sign-in', async (c) => {
                 username: siteInfo.username,
                 sitename: siteInfo.sitename,
             },
+            sync: {
+                coursesAdded: syncResult.coursesAdded,
+                coursesUpdated: syncResult.coursesUpdated,
+                enrollmentsCreated: syncResult.enrollmentsCreated,
+                success: syncResult.success,
+            },
+            sectionsSync: sectionsSyncResult ? {
+                totalCourses: sectionsSyncResult.totalCourses,
+                syncedCourses: sectionsSyncResult.syncedCourses,
+                skippedCourses: sectionsSyncResult.skippedCourses,
+                hasErrors: sectionsSyncResult.errors.length > 0,
+            } : null,
         });
     } catch (error: any) {
         console.error('Moodle sign-in failed:', error);
@@ -143,8 +181,43 @@ app.post('/login', protect, async (c) => {
     }
 
     try {
+        // Authenticate and store token
+        const moodleResponse = await moodleClient.authenticate(username, password);
         await moodleAuth.login(user.id, username, password);
-        return successResponse(c, { message: 'Connected to Moodle successfully' });
+
+        // Automatically sync courses
+        const syncResult = await academicsService.syncCoursesWithToken(
+            user.id,
+            moodleResponse.token,
+            moodleResponse.userId
+        );
+
+        // Auto-sync sections from StudyDeck
+        let sectionsSyncResult = null;
+        if (process.env.STUDYDECK_JWT_TOKEN) {
+            try {
+                sectionsSyncResult = await sectionsService.autoSyncAllCourses(user.id);
+                console.log('[Moodle Login] Sections sync completed:', sectionsSyncResult);
+            } catch (error: any) {
+                console.error('[Moodle Login] Sections sync failed:', error);
+            }
+        }
+
+        return successResponse(c, {
+            message: 'Connected to Moodle successfully',
+            sync: {
+                coursesAdded: syncResult.coursesAdded,
+                coursesUpdated: syncResult.coursesUpdated,
+                enrollmentsCreated: syncResult.enrollmentsCreated,
+                success: syncResult.success,
+            },
+            sectionsSync: sectionsSyncResult ? {
+                totalCourses: sectionsSyncResult.totalCourses,
+                syncedCourses: sectionsSyncResult.syncedCourses,
+                skippedCourses: sectionsSyncResult.skippedCourses,
+                hasErrors: sectionsSyncResult.errors.length > 0,
+            } : null,
+        });
     } catch (error: any) {
         console.error('Moodle login failed:', error);
         if (error instanceof MoodleError) {
@@ -189,6 +262,37 @@ app.get('/courses', protect, async (c) => {
             return errorResponse(c, error.message, error.statusCode, error.code);
         }
         return errorResponse(c, 'Failed to fetch courses from Moodle', 500);
+    }
+});
+
+/**
+ * POST /sync
+ * Manually sync courses from Moodle to database
+ */
+app.post('/sync', protect, async (c) => {
+    const user = c.get('user');
+
+    const token = await moodleAuth.getMoodleToken(user.id);
+    if (!token) {
+        return errorResponse(c, 'Moodle not connected', 401);
+    }
+
+    const moodleUserId = await moodleAuth.getMoodleUserId(user.id);
+    if (!moodleUserId) {
+        return errorResponse(c, 'Moodle user ID not found', 400);
+    }
+
+    try {
+        const syncResult = await academicsService.syncCoursesWithToken(user.id, token, moodleUserId);
+        return successResponse(c, {
+            message: 'Courses synced successfully',
+            result: syncResult,
+        });
+    } catch (error: any) {
+        if (error instanceof MoodleError) {
+            return errorResponse(c, error.message, error.statusCode, error.code);
+        }
+        return errorResponse(c, 'Failed to sync courses', 500);
     }
 });
 

@@ -5,3 +5,7 @@ dist
 drizzle
 .DS_Store
 bun.lockb
+documentation/
+
+# Debug logs
+debug/

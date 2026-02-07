@@ -1,0 +1,5242 @@
+[
+    {
+        "static_id": "a105c873-32f4-418f-862f-a5f747a37bcd",
+        "course_id": "BIO F101",
+        "name": "Intro To Bio Sci",
+        "units": 3,
+        "ic": "Shilpi Garg (Professor)",
+        "is_added": true,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f2aa5ebd-7984-4f8e-aa5b-1b1803716ac8",
+        "course_id": "BIO F215",
+        "name": "Biophysics",
+        "units": 3,
+        "ic": "Shibasish Chowdhury (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2366c989-18f1-47e5-8394-e6cea8fc1f1b",
+        "course_id": "BIO F231",
+        "name": "Biology Project Lab",
+        "units": 3,
+        "ic": "Shilpi Garg (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8be82755-760b-43b3-b51c-ee31cb8ac344",
+        "course_id": "BIO F241",
+        "name": "Ecology & Environ Sci",
+        "units": 3,
+        "ic": "B Vani (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "81b8fc10-50d9-48f8-81b4-72deb0063889",
+        "course_id": "BIO F242",
+        "name": "Intro To Bioinformatics",
+        "units": 3,
+        "ic": "Shibasish Chowdhury (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "86a3a3df-5ed4-48b7-a646-949a5c918f83",
+        "course_id": "BIO F243",
+        "name": "Genetics",
+        "units": 3,
+        "ic": "Sudeshna Mukherjee (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "767f6d59-2e8f-42f5-b4e9-6d9930063fb5",
+        "course_id": "BIO F244",
+        "name": "Instru Methods Of Anal",
+        "units": 4,
+        "ic": "Pankaj Kumar Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "21229f34-7695-4e1e-a4ce-7ac82783d638",
+        "course_id": "BIO F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Rajdeep Chowdhury (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a8d87fa7-f837-4e74-9159-c0c671a4ad26",
+        "course_id": "BIO F314",
+        "name": "Conservation Biology",
+        "units": 3,
+        "ic": "Sandhya Amol Marathe (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8daeab5a-a7be-4809-b20d-b052a80afb5a",
+        "course_id": "BIO F315",
+        "name": "Applied Nutrition & Nutr..",
+        "units": 2,
+        "ic": "Pankaj Kumar Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "bb9161d2-61a2-4893-bd93-ca0bf32bbe3a",
+        "course_id": "BIO F315",
+        "name": "Applied Nutrition & Nutraceuti",
+        "units": 2,
+        "ic": "Pankaj Kumar Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4f284d97-48a0-40b8-b819-d7370603a6b6",
+        "course_id": "BIO F341",
+        "name": "Developmental Biology",
+        "units": 3,
+        "ic": "Syamantak Majumder (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "73f67977-0570-42f5-959a-7332016b8fb0",
+        "course_id": "BIO F342",
+        "name": "Immunology",
+        "units": 3,
+        "ic": "Soumitra Ghosh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f70c3fcd-109a-4771-9a7f-5e1d16e1fc29",
+        "course_id": "BIO F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Rajdeep Chowdhury (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "fa065364-5fa1-4d0b-bf79-f2a56ec3c8f2",
+        "course_id": "BIO F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Rajdeep Chowdhury (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b444461f-2fad-4d61-9891-bb17ae2c71c2",
+        "course_id": "BIO F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Rajdeep Chowdhury (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "cbeb2c21-9ed4-4fcc-a28a-3947d198834c",
+        "course_id": "BIO F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Rajdeep Chowdhury (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "32d6323a-3b23-4cd0-9a70-8edf03c2d0df",
+        "course_id": "BIO F418",
+        "name": "Genetic Engineering Tech",
+        "units": 4,
+        "ic": "Mukul Joshi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "06d8f790-f8a8-4877-b7b7-ea430709ebe8",
+        "course_id": "BIO F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "Rajdeep Chowdhury (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "add5da3a-9418-4f14-a757-944077cc8b40",
+        "course_id": "BIO G515",
+        "name": "Stem Cell & Regener Bio",
+        "units": 4,
+        "ic": "Rajdeep Chowdhury (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "46783251-a9b6-462c-8a21-6be353fd8a39",
+        "course_id": "BIO G545",
+        "name": "Mol Parasit & Vector Bio",
+        "units": 5,
+        "ic": "Vishal Saxena (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e6e2cb24-cf2a-4cb9-967e-38291f0b3dd3",
+        "course_id": "BIO G561",
+        "name": "Adv Recombinant Dna Tech",
+        "units": 5,
+        "ic": "Ashis Kumar Das (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e3105bfe-d6d3-400f-9396-0a45a188ab97",
+        "course_id": "BIO G642",
+        "name": "Experimental Techniques",
+        "units": 4,
+        "ic": "Vishal Saxena (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "de856d78-0a02-497b-8ef6-61eb3895e2fb",
+        "course_id": "BIO G643",
+        "name": "Plant Biotechnology",
+        "units": 5,
+        "ic": "Jitendra Panwar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "95f589ec-2ba4-4b9c-a54e-df024924de37",
+        "course_id": "BIOT F416",
+        "name": "Intro To Pharma Biotech",
+        "units": 3,
+        "ic": "Vishal Saxena (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "36152881-bcae-457c-ba67-5b6d6a7fc853",
+        "course_id": "BITS C790T",
+        "name": "Independent Study",
+        "units": 1,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6aac1fff-7856-4323-acb2-e24f8a9d6bab",
+        "course_id": "BITS C791T",
+        "name": "Teaching Practice I",
+        "units": 1,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ea583a7b-04a6-4b6e-9cae-d0ae918b836e",
+        "course_id": "BITS C797T",
+        "name": "Ph D Seminar",
+        "units": 1,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e3d4b0cd-0129-44b4-bb76-b2243ff2acfb",
+        "course_id": "BITS C799T",
+        "name": "Ph D Thesis",
+        "units": 10,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0c8640d0-3441-46ef-bfa3-68225cb769cd",
+        "course_id": "BITS E574",
+        "name": "Study In Advanced Topic II",
+        "units": 5,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8fcd0f72-0559-4f77-a365-771f52793a0e",
+        "course_id": "BITS E584",
+        "name": "Case Studies II",
+        "units": 4,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "18f98143-007a-4ce2-8a5c-d24d63e687d7",
+        "course_id": "BITS E594",
+        "name": "Reading Course II",
+        "units": 5,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "080f801c-74fc-4e67-82da-c952a539f21b",
+        "course_id": "BITS E793T",
+        "name": "Practice Lect Series I",
+        "units": 1,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "49115ae8-20ee-46ce-b1fe-2c2cf4046603",
+        "course_id": "BITS F101-2",
+        "name": "Social Conduct",
+        "units": 1,
+        "ic": "Tanu Shukla (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "50e97053-67c5-4fd8-8440-881ed43396f5",
+        "course_id": "BITS F102",
+        "name": "Inno & Des Think",
+        "units": 1,
+        "ic": "Leela Rani (Professor)",
+        "is_added": true,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2cfeafba-2053-4b60-8252-8e2d4a9fb0b5",
+        "course_id": "BITS F111",
+        "name": "Thermodynamics",
+        "units": 3,
+        "ic": "Navin Singh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "12319c41-8312-47ad-97f7-104087a2107a",
+        "course_id": "BITS F114",
+        "name": "General Mathematics  II",
+        "units": 3,
+        "ic": "Ashish Tiwari (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b5b4b2eb-0199-4995-9240-03e3a600a7c8",
+        "course_id": "BITS F214",
+        "name": "Science Tech & Modernity",
+        "units": 3,
+        "ic": "Natasha Hazarika (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1c593199-62b5-456d-8fb4-4cd6c179a9b8",
+        "course_id": "BITS F225",
+        "name": "Environmental Studies",
+        "units": 3,
+        "ic": "B Vani (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "46afb637-fec2-46c4-ac0e-8958ce146d74",
+        "course_id": "BITS F226",
+        "name": "Soft Skills For Professi..",
+        "units": 3,
+        "ic": "Sangeeta Sharma (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e4adc549-e576-487a-aa15-209a1013f89c",
+        "course_id": "BITS F226",
+        "name": "Soft Skills For Professionals",
+        "units": 3,
+        "ic": "Sangeeta Sharma (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "564e0541-e156-4ddf-b4b2-536975ef341b",
+        "course_id": "BITS F235",
+        "name": "Digital Fundamentals",
+        "units": 4,
+        "ic": "Dinesh Rano (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b51706cf-094b-4b3b-8b63-508c9cb500dc",
+        "course_id": "BITS F241",
+        "name": "Systems Engg Principles",
+        "units": 4,
+        "ic": "Mani Sankar Dasgupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8a2012b7-d55a-44db-b66d-d7afe1a4ff01",
+        "course_id": "BITS F311",
+        "name": "Image Processing",
+        "units": 3,
+        "ic": "Sundaresan Raman (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c6b4695c-1f5b-4006-993f-a16d0835a182",
+        "course_id": "BITS F314",
+        "name": "Game Theo And Its Appl",
+        "units": 3,
+        "ic": "Suruchi Shrimali (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "17455ffe-1da2-486c-b98d-13b251b49626",
+        "course_id": "BITS F316",
+        "name": "Nonlinear Dyna & Chaos",
+        "units": 3,
+        "ic": "Tapomoy Guha Sarkar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "22d006d3-ac82-4b88-8bcb-a1537feb9b27",
+        "course_id": "BITS F385",
+        "name": "Intro To Gender Studies",
+        "units": 3,
+        "ic": "Madhurima Das (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a28cd882-c90c-41b7-8a1e-87a846a4fdaf",
+        "course_id": "BITS F386",
+        "name": "Quantum Info & Computing",
+        "units": 3,
+        "ic": "Jayendra Nath Bandyop.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "257367b6-aed6-42ba-bc4a-da712f2753b0",
+        "course_id": "BITS F412",
+        "name": "Practice School II",
+        "units": 20,
+        "ic": "Ps Dean (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "42accede-ae42-4039-ba2d-beb9cdb01844",
+        "course_id": "BITS F413",
+        "name": "Practice School II",
+        "units": 20,
+        "ic": "Ps Dean (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "493d8bab-d10a-42de-a52e-b8426c7e9b6a",
+        "course_id": "BITS F415",
+        "name": "Introduction To Mems",
+        "units": 4,
+        "ic": "Sachin Ulhasrao Belga.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "26b02d6c-9bf6-4f5f-87df-7f4b40f690ea",
+        "course_id": "BITS F416",
+        "name": "Intro To Nano Science",
+        "units": 3,
+        "ic": "Sarbani Ghosh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "d02142b7-b691-486d-b65f-3e5b48108646",
+        "course_id": "BITS F417",
+        "name": "Micro-fluidics & Its App",
+        "units": 4,
+        "ic": "Saikat Bhattacharjee (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7dd3789f-37c6-498e-befe-95c217943e0c",
+        "course_id": "BITS F418",
+        "name": "Intro To Biomedical Engg",
+        "units": 4,
+        "ic": "Venkatesh Kadbur Prab.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c285cbd0-cf80-4173-b643-9eb7c465af95",
+        "course_id": "BITS F421T",
+        "name": "Thesis",
+        "units": 16,
+        "ic": "Sachin Ulhasrao Belga.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b437d34c-9d7b-4ba9-b12e-aafc91448447",
+        "course_id": "BITS F422T",
+        "name": "Thesis",
+        "units": 16,
+        "ic": "Sachin Ulhasrao Belga.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "97dafa0f-2198-473f-baa4-b3ae539bb35e",
+        "course_id": "BITS F423T",
+        "name": "Thesis",
+        "units": 9,
+        "ic": "Sachin Ulhasrao Belga.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5dbd7f84-4c4d-4944-917d-36e41f8401fc",
+        "course_id": "BITS F424T",
+        "name": "Thesis",
+        "units": 9,
+        "ic": "Sachin Ulhasrao Belga.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6a7d65af-2729-48f7-bf9a-9ff7cf50a100",
+        "course_id": "BITS F427",
+        "name": "Digital Marketing",
+        "units": 3,
+        "ic": "Nirankush Dutta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2c84bea5-134b-4eca-a31c-7b107a96e771",
+        "course_id": "BITS F441",
+        "name": "Robotics",
+        "units": 3,
+        "ic": "Yogesh Singh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b940fec0-4a0b-4fb7-b66d-e58f57e22154",
+        "course_id": "BITS F442",
+        "name": "Remote Sens & Image Proc",
+        "units": 3,
+        "ic": "Sanchari Thakur (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9cc83b44-cdbd-4ca6-a215-38d00b3cb9ae",
+        "course_id": "BITS F451",
+        "name": "Autonomous Mobile Robotics",
+        "units": 3,
+        "ic": "Avinash Gautam (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "3c19862a-62cf-4f4c-8521-c0fb8f84ea8d",
+        "course_id": "BITS F452",
+        "name": "Blockchain Technology",
+        "units": 3,
+        "ic": "Ashutosh Bhatia (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5173e393-e892-4795-9930-9d27e7ae407b",
+        "course_id": "BITS F455",
+        "name": "Analytics For Supply Chain",
+        "units": 3,
+        "ic": "Satyendra Kr Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7d325096-d5e1-4c4c-9206-3b1df9fa0952",
+        "course_id": "BITS F459",
+        "name": "Computer Vision",
+        "units": 4,
+        "ic": "Gopal Singh Phartiyal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4b45d97c-df40-4bf1-9c39-3fd140849035",
+        "course_id": "BITS F463",
+        "name": "Cryptography",
+        "units": 3,
+        "ic": "Abhishek Mishra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c0fdffd1-48dd-4084-b862-90460a05176d",
+        "course_id": "BITS F464",
+        "name": "Machine Learning",
+        "units": 3,
+        "ic": "Rakhi Agrawal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6aab2a76-b3b1-4a86-8e46-8916c490367b",
+        "course_id": "BITS F471",
+        "name": "Intro To Large Language Models",
+        "units": 3,
+        "ic": "Dhruv Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "dcf34466-1f0a-47bd-81d0-7abacf101454",
+        "course_id": "BITS F471",
+        "name": "Intro To Large Language ..",
+        "units": 3,
+        "ic": "Dhruv Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1922090a-70bc-4d7b-8251-0932741cd4dd",
+        "course_id": "BITS F482",
+        "name": "Creat & Lead Entrep Orgn",
+        "units": 3,
+        "ic": "Arya Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "626b142b-dd11-43e4-8979-4f394f8829f5",
+        "course_id": "BITS F490",
+        "name": "Project Management",
+        "units": 4,
+        "ic": "Rajesh Matai (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4e902590-9405-463f-9e8e-77d0b5c4f76f",
+        "course_id": "BITS G511",
+        "name": "Advanced Project",
+        "units": 5,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4e9269b8-c868-43b9-a65f-623cfca6dbbe",
+        "course_id": "BITS G513",
+        "name": "Study In Advanced Topics",
+        "units": 5,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b9f857ba-d7a7-4bf8-a6d8-b3bb72dba2d6",
+        "course_id": "BITS G529",
+        "name": "Research Project I",
+        "units": 6,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "51b2b096-a3f0-40d4-9ec0-74ec25941dfb",
+        "course_id": "BITS G539",
+        "name": "Research Project II",
+        "units": 6,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8abb145b-0c90-4b66-bf25-2e1746330d77",
+        "course_id": "BITS G540",
+        "name": "Research Practice",
+        "units": 4,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "39ba74a9-2250-4ea7-b193-355f0476141a",
+        "course_id": "BITS G560",
+        "name": "Practice School",
+        "units": 20,
+        "ic": "Ps Dean (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b2099663-e3fb-4e91-b864-de267591e2db",
+        "course_id": "BITS G561T",
+        "name": "Dissertation",
+        "units": 16,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ea5663f5-2941-4508-aac4-a5382d64b374",
+        "course_id": "BITS G562T",
+        "name": "Dissertation",
+        "units": 16,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1ecae58d-335e-40b3-9ece-5b4844735e3f",
+        "course_id": "BITS G629T",
+        "name": "Dissertation",
+        "units": 16,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "30105e0e-e44d-4828-acb4-329e9a7375f6",
+        "course_id": "BITS G639",
+        "name": "Practice School",
+        "units": 20,
+        "ic": "Ps Dean (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0f220054-d70c-406b-a564-9e80fcc49065",
+        "course_id": "BITS G640",
+        "name": "Practice School",
+        "units": 20,
+        "ic": "Ps Dean (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ddd213dc-0155-41f4-9569-d137d0b1e7fd",
+        "course_id": "BITS G649",
+        "name": "Reading Course",
+        "units": 5,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2810757d-4104-433c-bab3-15bfec93904e",
+        "course_id": "BITS G661",
+        "name": "Research Methodology I",
+        "units": 5,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "aa3d6928-2e88-4deb-9bac-2ca09f290873",
+        "course_id": "BITS K101-2",
+        "name": "Physical Well-being And Creati",
+        "units": 1,
+        "ic": "Navin Singh (Professor)",
+        "is_added": true,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9ad9018b-2132-488e-8578-9a59e532bcd4",
+        "course_id": "CE F241",
+        "name": "Analysis Of Structures",
+        "units": 3,
+        "ic": "Manoj Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "095f69b2-8913-48d6-b96d-7e705e8b1a73",
+        "course_id": "CE F242",
+        "name": "Construction Plan & Tech",
+        "units": 3,
+        "ic": "Rajiv Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b3d5c158-cb08-4c06-9a6d-99ca7648993a",
+        "course_id": "CE F243",
+        "name": "Soil Mechanics",
+        "units": 4,
+        "ic": "Sayantan Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "97b01918-605e-4f64-a12d-5ee7f113ca8a",
+        "course_id": "CE F244",
+        "name": "Highway Engineering",
+        "units": 4,
+        "ic": "Durgesh Vikram (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "28cb8f34-3e14-413a-8ba1-4d826586bd8d",
+        "course_id": "CE F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Dipendu Bhunia (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7396034f-152f-4583-87f3-f71f5a62f954",
+        "course_id": "CE F321",
+        "name": "Engineering Hydrology",
+        "units": 3,
+        "ic": "Selva Balaji (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "3518384e-c250-4095-b2e7-24ecc98e0696",
+        "course_id": "CE F323",
+        "name": "Intro To Envirn Engg",
+        "units": 3,
+        "ic": "Pubali Mandal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "94b425e1-405a-4bbe-963d-dc2e6e6a6673",
+        "course_id": "CE F331",
+        "name": "In-situ Test Method Gtech Eng",
+        "units": 3,
+        "ic": "Sayantan Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e85c293a-e3e0-4660-b3bf-20290f60a4a7",
+        "course_id": "CE F342",
+        "name": "Water & Wastewater Treat",
+        "units": 4,
+        "ic": "Anupam Singhal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "3673db2d-da3b-40f2-ba25-a67af922ae35",
+        "course_id": "CE F343",
+        "name": "Des Of Steel Structures",
+        "units": 3,
+        "ic": "Dipendu Bhunia (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4d85abe2-210c-4bfa-8826-0cbeb569423f",
+        "course_id": "CE F345",
+        "name": "Computational Geomechani",
+        "units": 3,
+        "ic": "Rakshanda Showkat (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6df37cab-c306-4928-b783-ca55088e35d9",
+        "course_id": "CE F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Dipendu Bhunia (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2fdae7da-5b58-4fb0-bf5d-5c377ea8b8f4",
+        "course_id": "CE F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Dipendu Bhunia (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8b22bf8f-a095-43cf-82e3-d9f4a0e05e7b",
+        "course_id": "CE F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Dipendu Bhunia (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c599201f-f1b0-49d7-8f26-a06fc93da39a",
+        "course_id": "CE F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Dipendu Bhunia (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c928b941-a90e-4252-8edf-2b31b01c22eb",
+        "course_id": "CE F415",
+        "name": "Des Of Prest Conc Struct",
+        "units": 3,
+        "ic": "Subhasis Pradhan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ae5dab27-8633-4bb2-8602-09ee04f88752",
+        "course_id": "CE F416",
+        "name": "Computer Applications In Civil Engineering",
+        "units": 4,
+        "ic": "Ravikumar Guntu (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7eb506ff-9ba2-4521-9df7-754f0be69d0f",
+        "course_id": "CE F419",
+        "name": "Geotech Eq Eng & MC Foun",
+        "units": 3,
+        "ic": "Ravi Kant Mittal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "76382c9e-35b5-465a-8255-c1040a19ef4c",
+        "course_id": "CE F422",
+        "name": "Urban Hydrology",
+        "units": 3,
+        "ic": "Ravikumar Guntu (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8c6a0828-9c7c-4806-bee8-6ff07f0c90c2",
+        "course_id": "CE F425",
+        "name": "Airport Rail & Waterways",
+        "units": 4,
+        "ic": "Muthukumar G (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e27ee38b-c153-4fb7-ab03-b01e06d26c8b",
+        "course_id": "CE F429",
+        "name": "Design Of Foundation System",
+        "units": 4,
+        "ic": "Ravi Kant Mittal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7e46c738-9203-4d9c-a348-51e6c3d875eb",
+        "course_id": "CE F431",
+        "name": "Prin Of Geo Info Syst",
+        "units": 4,
+        "ic": "Sanchari Thakur (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "60db0aec-9778-46bc-902e-668af05f5fd1",
+        "course_id": "CE F432",
+        "name": "Structural Dynamics",
+        "units": 3,
+        "ic": "Muthukumar G (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "dbcb2a7a-9ba2-48b1-b91a-f705cf064b61",
+        "course_id": "CE F435",
+        "name": "Introduction To Fem",
+        "units": 3,
+        "ic": "Shuvendu Narayan Patel (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c4c42599-e59b-4b90-a6b6-bdc9f1a08468",
+        "course_id": "CE F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "Dipendu Bhunia (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f4330422-c0c8-48f3-9bfd-bc589cfc0029",
+        "course_id": "CE G516",
+        "name": "Multicriter Anal In Engg",
+        "units": 4,
+        "ic": "Ajit Pratap Singh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f2efe83d-9066-4ab5-a17e-d53b3c1f4a7c",
+        "course_id": "CE G518",
+        "name": "Pavement Analysis & Des",
+        "units": 4,
+        "ic": "Nishant Bhargava (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6e1c0c58-877b-4e32-ba2b-39ac3ce715fe",
+        "course_id": "CE G520",
+        "name": "Infrastruc Plan & Manag",
+        "units": 4,
+        "ic": "Anshuman (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "232fa48c-95e6-44ce-940c-4418037d1309",
+        "course_id": "CE G562",
+        "name": "Advd Concrete Technology",
+        "units": 4,
+        "ic": "Mukund Lahoti (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "57fafa13-7eec-4f75-867e-106f0971d6e1",
+        "course_id": "CE G566",
+        "name": "Public Transportation",
+        "units": 4,
+        "ic": "Durgesh Vikram (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6b426d2d-90a1-44c0-a58a-461a84111822",
+        "course_id": "CE G570",
+        "name": "Highway Construction Tech",
+        "units": 4,
+        "ic": "Vijay Kakade (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "aa1c9f10-3006-459c-93b5-7c12440e343e",
+        "course_id": "CE G573",
+        "name": "Road Safety And Accident Analy",
+        "units": 4,
+        "ic": "Maripini Himabindu (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ff8eeb5b-53f5-4b7d-88b8-6af703a970e6",
+        "course_id": "CE G573",
+        "name": "Road Safety And Accident..",
+        "units": 4,
+        "ic": "Maripini Himabindu (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "eb38e590-fac0-4df4-ab2e-cce1ad323161",
+        "course_id": "CE G612",
+        "name": "Advanced Steel Structure",
+        "units": 4,
+        "ic": "Shamsher Bahadur Singh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4f33330a-41ec-4c7d-a7ac-4a69abc19a21",
+        "course_id": "CE G613",
+        "name": "Adv Concrete Structures",
+        "units": 4,
+        "ic": "Subhasis Pradhan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "fb2d7e83-6f8d-4f7e-b810-42776efd9472",
+        "course_id": "CE G615",
+        "name": "Earthquake Engineering",
+        "units": 4,
+        "ic": "Rajesh Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "bc52bb6a-d869-4518-ac6c-5605f7783861",
+        "course_id": "CE G618",
+        "name": "Design Of Multi-stor Str",
+        "units": 4,
+        "ic": "Anshuman (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5514addb-b0d4-466a-9a9b-0584a3f4ea88",
+        "course_id": "CE G632",
+        "name": "Des Of Foun For Dyn Load",
+        "units": 4,
+        "ic": "Ravi Kant Mittal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "3c111dbb-8341-428f-8c2b-0adddf9d65c6",
+        "course_id": "CHE F241",
+        "name": "Heat Transfer",
+        "units": 3,
+        "ic": "Suresh Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b20e9d95-7a3c-4091-b225-d0c82d8d9ee6",
+        "course_id": "CHE F242",
+        "name": "Num Method For Chem Engg",
+        "units": 3,
+        "ic": "Hare Krishna Mohanta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "45619d60-a361-42dd-b144-e9c26c033469",
+        "course_id": "CHE F243",
+        "name": "Material Science & Engg",
+        "units": 3,
+        "ic": "Banasri Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ebe8fc46-d126-4912-9a93-37dcea8f0bec",
+        "course_id": "CHE F244",
+        "name": "Separation Processes I",
+        "units": 3,
+        "ic": "Sheth Pratik Nitincha.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "532a1451-afaf-4085-a5a7-d3a7eedfd209",
+        "course_id": "CHE F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Banasri Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2bd93572-95c9-48d1-ac43-57e759e265c1",
+        "course_id": "CHE F311",
+        "name": "Kinetics & Reactor Desig",
+        "units": 3,
+        "ic": "Bhanu Vardhan Reddy K.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "bf786619-51f6-4102-a0ef-f74ad3b80167",
+        "course_id": "CHE F315",
+        "name": "Machine Learning For Che..",
+        "units": 3,
+        "ic": "Ajaya Kumar Pani (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "40353d16-da7d-4702-95a4-aada49192e21",
+        "course_id": "CHE F315",
+        "name": "Machine Learning For Che Eng",
+        "units": 3,
+        "ic": "Ajaya Kumar Pani (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "efeb1228-d280-4173-9f23-0e17edbdf277",
+        "course_id": "CHE F341",
+        "name": "Chemical Engg Lab II",
+        "units": 3,
+        "ic": "Jay Pandey (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "434e3af1-a29e-4e90-8158-7474cc49ba09",
+        "course_id": "CHE F342",
+        "name": "Process Dyn & Control",
+        "units": 3,
+        "ic": "Ajaya Kumar Pani (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "802bee92-58fe-4447-a892-dfba20c27423",
+        "course_id": "CHE F343",
+        "name": "Process Des Principle II",
+        "units": 3,
+        "ic": "Pradipta Chattopadhyay (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a3221ab3-fdee-49a7-8675-edc448b834a5",
+        "course_id": "CHE F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Banasri Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "abe62977-b689-4b9b-a3bd-41c77e4ed82a",
+        "course_id": "CHE F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Banasri Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "608e3e48-da61-4359-aec5-86af90a88bd4",
+        "course_id": "CHE F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Banasri Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "aa4e46e7-e542-4e5e-b6cd-55cea2fd11fb",
+        "course_id": "CHE F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Banasri Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "380808d0-d38f-4c40-adea-053898ba8f14",
+        "course_id": "CHE F413",
+        "name": "Process Plant Safety",
+        "units": 3,
+        "ic": "Priya Christina Sande (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "72f16711-80c9-4226-a2a0-79ec9de73c02",
+        "course_id": "CHE F414",
+        "name": "Transport Phenomena",
+        "units": 3,
+        "ic": "Bhanu Vardhan Reddy K.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0165e618-669d-49c4-85f5-65dd41b97769",
+        "course_id": "CHE F418",
+        "name": "Model & Simu In Che Engg",
+        "units": 3,
+        "ic": "Jay Pandey (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "3c795d47-51f3-49ea-bdf9-e38d82ffbd7f",
+        "course_id": "CHE F419",
+        "name": "Chemical Process Tech",
+        "units": 3,
+        "ic": "Smita Raghuvanshi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "682b4298-8a80-492d-9022-578c38645763",
+        "course_id": "CHE F423",
+        "name": "Membrane Science & Engin..",
+        "units": 3,
+        "ic": "Somak Chatterjee (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "d0c340ac-ce25-4508-9365-b7965b7d1c67",
+        "course_id": "CHE F423",
+        "name": "Membrane Science & Engineering",
+        "units": 3,
+        "ic": "Somak Chatterjee (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e03581e9-c489-4659-ab42-d9c18a66d8fc",
+        "course_id": "CHE F491",
+        "name": "Special Projects",
+        "units": 3,
+        "ic": "Banasri Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "984fdd5e-345d-43b7-aba8-444993b1599f",
+        "course_id": "CHE G556",
+        "name": "Electrochemical Engg",
+        "units": 4,
+        "ic": "Aditya Singh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "46b389f3-16b8-43d1-8fae-42366b2b8891",
+        "course_id": "CHE G622",
+        "name": "Adv Chemical Engg Thermo",
+        "units": 5,
+        "ic": "Mohit Garg (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7ca719cf-f7a4-4348-84b0-29e7e985a673",
+        "course_id": "CHE G641",
+        "name": "Reaction Engineering",
+        "units": 5,
+        "ic": "Amit Jain (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "36ef0020-a7a6-4be9-8457-c3a251b6ae1c",
+        "course_id": "CHEM F101",
+        "name": "Funda Of Chem",
+        "units": 3,
+        "ic": "Saumi Ray (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "625dc2f9-2e63-41da-b75c-955f7358ce2c",
+        "course_id": "CHEM F111",
+        "name": "General Chemistry",
+        "units": 3,
+        "ic": "Saumi Ray (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0ae66593-8e81-4504-b955-8e97b6c3c0ee",
+        "course_id": "CHEM F211",
+        "name": "Physical Chemistry I",
+        "units": 3,
+        "ic": "Avik Kumar Pati (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "83091800-877e-40a9-87aa-e27a7dae5149",
+        "course_id": "CHEM F241",
+        "name": "Inorganic Chemistry II",
+        "units": 3,
+        "ic": "Madhushree Sarkar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "403d28bf-ae3d-4bb6-a1a0-e055a605a085",
+        "course_id": "CHEM F243",
+        "name": "Organic Chemistry II",
+        "units": 3,
+        "ic": "Indresh Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9f57f52d-96aa-49e8-8984-d35735e1153c",
+        "course_id": "CHEM F244",
+        "name": "Physical Chemistry III",
+        "units": 3,
+        "ic": "Ram Kinkar Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "03cb818b-16c3-442d-80e7-c76c7c7afa31",
+        "course_id": "CHEM F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Inamur Rahaman Laskar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ec6b79d5-fc69-45a0-bf0e-124fe44aeb6f",
+        "course_id": "CHEM F323",
+        "name": "Biophysical Chemistry",
+        "units": 3,
+        "ic": "Inamur Rahaman Laskar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6a674070-6f86-4755-930b-9f17da674ba7",
+        "course_id": "CHEM F325",
+        "name": "Polymer Chemistry",
+        "units": 3,
+        "ic": "Bibhas Ranjan Sarkar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e3860c76-cd1a-4fd1-8533-864dab941e29",
+        "course_id": "CHEM F336",
+        "name": "Nanochemistry",
+        "units": 4,
+        "ic": "Surojit Pande (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a489d7ff-90e2-43f8-82bd-e2e04697d2d9",
+        "course_id": "CHEM F341",
+        "name": "Chemical Exper II",
+        "units": 4,
+        "ic": "Prashant Uday Manohar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "bb7ec135-69db-4332-9e67-725e77bc42f3",
+        "course_id": "CHEM F342",
+        "name": "Organic Chemistry IV",
+        "units": 3,
+        "ic": "Nitika Grover (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "93448878-5592-4b08-9e4b-df83324fe969",
+        "course_id": "CHEM F343",
+        "name": "Inorganic Chemistry III",
+        "units": 3,
+        "ic": "Bharti Khungar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8590ce83-1f7b-4466-9737-aad4b2ca8639",
+        "course_id": "CHEM F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Inamur Rahaman Laskar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7aafde34-050b-46ff-89b7-78e06cb761bc",
+        "course_id": "CHEM F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Inamur Rahaman Laskar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "79942d41-f692-4406-85ac-3543b2ca6ef9",
+        "course_id": "CHEM F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Inamur Rahaman Laskar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "16321e28-f931-4d03-8b74-44ea056327d5",
+        "course_id": "CHEM F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Inamur Rahaman Laskar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "01c28f91-ad52-40f4-af94-7f5eb328c264",
+        "course_id": "CHEM F415",
+        "name": "Frontiers In Organic Syn",
+        "units": 3,
+        "ic": "Dalip Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "580c876d-9e2a-4218-8b69-478ae0d53913",
+        "course_id": "CHEM F422",
+        "name": "Statistical Thermodynam",
+        "units": 3,
+        "ic": "Pritam Kumar Jana (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "cef7a49b-303c-44ed-b19c-223544cfaff7",
+        "course_id": "CHEM F430",
+        "name": "Atmospheric Chemistry",
+        "units": 3,
+        "ic": "Shamik Chakraborty (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1c3c4f77-344c-47a6-aa55-a6700cc46f7f",
+        "course_id": "CHEM F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "Inamur Rahaman Laskar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "04893417-3ed5-4816-94e1-44cb1d277311",
+        "course_id": "CHEM G552",
+        "name": "Adv Inorganic Chemistry",
+        "units": 5,
+        "ic": "Inamur Rahaman Laskar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a836e6f3-c442-40dd-bb13-982edbe1c001",
+        "course_id": "CHEM G554",
+        "name": "Phy Methods In Chemistry",
+        "units": 5,
+        "ic": "Mrinmoyee Basu (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "92cd2162-1f2e-4282-89de-3c0b504b4273",
+        "course_id": "CS F111",
+        "name": "Computer Programming",
+        "units": 4,
+        "ic": "Jagat Sesh Challa (Professor)",
+        "is_added": true,
+        "type": "CDC",
+        "nickname": ""
+    },
+    {
+        "static_id": "8a5a9708-fdcd-48d8-981c-692e29b44996",
+        "course_id": "CS F211",
+        "name": "Data Structures & Algo",
+        "units": 4,
+        "ic": "Poonam Goyal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "052eb9f3-666c-41a9-a1f2-9bf575dc78d1",
+        "course_id": "CS F212",
+        "name": "Database Systems",
+        "units": 4,
+        "ic": "Navneet Goyal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "d0c894e6-8443-4fc3-897a-4e01c7d05346",
+        "course_id": "CS F213",
+        "name": "Object Oriented Prog",
+        "units": 4,
+        "ic": "Tanmay Mahapatra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f00ae599-a000-46f9-9033-b1bd2fab8c3b",
+        "course_id": "CS F241",
+        "name": "Microproc & Interfacing",
+        "units": 4,
+        "ic": "Meetha V. Shenoy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a6f1845c-038d-476e-ba66-09ace04046b8",
+        "course_id": "CS F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Yashvardhan Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "d966ad91-a728-4752-bbb2-c5719d30343b",
+        "course_id": "CS F303",
+        "name": "Computer Networks",
+        "units": 4,
+        "ic": "Virendra Singh Shekha.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ee1f7a4f-65d4-42d4-a307-45f5cec1e763",
+        "course_id": "CS F320",
+        "name": "Foundations Of Data Scie..",
+        "units": 3,
+        "ic": "Navneet Goyal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e532990f-4f23-4509-b5ee-e672af4e087a",
+        "course_id": "CS F320",
+        "name": "Foundations Of Data Science",
+        "units": 3,
+        "ic": "Navneet Goyal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "947c0dda-eb5b-41ae-8b07-aa44b5e21bba",
+        "course_id": "CS F342",
+        "name": "Computer Architecture",
+        "units": 4,
+        "ic": "Saurabh Gandhi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "128a2e85-95ae-4988-9bd8-9f2b92872572",
+        "course_id": "CS F351",
+        "name": "Theory Of Computation",
+        "units": 3,
+        "ic": "Shashank Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0fa5f164-d966-4706-859e-45f8794ef7a8",
+        "course_id": "CS F363",
+        "name": "Compiler Construction",
+        "units": 3,
+        "ic": "Shashank Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "947bb0ca-3b70-41bb-9ec5-195b45103af9",
+        "course_id": "CS F364",
+        "name": "Design & Anal Of Algo",
+        "units": 3,
+        "ic": "Abhishek Mishra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "71051f90-b4a4-43a5-b150-c312e1dcd5d7",
+        "course_id": "CS F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Yashvardhan Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "d87556a0-b3ea-41ed-9f54-46aa26ec61a9",
+        "course_id": "CS F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Yashvardhan Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "534aaf62-cf81-49a6-a5df-95634dc4a493",
+        "course_id": "CS F372",
+        "name": "Operating Systems",
+        "units": 3,
+        "ic": "Janardan Prasad Misra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "54824a31-15d2-48de-8338-c81025c2741f",
+        "course_id": "CS F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Yashvardhan Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "84fe23e8-381c-4110-b2da-3ba00ca35dac",
+        "course_id": "CS F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Yashvardhan Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "df4fb70e-2ee5-4fa7-8ec1-ddb317824f2a",
+        "course_id": "CS F407",
+        "name": "Artificial Intelligence",
+        "units": 3,
+        "ic": "Amit Dua (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2af3fa7c-2506-4a36-af60-78fa63d84169",
+        "course_id": "CS F422",
+        "name": "Parallel Computing",
+        "units": 3,
+        "ic": "Haribabu K (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4a70a82b-53c2-41a4-bad8-0da2c8d39e16",
+        "course_id": "CS F425",
+        "name": "Deep Learning",
+        "units": 3,
+        "ic": "Pratik Narang (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "db19f06e-15a6-4990-adf2-cb88a4c81b5b",
+        "course_id": "CS F426",
+        "name": "Graph Mining",
+        "units": 4,
+        "ic": "Vinti Agarwal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "eee8bc61-3e15-46fc-b08c-63223674f2bd",
+        "course_id": "CS F437",
+        "name": "Generative Ai",
+        "units": 3,
+        "ic": "Poonam Goyal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "db4a692b-befb-4ac0-95d2-a7d195ffdf9a",
+        "course_id": "CS F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "Yashvardhan Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "167d9fe2-9b34-4737-9165-f2f0293cbeaa",
+        "course_id": "CS G513",
+        "name": "Network Security",
+        "units": 4,
+        "ic": "Rajesh Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e1ecbe0d-511c-408f-ade5-00fe6b392644",
+        "course_id": "CS G516",
+        "name": "Advanced Database Systems",
+        "units": 4,
+        "ic": "Yashvardhan Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f99d9644-6838-42e8-b800-de331b7fd932",
+        "course_id": "CS G523",
+        "name": "Software For Embedde Sys",
+        "units": 5,
+        "ic": "Saurabh Gandhi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0ce54887-ea4d-4b3d-9208-769580113bed",
+        "course_id": "CS G524",
+        "name": "Adv Computer Architectur",
+        "units": 5,
+        "ic": "Virendra Singh Shekha.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "58c24259-d5a9-4804-8fcd-81c9340f0252",
+        "course_id": "CS G653",
+        "name": "Software Architechtures",
+        "units": 5,
+        "ic": "Tanmay Mahapatra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e0a75122-f481-4f8d-9843-2713d982f480",
+        "course_id": "DE G514",
+        "name": "Fracture Mechanics",
+        "units": 5,
+        "ic": "Sharad Shrivastava (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8f576748-c70e-4da1-ba32-2de6c784828c",
+        "course_id": "DE G522",
+        "name": "Design Projects",
+        "units": 5,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "77765d0c-56e5-4a9a-8a59-fde315fa5d16",
+        "course_id": "ECE F241",
+        "name": "Microproc & Interfacing",
+        "units": 4,
+        "ic": "Meetha V. Shenoy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9b1d83e8-2975-404d-a6bc-cede5ef2039d",
+        "course_id": "ECE F242",
+        "name": "Control Systems",
+        "units": 3,
+        "ic": "Puneet Mishra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2224c727-609e-444d-93a0-a792fcac65d0",
+        "course_id": "ECE F243",
+        "name": "Signals & Systems",
+        "units": 3,
+        "ic": "Pawan Kamalkishor Ajm.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "95e5abe5-5e7a-433f-b6f7-c939365a61b4",
+        "course_id": "ECE F244",
+        "name": "Microelectronic Circuits",
+        "units": 3,
+        "ic": "Anu Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b3dc64b0-4bef-49fb-86fd-9765121ab5fc",
+        "course_id": "ECE F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "99ae48bc-d514-49bd-b5ca-8ca9488dab2c",
+        "course_id": "ECE F341",
+        "name": "Analog Electronics",
+        "units": 4,
+        "ic": "Arnab Hazra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "85282457-f8dd-4fe5-9f79-a8fbec076b39",
+        "course_id": "ECE F343",
+        "name": "Communication Networks",
+        "units": 3,
+        "ic": "Sharda Tripathi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0c08c4c3-f4d4-4afe-9563-cd6992e07808",
+        "course_id": "ECE F344",
+        "name": "Info Theory & Coding",
+        "units": 3,
+        "ic": "Sandeep Joshi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "acb4efa7-02b3-4fd5-82ad-652879dd08d7",
+        "course_id": "ECE F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "60cbf3f4-d9fb-43fb-8329-a54cdf65bdee",
+        "course_id": "ECE F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c7149ee2-11c6-4136-af83-1cd16e416e18",
+        "course_id": "ECE F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "03adcb3a-1695-42b3-8e70-f1fd88319352",
+        "course_id": "ECE F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "3d8c111e-758e-4bf1-8685-791e5137e10d",
+        "course_id": "ECE F424",
+        "name": "Smart Grid For Sustain Energy",
+        "units": 3,
+        "ic": "Hitesh Datt Mathur (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "dd3ffd31-3a3c-4be8-89ae-13006b2c3a53",
+        "course_id": "ECE F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "Hitesh Datt Mathur (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "700f3868-a751-43d5-ad4e-37e1afb3459a",
+        "course_id": "ECON F211",
+        "name": "Principles Of Economics",
+        "units": 3,
+        "ic": "Rahul Arora (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c1f18da0-4831-4811-b98f-cace39492700",
+        "course_id": "ECON F212",
+        "name": "Funda Of Fin And Account",
+        "units": 3,
+        "ic": "Aprajita Pandey (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5722c696-e371-4bc1-8b62-8c6f58a9c6fe",
+        "course_id": "ECON F215",
+        "name": "Computational Methods Fo..",
+        "units": 3,
+        "ic": "Suruchi Shrimali (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b99634b0-1075-4b7a-a20b-4057da951e7e",
+        "course_id": "ECON F215",
+        "name": "Computational Methods For Econ",
+        "units": 3,
+        "ic": "Suruchi Shrimali (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8806c889-2ad6-44fc-ac3e-e7320616bb5e",
+        "course_id": "ECON F241",
+        "name": "Econometric Methods",
+        "units": 3,
+        "ic": "Muralidhar Rao N V (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e67603e9-0ee2-42e2-8f0e-3ac7b0565dfc",
+        "course_id": "ECON F242",
+        "name": "Microeconomics",
+        "units": 3,
+        "ic": "Geetilaxmi Mohapatra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "aa78d59d-0630-4fe8-a823-687406779ca2",
+        "course_id": "ECON F243",
+        "name": "Macroeconomics",
+        "units": 3,
+        "ic": "Arun Kumar Giri (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8f46caaa-6cf8-4819-b27c-4993401340b5",
+        "course_id": "ECON F244",
+        "name": "Economic Of Growth & Dev",
+        "units": 3,
+        "ic": "Arun Kumar Giri (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9c73a80a-e880-42b3-add6-cb6fdd06dd58",
+        "course_id": "ECON F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Krishna M (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9d8c0f7d-0999-4a74-885c-36937ff0ea26",
+        "course_id": "ECON F315",
+        "name": "Financial Management",
+        "units": 3,
+        "ic": "Arya Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b7130704-5748-4740-8903-a85464a92afb",
+        "course_id": "ECON F341",
+        "name": "Public Fin Theo & Policy",
+        "units": 3,
+        "ic": "Balakrushna Padhi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2bd3768a-294a-4c2a-a440-86639dc33d33",
+        "course_id": "ECON F342",
+        "name": "Applied Econometrics",
+        "units": 3,
+        "ic": "Rahul Arora (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "809234be-1f7f-473e-8eb6-89e6aaa42ee3",
+        "course_id": "ECON F343",
+        "name": "Economic Anal Of Pub Pol",
+        "units": 3,
+        "ic": "Krishna M (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5bfc3671-d93f-44db-af38-96aca99dc517",
+        "course_id": "ECON F353",
+        "name": "Energy Economic & Policy",
+        "units": 3,
+        "ic": "Krishna M (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "49e42224-c8e9-4c13-8dc4-1e5375b85142",
+        "course_id": "ECON F354",
+        "name": "Derivatives & Risk Mgmt",
+        "units": 3,
+        "ic": "Aditya Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ae4783fd-c3a3-47f4-9540-b1607262e095",
+        "course_id": "ECON F355",
+        "name": "Buss Anal & Valuation",
+        "units": 3,
+        "ic": "Aprajita Pandey (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7892a65c-ecbc-4568-9c54-fd6ac6ee750b",
+        "course_id": "ECON F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Krishna M (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "889388ec-25b2-45cb-82e7-634feca6e5f9",
+        "course_id": "ECON F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Krishna M (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a259d63d-1bfe-4954-afc2-fe5f18ff07c9",
+        "course_id": "ECON F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Krishna M (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4c8d6923-ec94-4605-9dee-108b1aff64bc",
+        "course_id": "ECON F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Krishna M (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "220bc4b2-9045-4cf4-a6d1-ea27bb40fb5e",
+        "course_id": "ECON F412",
+        "name": "Secur Anal & Portfol Mgt",
+        "units": 3,
+        "ic": "Krishna M (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "455a5acf-8001-436f-8f74-672a61357e8b",
+        "course_id": "ECON F414",
+        "name": "Creat & Lead Entrep Orgn",
+        "units": 3,
+        "ic": "Arya Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b4e6dfdd-c7c6-4518-87bb-1827087944fb",
+        "course_id": "ECON F435",
+        "name": "Marketing Research",
+        "units": 3,
+        "ic": "Anil Kumar Bhat (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "bd3d2d2b-cb75-43c8-977c-92cd94923136",
+        "course_id": "ECON F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "Krishna M (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "664bb48f-c299-4382-8ef2-397e1bade072",
+        "course_id": "EE G502",
+        "name": "Water And Wastewater Tre..",
+        "units": 5,
+        "ic": "Pubali Mandal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0290d711-d4d8-42b4-a94b-a286187eda5f",
+        "course_id": "EE G502",
+        "name": "Water And Wastewater Treatment",
+        "units": 5,
+        "ic": "Pubali Mandal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8d214162-83dd-4ad0-a853-db97c2fc23eb",
+        "course_id": "EE G503",
+        "name": "Environmental Systems Modellin",
+        "units": 5,
+        "ic": "Shibani Khanra Jha (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8c07a961-4f5f-46e3-92c2-2df5ed2ef0dc",
+        "course_id": "EE G503",
+        "name": "Environmental Systems Mo..",
+        "units": 5,
+        "ic": "Shibani Khanra Jha (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "db33db18-3b43-4133-8dde-b4205510e761",
+        "course_id": "EE G506",
+        "name": "Environmental Statistics",
+        "units": 5,
+        "ic": "Rallapalli Srinivas (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5da7be38-6c1d-4b04-8bc6-e27d3f98d191",
+        "course_id": "EEE F111",
+        "name": "Electrical Sciences",
+        "units": 3,
+        "ic": "Praveen Kumar A.V. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a54d584f-7844-4441-9501-26bba9fdc125",
+        "course_id": "EEE F216",
+        "name": "Electronic Dev Simulatio..",
+        "units": 2,
+        "ic": "Rahul Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a38e5523-e5ca-40a9-bafa-5305ef766cab",
+        "course_id": "EEE F216",
+        "name": "Electronic Dev Simulation Lab",
+        "units": 2,
+        "ic": "Rahul Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "125def59-6aa7-4105-bd56-ec4bc17d6e96",
+        "course_id": "EEE F241",
+        "name": "Microproc & Interfacing",
+        "units": 4,
+        "ic": "Meetha V. Shenoy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8154bafe-6db1-4bf6-a8b6-c6d774be4776",
+        "course_id": "EEE F242",
+        "name": "Control Systems",
+        "units": 3,
+        "ic": "Puneet Mishra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "44d5ed6f-5b90-4ebd-8b06-652a68e8092e",
+        "course_id": "EEE F243",
+        "name": "Signals & Systems",
+        "units": 3,
+        "ic": "Pawan Kamalkishor Ajm.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "eda98a3d-edc0-471d-9c72-4e46c03dea44",
+        "course_id": "EEE F244",
+        "name": "Microelectronic Circuits",
+        "units": 3,
+        "ic": "Anu Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4fcbad1d-b45f-4efd-9d38-54c763e34e1c",
+        "course_id": "EEE F246",
+        "name": "E & E  Circuit  Laboratory",
+        "units": 2,
+        "ic": "Yenuganti Sujan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8c7f92f2-f165-4664-9b4b-b9978ca75b41",
+        "course_id": "EEE F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "15deb8d9-dcec-4978-b78c-a9fc6e4b9434",
+        "course_id": "EEE F312",
+        "name": "Power Systems",
+        "units": 3,
+        "ic": "Hari Om Bansal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "fc846139-519a-470f-858d-853567584c0e",
+        "course_id": "EEE F341",
+        "name": "Analog Electronics",
+        "units": 4,
+        "ic": "Arnab Hazra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "08e43744-ebea-4ed8-8e21-7b074add44bf",
+        "course_id": "EEE F342",
+        "name": "Power Electronics",
+        "units": 4,
+        "ic": "Dheerendra Singh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ce70125f-9821-4f3c-bdc5-e256685bb3cf",
+        "course_id": "EEE F348",
+        "name": "Fpga Based System Design Lab",
+        "units": 2,
+        "ic": "Govind Prasad (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "668938b4-84c2-4cf0-95c4-89b1ad8c10c6",
+        "course_id": "EEE F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8b1871f4-a79e-4730-851f-71749e35461a",
+        "course_id": "EEE F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c380ff79-93ea-4871-a44d-8c57e5d65d1d",
+        "course_id": "EEE F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "40c8cfb6-a1ea-4707-9505-614b10f3e29f",
+        "course_id": "EEE F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1ef1ec37-b01e-4f6d-8351-199fd4e7f7b0",
+        "course_id": "EEE F416",
+        "name": "Digital Communication",
+        "units": 3,
+        "ic": "Sharda Tripathi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "33fb2313-294b-40bc-b1c2-65896f5ed94f",
+        "course_id": "EEE F419",
+        "name": "Flexible And Stretchable..",
+        "units": 4,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0bee18fa-0f69-43ed-ada7-926bb2360b75",
+        "course_id": "EEE F419",
+        "name": "Flexible And Stretchable Elect",
+        "units": 4,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ac03d6c4-3c8c-47f5-9509-19d17bf4555e",
+        "course_id": "EEE F424",
+        "name": "Smart Grid For Sustain Energy",
+        "units": 3,
+        "ic": "Hitesh Datt Mathur (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1c96b006-5bd1-447c-83cb-08649f6808f8",
+        "course_id": "EEE F424",
+        "name": "Smart Grid For Sustain E..",
+        "units": 3,
+        "ic": "Hitesh Datt Mathur (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e68b8196-f644-46e1-8a4c-2fd3f99c5ffa",
+        "course_id": "EEE F430",
+        "name": "Green Communications & Network",
+        "units": 3,
+        "ic": "Sainath Bitragunta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0255b44f-1592-44ad-8c49-3197a3073a2b",
+        "course_id": "EEE F430",
+        "name": "Green Communications & N..",
+        "units": 3,
+        "ic": "Sainath Bitragunta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4924602c-a72e-4828-86eb-5b5d8d3dd57c",
+        "course_id": "EEE F431",
+        "name": "Mobile Telecom Networks",
+        "units": 3,
+        "ic": "Sandeep Joshi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "86ad474c-9d6a-42c4-ae3e-5d7730ca0586",
+        "course_id": "EEE F432",
+        "name": "Medical Instrumentation",
+        "units": 3,
+        "ic": "Karunesh Kr Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6d5c52e9-cb87-4ba8-ad61-18eecd09f5e6",
+        "course_id": "EEE F437",
+        "name": "Semiconductor Fab Tech",
+        "units": 4,
+        "ic": "Rahul Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5ca5d154-76b5-466f-a10f-0b525ccf4908",
+        "course_id": "EEE F437",
+        "name": "Semiconductor Fab. Tech.",
+        "units": 4,
+        "ic": "Rahul Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4a098bb9-d389-430b-bef9-577160a20e7f",
+        "course_id": "EEE F438",
+        "name": "Electric Vehicles",
+        "units": 3,
+        "ic": "Hitesh Datt Mathur (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "396958ef-18d4-4e12-b73b-c40969aa9947",
+        "course_id": "EEE F439",
+        "name": "Comm & Comp For Dron",
+        "units": 4,
+        "ic": "Vinay Chamola (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "29f294cc-2344-40f3-a55f-0cb6deb738b3",
+        "course_id": "EEE F474",
+        "name": "Antenna Theo And Design",
+        "units": 4,
+        "ic": "Dinesh Rano (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9706529d-a2a4-4692-ac65-a588be5b4e05",
+        "course_id": "EEE F477",
+        "name": "Modeling Of Field-effect..",
+        "units": 3,
+        "ic": "V K Chaubey (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1f95f1bf-1d0d-4430-a8d5-64d19b8bca24",
+        "course_id": "EEE F477",
+        "name": "Modeling Of Field-effect Nano",
+        "units": 3,
+        "ic": "V K Chaubey (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ec3480d6-a9d3-4a69-bf45-0ff574b4726a",
+        "course_id": "EEE F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "67159171-5745-4aa2-8e31-2eb1a562762c",
+        "course_id": "EEE G510",
+        "name": "Rf Microelectronics",
+        "units": 5,
+        "ic": "Pankaj Arora (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8773f139-d16c-4e4b-82d0-1a91e9797c80",
+        "course_id": "EEE G523",
+        "name": "Processor Architecture And Des",
+        "units": 5,
+        "ic": "Sai Sesha Chalapathi .. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "38e76e3d-6115-4c43-b508-26121ba4a137",
+        "course_id": "EEE G525",
+        "name": "Wireless Communication Systems",
+        "units": 5,
+        "ic": "Syed Mohammad Zafarud.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f62ec57a-ee29-45e9-9f7a-36de1427b2d5",
+        "course_id": "EEE G526",
+        "name": "Lightwave Engineering",
+        "units": 5,
+        "ic": "Rahul Singhal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "21969f3e-bb22-496b-9e75-914421544595",
+        "course_id": "EEE G540",
+        "name": "Advanced Control Techniques Fo",
+        "units": 5,
+        "ic": "Aditya Raw Gautam (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6f003439-4032-4171-85c8-ca64d126aafe",
+        "course_id": "EEE G548",
+        "name": "Distr. & Networked Emb. Sys.",
+        "units": 4,
+        "ic": "Vinay Chamola (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "efa68450-3a37-4c6d-97dc-17622f7c7134",
+        "course_id": "EEE G552",
+        "name": "Solid State Drives",
+        "units": 5,
+        "ic": "Ashish Patel . (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4cc8bf5e-fda0-4f12-97f0-0891ea881238",
+        "course_id": "FIN F212",
+        "name": "Funda Of Fin And Account",
+        "units": 3,
+        "ic": "Aprajita Pandey (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "77b6946c-0353-4ee5-86a5-d63c271f4eec",
+        "course_id": "FIN F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Krishna M (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "81010352-dd44-4291-a32e-bf2fc7eb947a",
+        "course_id": "FIN F311",
+        "name": "Derivatives & Risk Mgmt",
+        "units": 3,
+        "ic": "Aditya Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f107603e-76d2-4f89-9b52-21498ec069f6",
+        "course_id": "FIN F315",
+        "name": "Financial Management",
+        "units": 3,
+        "ic": "Arya Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "3ceaf8c5-731b-4f78-9f58-53772ae15feb",
+        "course_id": "FIN F414",
+        "name": "Financial Risk Anal And Mgmt",
+        "units": 3,
+        "ic": "Debata Byomakesh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "70d2a5e2-c015-4376-bbf0-b9ef9a3f1bfe",
+        "course_id": "FIN F414",
+        "name": "Financial Risk Anal And ..",
+        "units": 3,
+        "ic": "Debata Byomakesh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "01f2b92d-59af-4070-ae0b-f7995170d072",
+        "course_id": "GS F223",
+        "name": "Intro To Mass Comm",
+        "units": 3,
+        "ic": "Sushila Shekhawat (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "21cce131-d98b-4d45-af6f-172d1e3e1352",
+        "course_id": "GS F231",
+        "name": "Dyn Of Social Change",
+        "units": 3,
+        "ic": "Madhurima Das (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5a3490de-c175-41bd-911c-21c9334f22e6",
+        "course_id": "GS F232",
+        "name": "Introductory Psychology",
+        "units": 3,
+        "ic": "Tanu Shukla (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "147132ad-4dd7-4c25-95ae-e19c58c28479",
+        "course_id": "GS F233",
+        "name": "Public Policy",
+        "units": 3,
+        "ic": "Natasha Hazarika (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1efc3613-76a6-4327-bd3a-48b946146f79",
+        "course_id": "GS F234",
+        "name": "Development Economics",
+        "units": 3,
+        "ic": "Leela Rani (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c0b9c461-d783-491a-bb28-8173dc194f67",
+        "course_id": "GS F241",
+        "name": "Creative Writing",
+        "units": 3,
+        "ic": "Devika (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b6321984-8c8e-493e-9a98-f19b04397e11",
+        "course_id": "GS F242",
+        "name": "Cultural Studies",
+        "units": 3,
+        "ic": "Susan Haris (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "bede0653-5406-48e3-ac10-505d66c59148",
+        "course_id": "GS F243",
+        "name": "Current Affairs",
+        "units": 3,
+        "ic": "Sanjiv Kumar Choudhary (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "43407aa1-ca43-4c85-a1e7-c332787d5d11",
+        "course_id": "GS F244",
+        "name": "Report & Write For Media",
+        "units": 3,
+        "ic": "Gajendra Singh Chauhan (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "535b792b-d814-4e66-ace7-1d71174b88e5",
+        "course_id": "GS F245",
+        "name": "Effective Public Speak",
+        "units": 3,
+        "ic": "Pushp Lata (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "615da3be-4b69-49a9-9f9a-d114041f88c8",
+        "course_id": "GS F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Sangeeta Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "01f40618-b51a-4508-90e5-87f88e2aaddc",
+        "course_id": "GS F312",
+        "name": "Applied Philosophy",
+        "units": 3,
+        "ic": "Kumar Neeraj Sachdev (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9686f111-ef9a-45f5-8b3e-cced471888e0",
+        "course_id": "GS F313",
+        "name": "Marxian Thoughts",
+        "units": 3,
+        "ic": "Paul Mathew (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e513621c-a6ef-4318-af19-48ccf60e0ca9",
+        "course_id": "GS F322",
+        "name": "Criti Anal Of Lit & Cine",
+        "units": 3,
+        "ic": "Prateek (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "546cf469-f765-46b2-b064-271151cbe5cc",
+        "course_id": "GS F331",
+        "name": "Tech In Social Research",
+        "units": 3,
+        "ic": "Tanu Shukla (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8f971b25-6354-4bd9-a1b8-e85749ffe8e9",
+        "course_id": "GS F332",
+        "name": "Contemporary India",
+        "units": 3,
+        "ic": "Veena R (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a673941e-6119-4e43-b18a-3fc80ff0721d",
+        "course_id": "GS F333",
+        "name": "Public Administration",
+        "units": 3,
+        "ic": "Sailaja Nandigama (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2e46936b-26ec-4ec6-8e74-e6d40d899145",
+        "course_id": "GS F334",
+        "name": "Global Business Tec & Ks",
+        "units": 3,
+        "ic": "Praveen Goyal (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6ebdd23e-d9a5-4ecb-80ed-fbbb52a70fa3",
+        "course_id": "GS F342",
+        "name": "Computer Mediated Comm",
+        "units": 3,
+        "ic": "Virendra Singh Nirban (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "63c696a8-ae04-46ae-8b6f-0e43ec0c8698",
+        "course_id": "GS F343",
+        "name": "Short Film & Video Prod",
+        "units": 3,
+        "ic": "Sushila Shekhawat (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9b21bc21-d986-4664-9857-f11bb722b48f",
+        "course_id": "GS F344",
+        "name": "Copywriting",
+        "units": 2,
+        "ic": "Gajendra Singh Chauhan (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "28b670c7-2d76-44c7-a3a6-c22fee23439e",
+        "course_id": "GS F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Sangeeta Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4aa1025f-2a7c-405e-b828-f088ae18a17d",
+        "course_id": "GS F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Sangeeta Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1383ddfe-892d-42b6-bea8-50438f75c903",
+        "course_id": "GS F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Sangeeta Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "25ff1686-52cc-4487-bf9b-34ed1f94fbd8",
+        "course_id": "GS F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Sangeeta Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0b8bf409-3d0c-4882-9295-51e83987fda7",
+        "course_id": "GS F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "Sangeeta Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "91986407-ee31-473e-9278-c0267140d653",
+        "course_id": "HSS F101",
+        "name": "Understanding Self And Society",
+        "units": 2,
+        "ic": "Sailaja Nandigama (Professor)",
+        "is_added": true,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1c4c528c-dd2c-4c47-97bc-f9adee42544c",
+        "course_id": "HSS F222",
+        "name": "Linguistics",
+        "units": 3,
+        "ic": "Sanjiv Kumar Choudhary (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6878550e-b488-4008-a5cf-d1a901f31dd3",
+        "course_id": "HSS F223",
+        "name": "Appr Of Indian Music",
+        "units": 3,
+        "ic": "Hricha Rashmi (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "98fb658f-0968-475c-8207-6a73d2f06830",
+        "course_id": "HSS F224",
+        "name": "English Skills For Acade..",
+        "units": 3,
+        "ic": "Chintalapalli Vijayak.. (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "29a44084-d626-4068-8ac2-2dec77e5d724",
+        "course_id": "HSS F226",
+        "name": "Post Modernism",
+        "units": 3,
+        "ic": "Devika (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "88e7e5b3-56fe-4ff7-8fdf-2f7bfcd9c5d8",
+        "course_id": "HSS F235",
+        "name": "Introductory Philosophy",
+        "units": 3,
+        "ic": "Anupam Yadav (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "55669e2c-5b3e-4e18-88f2-1f5adcdc9aa7",
+        "course_id": "HSS F236",
+        "name": "Symbolic Logic",
+        "units": 3,
+        "ic": "Anupam Yadav (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6c3c357c-9429-41d3-a39a-d5be46e072fc",
+        "course_id": "HSS F247",
+        "name": "Social Informatics",
+        "units": 3,
+        "ic": "Virendra Singh Nirban (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e760f9c6-308d-43c8-a543-810eee3351a6",
+        "course_id": "HSS F250",
+        "name": "Comics And Visual Culture",
+        "units": 3,
+        "ic": "Shriya Raina (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "40016a68-d20e-4b0d-803e-67f62c6aa461",
+        "course_id": "HSS F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Sangeeta Sharma (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e74fc7af-eda0-4494-9c1d-8562bd864db4",
+        "course_id": "HSS F316",
+        "name": "Pop Liter & Cult S Asia",
+        "units": 3,
+        "ic": "Shriya Raina (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ae219070-792a-4bee-b273-ee1a3ea1654e",
+        "course_id": "HSS F323",
+        "name": "Organizational Psychology",
+        "units": 3,
+        "ic": "Rajneesh Choubisa (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9f771038-e9ea-48f1-b31f-044e14544a34",
+        "course_id": "HSS F328",
+        "name": "Human Resource Develop",
+        "units": 3,
+        "ic": "Rajneesh Choubisa (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0f7113f7-e664-4def-baf2-d47468bb26f2",
+        "course_id": "HSS F329",
+        "name": "Musicology-an Introductn",
+        "units": 3,
+        "ic": "Hricha Rashmi (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "50fb62c9-6561-459b-8037-79096f4ee238",
+        "course_id": "HSS F332",
+        "name": "Cinematic Art",
+        "units": 3,
+        "ic": "Paul Mathew (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ce95705d-39ce-4d52-b823-cb4ea0bb6647",
+        "course_id": "HSS F334",
+        "name": "Srimad Bhagavad Gita",
+        "units": 3,
+        "ic": "Vinay Chamola (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "68290468-1a18-404b-ad9b-cf370b46372e",
+        "course_id": "HSS F343",
+        "name": "Professional Ethics",
+        "units": 3,
+        "ic": "Kumar Neeraj Sachdev (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "05fe1b0c-8326-475d-9a58-da34da0c0a05",
+        "course_id": "HSS F346",
+        "name": "International Relations",
+        "units": 3,
+        "ic": "Veena R (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "515d5230-99ac-44ae-9a3e-c34771c652d8",
+        "course_id": "HSS F349",
+        "name": "Ecocriticism",
+        "units": 3,
+        "ic": "Susan Haris (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b963effb-4f4b-43ac-98f2-95b7c83e5971",
+        "course_id": "HSS F380",
+        "name": "Performance Studies",
+        "units": 3,
+        "ic": "Prateek (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6958a4c7-47a9-4f1c-9511-fdff898f34a5",
+        "course_id": "HSS F381",
+        "name": "Environmental Sustain Ventures",
+        "units": 3,
+        "ic": "Natasha Hazarika (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b9b85f25-1e11-4bd6-ae2e-8da694d56ddb",
+        "course_id": "HSS F381",
+        "name": "Environmental Sustain Ve..",
+        "units": 3,
+        "ic": "Natasha Hazarika (Professor)",
+        "is_added": false,
+        "type": "HUEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e13de3b5-164e-4c59-aec6-823c77ddb72a",
+        "course_id": "INSTR F216",
+        "name": "Electronic Dev Simulatio..",
+        "units": 2,
+        "ic": "Rahul Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8099d4eb-65f3-45ee-815a-519d3c02ed97",
+        "course_id": "INSTR F216",
+        "name": "Electronic Dev Simulation Lab",
+        "units": 2,
+        "ic": "Rahul Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "93ab83c8-6ecc-4f65-856e-36801b9b25e3",
+        "course_id": "INSTR F241",
+        "name": "Microproc & Interfacing",
+        "units": 4,
+        "ic": "Meetha V. Shenoy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "862d0bc9-ea65-48a6-ac3b-85ba0c07727b",
+        "course_id": "INSTR F242",
+        "name": "Control Systems",
+        "units": 3,
+        "ic": "Puneet Mishra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "23c695f4-5d4f-4adb-bcc6-ef344d160503",
+        "course_id": "INSTR F243",
+        "name": "Signals & Systems",
+        "units": 3,
+        "ic": "Pawan Kamalkishor Ajm.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "fb952f3e-2047-495c-bf90-c4c8bae0b8eb",
+        "course_id": "INSTR F244",
+        "name": "Microelectronic Circuits",
+        "units": 3,
+        "ic": "Anu Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5bd6c10d-37c5-4c76-af2a-9eb83c2c140e",
+        "course_id": "INSTR F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5bc23100-bdc1-4e1e-8a60-72b9e8e98588",
+        "course_id": "INSTR F341",
+        "name": "Analog Electronics",
+        "units": 4,
+        "ic": "Arnab Hazra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "254f1009-321f-478e-bcf8-dc71eb508eb6",
+        "course_id": "INSTR F342",
+        "name": "Power Electronics",
+        "units": 4,
+        "ic": "Dheerendra Singh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f76a57b5-7c2f-4904-80e2-548d2dfc5dea",
+        "course_id": "INSTR F343",
+        "name": "Indus Instrument & Cont",
+        "units": 3,
+        "ic": "Yenuganti Sujan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "20641d66-9de1-44ce-b858-9d2215d12bb7",
+        "course_id": "INSTR F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "fa58c9ec-caa5-4109-a587-6916a5461ffe",
+        "course_id": "INSTR F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "dd445699-c56c-49ac-856f-742b3d2bdc06",
+        "course_id": "INSTR F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "fcdc40f1-43e7-4adf-8e95-78d097d7dc61",
+        "course_id": "INSTR F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "cc5328aa-6dd2-4160-ba25-d761cc2bfa7f",
+        "course_id": "INSTR F424",
+        "name": "Smart Grid For Sustain Energy",
+        "units": 3,
+        "ic": "Hitesh Datt Mathur (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "acdf2228-00ff-4a29-8afb-de5f5731ba4a",
+        "course_id": "INSTR F424",
+        "name": "Smart Grid For Sustain E..",
+        "units": 3,
+        "ic": "Hitesh Datt Mathur (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7d628a03-8e34-4939-9fac-57954d7b6be1",
+        "course_id": "INSTR F432",
+        "name": "Medical Instrumentation",
+        "units": 3,
+        "ic": "Karunesh Kr Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9172ed2f-5031-42eb-ab61-e1661327955d",
+        "course_id": "INSTR F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "Navneet Gupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2b9e6a60-d116-4c38-bc4c-42c20ecee04c",
+        "course_id": "MAC F212",
+        "name": "Object Oriented Programming",
+        "units": 4,
+        "ic": "Tanmay Mahapatra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b97ff2de-2dba-4a2c-8fa3-e35c2b4d782b",
+        "course_id": "MAC F241",
+        "name": "Numerical Analysis",
+        "units": 3,
+        "ic": "Bhupendra Kumar Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8b1e3e74-b204-4469-81f6-76c44f7eb0ad",
+        "course_id": "MAC F242",
+        "name": "Data Structures & Algorithms",
+        "units": 4,
+        "ic": "Poonam Goyal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "cb06bc07-3c0c-41de-93b5-3b41b21886f2",
+        "course_id": "MAC F243",
+        "name": "Numerical Optimization",
+        "units": 3,
+        "ic": "Rajesh Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "99b18f70-c79f-46eb-b868-55d4265ce687",
+        "course_id": "MAC F244",
+        "name": "Stochastic Calcu & App To Fin",
+        "units": 3,
+        "ic": "Ankan Pal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ebf3b841-0f75-4125-9d2e-ed42c3b3cd62",
+        "course_id": "MAC F245",
+        "name": "Scientific Computing Lab",
+        "units": 1,
+        "ic": "Rajesh Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f053526d-67ad-4bb2-be61-b5acc43f99bf",
+        "course_id": "MAC F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Ashish Tiwari (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "d1fcc371-de8b-495b-9b54-7c828027f081",
+        "course_id": "MATH F102",
+        "name": "Lin Algeb & Comp Varia",
+        "units": 3,
+        "ic": "Sangita Yadav (Professor)",
+        "is_added": true,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "206368d4-601c-484f-a795-d50bccc67c46",
+        "course_id": "MATH F112",
+        "name": "Mathematics II",
+        "units": 3,
+        "ic": "Sangita Yadav (Professor)",
+        "is_added": false,
+        "type": "CDC",
+        "nickname": ""
+    },
+    {
+        "static_id": "f79a5eec-c60b-474c-b416-df19140a598c",
+        "course_id": "MATH F113",
+        "name": "Probability & Statistics",
+        "units": 3,
+        "ic": "Chandra Shekhar (Professor)",
+        "is_added": true,
+        "type": "CDC",
+        "nickname": ""
+    },
+    {
+        "static_id": "cb0415c3-8c38-4cb9-82b6-77fde89f9396",
+        "course_id": "MATH F231",
+        "name": "Number Theory",
+        "units": 3,
+        "ic": "Pramod Eyyunni (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0c219738-c3d2-4e79-ba35-a0507a689e31",
+        "course_id": "MATH F241",
+        "name": "Mathematical Methods",
+        "units": 3,
+        "ic": "Trilok Mathur (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "d4f8cb98-e033-4930-a883-89bd1b98a44a",
+        "course_id": "MATH F242",
+        "name": "Operations Research",
+        "units": 3,
+        "ic": "Chandra Shekhar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "3e0308f6-3758-4cea-aa28-47fa5f170028",
+        "course_id": "MATH F243",
+        "name": "Graphs And Networks",
+        "units": 3,
+        "ic": "Krishnendra Shekhawat (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "22eb6547-17a9-4663-a978-38c044cfe552",
+        "course_id": "MATH F244",
+        "name": "Measure & Integration",
+        "units": 3,
+        "ic": "Balram Dubey (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7fe8091e-2d4c-4c26-a6a7-ba487370e1a0",
+        "course_id": "MATH F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Ashish Tiwari (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ded71df6-579d-48ac-8421-7083eef28ce0",
+        "course_id": "MATH F313",
+        "name": "Numerical Analysis",
+        "units": 3,
+        "ic": "Bhupendra Kumar Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c8f77767-e8ae-4422-af6f-1986398e73f2",
+        "course_id": "MATH F317",
+        "name": "Sampling Theory",
+        "units": 4,
+        "ic": "Niladri Chatterjee (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f1e92117-aaac-492c-9b7c-ba57666d10ac",
+        "course_id": "MATH F341",
+        "name": "Intro To Functional Anal",
+        "units": 3,
+        "ic": "Shailesh Trivedi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ad344cf4-48f0-4282-8dce-0c8bd532c054",
+        "course_id": "MATH F342",
+        "name": "Differential Geometry",
+        "units": 3,
+        "ic": "Sangita Yadav (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a0444ede-4094-4b6d-af28-284f67ed5543",
+        "course_id": "MATH F343",
+        "name": "Partial Diff Equations",
+        "units": 3,
+        "ic": "Devendra Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7a7b570a-3a66-489a-8068-79a22706be5d",
+        "course_id": "MATH F353",
+        "name": "Statistical Infer & App",
+        "units": 3,
+        "ic": "Sumanta Pasari (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "81190aa7-a89d-4e0c-afed-a026824df155",
+        "course_id": "MATH F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Ashish Tiwari (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "172d3c18-737f-4c21-9e02-a9070e3de4a5",
+        "course_id": "MATH F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Ashish Tiwari (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5888c20c-3bf7-4764-8226-5035fb687670",
+        "course_id": "MATH F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Ashish Tiwari (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5a9964aa-c2cd-4e13-af4f-292bf5edaf66",
+        "course_id": "MATH F422",
+        "name": "Num Mthd For Partial Diff Eq",
+        "units": 4,
+        "ic": "Devendra Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5cb00d80-cc6d-49a5-b3f6-7a3eec6102d3",
+        "course_id": "MATH F422",
+        "name": "Num Mthd For Partial Dif..",
+        "units": 4,
+        "ic": "Devendra Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8bfd6042-8b8e-4e2d-8015-8a59a5cb6109",
+        "course_id": "MATH F424",
+        "name": "Applied Stochastic Proce",
+        "units": 4,
+        "ic": "Ankan Pal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f5edc3b6-256b-434a-a3da-006ea9c65e16",
+        "course_id": "MATH F425",
+        "name": "Numerical Linear Algebra",
+        "units": 4,
+        "ic": "Deepak Bhoriya (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "713a27a8-5c18-4e41-a294-ba8c6e637fe2",
+        "course_id": "MATH F427",
+        "name": "Statistical Simulation A..",
+        "units": 4,
+        "ic": "Anirudh Singh Rana (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "36709475-40a8-40ff-a8d9-21189247bae3",
+        "course_id": "MATH F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "Ashish Tiwari (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2fab611a-3ffb-4844-b428-395638979802",
+        "course_id": "ME F112",
+        "name": "Workshop Practice",
+        "units": 2,
+        "ic": "Amit Kumar (Professor)",
+        "is_added": false,
+        "type": "CDC",
+        "nickname": ""
+    },
+    {
+        "static_id": "0abd5a1b-c877-48c3-a852-f7c7c65e3072",
+        "course_id": "ME F218",
+        "name": "Advanced Mechanics Of So..",
+        "units": 2,
+        "ic": "Mani Sankar Dasgupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "bde1cbe1-d81d-4a72-9d79-e8021e03c628",
+        "course_id": "ME F218",
+        "name": "Advanced Mechanics Of Solids",
+        "units": 2,
+        "ic": "Mani Sankar Dasgupta (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8c626f76-cf52-4fde-b3d7-f28f6c741482",
+        "course_id": "ME F219",
+        "name": "Manufacturing Processes",
+        "units": 4,
+        "ic": "Geeta Bhatt (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "818352bc-a00c-418b-8611-7735f26964c8",
+        "course_id": "ME F220",
+        "name": "Heat Transfer",
+        "units": 4,
+        "ic": "P Srinivasan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e78abae7-82f2-455b-bc6f-177c9f89c523",
+        "course_id": "ME F221",
+        "name": "Mechanisms And Machines",
+        "units": 3,
+        "ic": "Jitendra Singh Rathore (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "911d5ce9-a05c-4dde-a0fa-1db54188d2c2",
+        "course_id": "ME F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "dbbe0da8-84c2-4664-baee-dc4bd363fc45",
+        "course_id": "ME F316",
+        "name": "Manufacturing Management",
+        "units": 2,
+        "ic": "Abhijeet Keshaorao Di.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "659a2356-0366-4688-a712-07869d69c0ac",
+        "course_id": "ME F318",
+        "name": "Computer-aided Design",
+        "units": 3,
+        "ic": "Amit Rajnarayan Singh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "df2151ba-105c-403b-93ae-a08fa207fa97",
+        "course_id": "ME F319",
+        "name": "Vibrations And Control",
+        "units": 3,
+        "ic": "Arun Kumar Jalan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "713ee99c-8933-4beb-b96f-b1d13ef8d117",
+        "course_id": "ME F320",
+        "name": "Engineering Optimization",
+        "units": 3,
+        "ic": "Rajesh Prasad Mishra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "d7a37d8f-9694-4776-b8a5-7887ff283c6b",
+        "course_id": "ME F325",
+        "name": "Fundamentals Of Soft Matter",
+        "units": 3,
+        "ic": "A R Harikrishnan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f54ba38c-6045-41dc-a05a-152a295ff197",
+        "course_id": "ME F341",
+        "name": "Primemovers & Fluid Mach",
+        "units": 3,
+        "ic": "Manoj Kumar Soni (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9c890622-b987-43aa-a60f-b2e570ced712",
+        "course_id": "ME F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "bdce5787-201c-4376-aeb4-6f38e4f410cb",
+        "course_id": "ME F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1d936720-7e3f-4a73-96e4-401dcfaebf82",
+        "course_id": "ME F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "46c39cd6-b43f-45c4-8820-93f1f71bbd12",
+        "course_id": "ME F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "cccd809b-5d28-4b40-830d-5d0c34ffa68a",
+        "course_id": "ME F424",
+        "name": "Energy Management",
+        "units": 3,
+        "ic": "Manoj Kumar Soni (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8010868d-8efd-4e40-b73b-48c4d46e8b0e",
+        "course_id": "ME F425",
+        "name": "Additive Manufacturing",
+        "units": 3,
+        "ic": "Radha Raman Mishra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9b8cecc6-e7e8-4807-a5c1-0b4c40643d82",
+        "course_id": "ME F430",
+        "name": "Fluid-structure Interactions",
+        "units": 3,
+        "ic": "Gaurav Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e0c47b0d-0389-4966-93d3-3ecee00cc490",
+        "course_id": "ME F434",
+        "name": "Digital Twins In Mech Engg",
+        "units": 3,
+        "ic": "Madhurjya Dev Choudhury (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "10fed3f5-81af-43fb-9464-cb4022fefe74",
+        "course_id": "ME F441",
+        "name": "Automotive Vehicles",
+        "units": 3,
+        "ic": "Srinibas Tripathy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "94501822-941b-4f44-a163-4a95b91c5441",
+        "course_id": "ME F452",
+        "name": "Composite Material &  Des",
+        "units": 3,
+        "ic": "Faizan Mohammad Rashid (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6952e451-aa5c-4579-bdaa-9b60251ffd01",
+        "course_id": "ME F485",
+        "name": "Num Fl Flow & Heat Trans",
+        "units": 3,
+        "ic": "Shyam Sunder Yadav (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "de844df0-847f-4c26-9a99-88b62c8ad96d",
+        "course_id": "ME F491",
+        "name": "Special Projects",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8f1bbf22-0cfe-4c94-91e6-a586ce03740a",
+        "course_id": "ME G515",
+        "name": "Comput Fluid Dynamics",
+        "units": 5,
+        "ic": "Aneesh A M (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "37702d6b-aba0-46a8-ab80-29f36e0102c7",
+        "course_id": "ME G536",
+        "name": "Thermal Equipment Design",
+        "units": 5,
+        "ic": "C Ranganayakulu (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "302fd6b0-5dc3-4dd7-9a14-2e7267eae46c",
+        "course_id": "ME G611",
+        "name": "Comp Aided Anal & Design",
+        "units": 5,
+        "ic": "Murali Palla (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "baf0d1e8-7be9-4d27-8442-ae2c22bd9fea",
+        "course_id": "ME G613",
+        "name": "Adv Finite Elem Model & Analy",
+        "units": 5,
+        "ic": "Gaurav Watts (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "bf9c4c9b-d779-4599-b0ed-1ec8b76b7036",
+        "course_id": "ME G613",
+        "name": "Adv Finite Elem Model & ..",
+        "units": 5,
+        "ic": "Gaurav Watts (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "446dae10-4826-464d-b7c8-1e3f96af643e",
+        "course_id": "MEL G632",
+        "name": "Analog Ic Design",
+        "units": 5,
+        "ic": "Nitin Chaturvedi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1ed7e930-29dc-4095-b90e-fc3e876db917",
+        "course_id": "MEL G641",
+        "name": "Cad For Ic Design",
+        "units": 5,
+        "ic": "Abhijit Rameshwar Asati (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8c552175-f010-4b4d-9d9a-402f0c914b0a",
+        "course_id": "MF F219",
+        "name": "Operations Management",
+        "units": 3,
+        "ic": "Girish Kant Garg (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b8e0e268-b9ac-43a4-973f-3a750a98e020",
+        "course_id": "MF F220",
+        "name": "Metrology And Quality Assu.",
+        "units": 3,
+        "ic": "Tribeni Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a79c2bec-2034-4966-8439-bfd022bc15df",
+        "course_id": "MF F220",
+        "name": "Metrology And Quality As..",
+        "units": 3,
+        "ic": "Tribeni Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "84eb7e78-74be-4912-945b-d583178bd8c2",
+        "course_id": "MF F221",
+        "name": "Mechanisms And Machines",
+        "units": 3,
+        "ic": "Jitendra Singh Rathore (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4e1504e3-a823-4620-a1ff-63aa57a78cc7",
+        "course_id": "MF F222",
+        "name": "Casting Forming And Welding",
+        "units": 4,
+        "ic": "Sunil Sinhmar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "832f558b-1a0b-407d-88df-9f8e2643a7fb",
+        "course_id": "MF F222",
+        "name": "Casting Forming And Weld..",
+        "units": 4,
+        "ic": "Sunil Sinhmar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c60bceef-8bfd-4e75-9e3a-ab8c535875b5",
+        "course_id": "MF F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c249fee4-5bb7-4142-99a9-06fcb965e069",
+        "course_id": "MF F317",
+        "name": "Computer Aided Design An..",
+        "units": 3,
+        "ic": "Tufan Chandra Bera (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "181df0ac-9d66-4b6e-967c-835e7fca6593",
+        "course_id": "MF F317",
+        "name": "Computer Aided Design And Manu",
+        "units": 3,
+        "ic": "Tufan Chandra Bera (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ea203475-82b3-48bf-a40c-8b4505b1c2e7",
+        "course_id": "MF F318",
+        "name": "Non Traditional Manu Pro..",
+        "units": 3,
+        "ic": "Anuj Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "24627d42-b2f9-47b2-8168-7f2735ed75ae",
+        "course_id": "MF F318",
+        "name": "Non Traditional Manu Processes",
+        "units": 3,
+        "ic": "Anuj Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ffb041e2-2f6e-438f-b78c-548cf7d4b5fb",
+        "course_id": "MF F319",
+        "name": "Supply Chain Management",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2a1e38ff-dd60-4c52-8304-5199e15536ce",
+        "course_id": "MF F320",
+        "name": "Engineering Optimization",
+        "units": 3,
+        "ic": "Rajesh Prasad Mishra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9ea9da92-8610-4aa3-9c5a-8fc585408898",
+        "course_id": "MF F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f669dd2c-42ee-4a44-bd5a-5557cff1ec2a",
+        "course_id": "MF F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "63bcb602-f257-469a-892b-e21fefe1d48c",
+        "course_id": "MF F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "910b8bb2-38f1-46e7-8f8b-2676306e19e3",
+        "course_id": "MF F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "d8128d0a-6852-453f-821e-3d3d8c9c9c4b",
+        "course_id": "MF F421",
+        "name": "Supply Chain Management",
+        "units": 4,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b59a9186-06c9-481c-bf1d-2fa648f23686",
+        "course_id": "MF F473",
+        "name": "Product Design & Develop",
+        "units": 3,
+        "ic": "Hemant Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "01689460-acd9-48fa-b1ea-6ae7e34423d0",
+        "course_id": "MF F491",
+        "name": "Special Projects",
+        "units": 3,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ccb08790-96a2-468a-9756-8d2803a30811",
+        "course_id": "MGTS F211",
+        "name": "Principles Of Management",
+        "units": 3,
+        "ic": "Moammad Faraz Naim (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f15a497f-2899-4093-ae4a-e442824106ef",
+        "course_id": "MGTS F314",
+        "name": "Essentials Of Financial Manage",
+        "units": 3,
+        "ic": "Saurabh Chadha (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "d6d77a4a-b203-4904-9a2c-36929e8d7eba",
+        "course_id": "MGTS F314",
+        "name": "Essentials Of Financial ..",
+        "units": 3,
+        "ic": "Saurabh Chadha (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "71a0f101-a09e-4c72-b969-42e449e3033b",
+        "course_id": "MPBA G508",
+        "name": "Strategic Management",
+        "units": 3,
+        "ic": "Anil Kumar Bhat (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "46e4fc70-d755-4aca-8f67-0fcb919b7dba",
+        "course_id": "MPBA G509",
+        "name": "Corporate Finance",
+        "units": 3,
+        "ic": "Saurabh Chadha (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4fd7975f-4ae9-4a00-8dca-1c8c0c1e534d",
+        "course_id": "MPBA G510",
+        "name": "Operations & Supply Chain Mgmt",
+        "units": 3,
+        "ic": "Satyendra Kr Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6ef0af75-fa13-4742-9ccb-ebfdf435b15f",
+        "course_id": "MPBA G510",
+        "name": "Operations & Supply Chai..",
+        "units": 3,
+        "ic": "Satyendra Kr Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6322ce29-abf6-48c9-b8e9-79670b067cf3",
+        "course_id": "MPBA G511",
+        "name": "Data Visual  Ethic & Dat..",
+        "units": 3,
+        "ic": "Satyendra Kr Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "3964fdcc-49e1-470b-8c6f-3cf8e83d41b2",
+        "course_id": "MPBA G511",
+        "name": "Data Visual  Ethic & Data Priv",
+        "units": 3,
+        "ic": "Satyendra Kr Sharma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "889d1d65-7eef-45f7-bac9-09cb81eabb2d",
+        "course_id": "MPBA G512",
+        "name": "Time Series Analysis & F..",
+        "units": 3,
+        "ic": "Udayan Chanda (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "41fb1858-b477-4de3-bd57-0dcefb49c7de",
+        "course_id": "MPBA G512",
+        "name": "Time Series Analysis & Forecas",
+        "units": 3,
+        "ic": "Udayan Chanda (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "cd972af6-cdfc-4104-b6da-69059373c642",
+        "course_id": "MPBA G513",
+        "name": "Predictive Analytics",
+        "units": 3,
+        "ic": "Abhishek Verma (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c3e38d4f-604a-4340-8a17-4205077baf12",
+        "course_id": "MPBA G516",
+        "name": "Adv Spread & Mac Prog For Busi",
+        "units": 3,
+        "ic": "Achint Nigam (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "24256224-7c0b-4a24-9ba5-2a949bf9b05c",
+        "course_id": "MPBA G516",
+        "name": "Adv Spread & Mac Prog Fo..",
+        "units": 3,
+        "ic": "Achint Nigam (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4857a66c-a3a9-47b8-b853-9d6a5a64bb2b",
+        "course_id": "MPBA G519",
+        "name": "Natural Lang Proces For Busi",
+        "units": 3,
+        "ic": "Pabitra Biswas (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "25e78d6b-e149-4331-b26f-458745f76ce0",
+        "course_id": "MPBA G519",
+        "name": "Natural Lang Proces For ..",
+        "units": 3,
+        "ic": "Pabitra Biswas (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8d378352-fcfa-4218-90ee-2d68171290bc",
+        "course_id": "MSE G511",
+        "name": "Mechatronics",
+        "units": 5,
+        "ic": "Prateek Kala (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a67352e4-e0ba-4e95-8e53-71a2b29887d1",
+        "course_id": "MSE G513",
+        "name": "Maintenance Engineering",
+        "units": 5,
+        "ic": "Amit Kumar Jain (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "65a8f08a-9264-4e10-a6ac-39a704a66127",
+        "course_id": "MSE G601",
+        "name": "Supply Chain Management",
+        "units": 4,
+        "ic": "Srikanta Routroy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a4ffe4d8-4d4b-4f30-b5a8-fb16f691b0e7",
+        "course_id": "MST F331",
+        "name": "Materials Characterization",
+        "units": 4,
+        "ic": "Etika Krishna Chaitanya (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1954f92a-c749-4701-85f8-64a3a15b8586",
+        "course_id": "MST G521",
+        "name": "Material Characterizatio..",
+        "units": 5,
+        "ic": "Etika Krishna Chaitanya (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b733e6d4-c585-4cad-b418-86d8d577a373",
+        "course_id": "MST G521",
+        "name": "Material Characterization Tech",
+        "units": 5,
+        "ic": "Etika Krishna Chaitanya (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ca3635ca-c353-4b7c-9e54-415d637cf3d5",
+        "course_id": "PHA F214",
+        "name": "Anatomy Physio & Hygiene",
+        "units": 3,
+        "ic": "Pragyanshu Khare (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "e16d16fb-d0a7-4895-8b08-2ae302ccb9fb",
+        "course_id": "PHA F215",
+        "name": "Intr To Mol Bio & Immuno",
+        "units": 3,
+        "ic": "Aniruddha Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b8e850ee-3582-4398-947e-c35a29ec3bb6",
+        "course_id": "PHA F216",
+        "name": "Pharmaceutical Formulati..",
+        "units": 3,
+        "ic": "Ankit Jain (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "92a00e58-109c-48ae-8dbd-2994734723c1",
+        "course_id": "PHA F216",
+        "name": "Pharmaceutical Formulations I",
+        "units": 3,
+        "ic": "Ankit Jain (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f236a7c9-1f1c-476e-bd30-fc33a7603141",
+        "course_id": "PHA F217",
+        "name": "Pharmaceutical Microbiology",
+        "units": 3,
+        "ic": "Pragyanshu Khare (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "412b4efe-ce19-4534-8776-964da8ab0193",
+        "course_id": "PHA F217",
+        "name": "Pharmaceutical Microbiol..",
+        "units": 3,
+        "ic": "Pragyanshu Khare (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2398c298-dcb0-4fbd-95ee-69990abe98e1",
+        "course_id": "PHA F241",
+        "name": "Pharmaceutical Chemistry",
+        "units": 3,
+        "ic": "Sandeep Sundriyal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1c36c52e-8212-4193-ac9e-09f6c5071b9f",
+        "course_id": "PHA F244",
+        "name": "Physical Pharmacy",
+        "units": 3,
+        "ic": "Aniruddha Roy (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "596f297f-0420-4cab-9add-86bc1ca9e7ab",
+        "course_id": "PHA F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "Rajeev Taliyan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "aa457f9b-ff8c-4426-8ad4-f5b14e22a4fc",
+        "course_id": "PHA F316",
+        "name": "Pharmaceutical Regulatory Sci",
+        "units": 3,
+        "ic": "Gaikwad Anil Bhanudas (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "997bccf8-4e49-4066-9956-b373bb1e9c47",
+        "course_id": "PHA F316",
+        "name": "Pharmaceutical Regulator..",
+        "units": 3,
+        "ic": "Gaikwad Anil Bhanudas (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6e04e1e5-abf6-44f7-8067-3405c9793ea0",
+        "course_id": "PHA F341",
+        "name": "Pharmacology II",
+        "units": 3,
+        "ic": "Gaikwad Anil Bhanudas (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f55d346a-c82d-4a26-ac3b-647a5c183bda",
+        "course_id": "PHA F342",
+        "name": "Medicinal Chemistry II",
+        "units": 3,
+        "ic": "R Mahesh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9e5ac90b-66ad-4c40-bb6e-3eb22270c3fd",
+        "course_id": "PHA F343",
+        "name": "Forensic Pharmacy",
+        "units": 2,
+        "ic": "Gautam Singhvi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "0dcd4c60-f5e4-4ac9-bc5a-c7a653366b6f",
+        "course_id": "PHA F344",
+        "name": "Natural Drugs",
+        "units": 3,
+        "ic": "Atish Paul (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "d533f018-d91d-4e06-a899-f47b5540048e",
+        "course_id": "PHA F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Rajeev Taliyan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b6492dba-e52f-4692-92cb-b96be9778ebf",
+        "course_id": "PHA F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "Rajeev Taliyan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "65f9a1a0-69e2-4ab4-911c-763c1f8767de",
+        "course_id": "PHA F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Rajeev Taliyan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "13135ae7-d367-4df0-a62b-1bc599af9518",
+        "course_id": "PHA F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "Rajeev Taliyan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "738474bb-812d-4a07-a761-6c0bc34de98d",
+        "course_id": "PHA F416",
+        "name": "Chem Of Synthetic Drugs",
+        "units": 3,
+        "ic": "Jagpreet Singh Sidhu (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "fd0a88c1-51f1-4617-843b-f7344ae5183c",
+        "course_id": "PHA F417",
+        "name": "Pharmacoeconomics",
+        "units": 3,
+        "ic": "Murali M Pandey (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "174df660-0109-4dc0-aa41-9848dd073142",
+        "course_id": "PHA F418",
+        "name": "Biopharmaceutic & Pharma..",
+        "units": 3,
+        "ic": "Murali M Pandey (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "3983f5e3-0cb8-4e80-acc5-4734c1846cb2",
+        "course_id": "PHA F418",
+        "name": "Biopharmaceutic & Pharmacokine",
+        "units": 3,
+        "ic": "Murali M Pandey (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "a4a7330a-2eee-45a4-8cfe-e4b780fbc225",
+        "course_id": "PHA F422",
+        "name": "Cosmetics Science",
+        "units": 3,
+        "ic": "Gautam Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "74233eb9-39c3-4e3e-9168-827567f44526",
+        "course_id": "PHA F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "Rajeev Taliyan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7bfae0fc-891c-4bce-9315-b26b0db024df",
+        "course_id": "PHA G522",
+        "name": "Chem Of Macromolecules",
+        "units": 4,
+        "ic": "Atish Paul (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "6867e4d6-5dfc-49f8-9ea5-1c2ae9931b8a",
+        "course_id": "PHA G535",
+        "name": "Biomaterials",
+        "units": 5,
+        "ic": "Deepak Chitkara (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ca425ce6-ade5-49ac-8263-d949ba070659",
+        "course_id": "PHA G539",
+        "name": "Principles Of Drug Disco..",
+        "units": 4,
+        "ic": "Richa Shrivastava (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "04906a6a-4630-43df-b082-5bf944968142",
+        "course_id": "PHA G539",
+        "name": "Principles Of Drug Discovery",
+        "units": 4,
+        "ic": "Richa Shrivastava (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "855a07cb-95b3-436d-be76-efbd033811ef",
+        "course_id": "PHA G540",
+        "name": "Modern Pharmaceut Analy ..",
+        "units": 4,
+        "ic": "S Murugesan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f9269d80-0595-44fa-bd75-e9c3c43f6acb",
+        "course_id": "PHA G540",
+        "name": "Modern Pharmaceut Analy Techni",
+        "units": 4,
+        "ic": "S Murugesan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "64a0c1cf-7f16-4b9f-89ae-2046b20e0247",
+        "course_id": "PHA G545",
+        "name": "Ipr And Pharmaceuticals",
+        "units": 3,
+        "ic": "Hemant Ramanlal Jadhav (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "5213a9f9-e8c1-4fab-a690-1aba1a74adcd",
+        "course_id": "PHA G546",
+        "name": "Phrmaceutical Biostatistics",
+        "units": 3,
+        "ic": "Richa Shrivastava (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "fa3abcfd-f29d-4fb6-a170-c913b7b5c5c3",
+        "course_id": "PHA G546",
+        "name": "Phrmaceutical Biostatist..",
+        "units": 3,
+        "ic": "Richa Shrivastava (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c15a77f0-35bc-490d-b7b5-1b6c9d5c5647",
+        "course_id": "PHA G611",
+        "name": "Advanced Pharmacology",
+        "units": 5,
+        "ic": "Rajeev Taliyan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "dcfefe5b-6bc4-4ecf-8c07-66b98488e28e",
+        "course_id": "PHA G614",
+        "name": "Clinical Pharma & Therap",
+        "units": 5,
+        "ic": "R Mahesh (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "8f65171d-b5a6-4be7-bc3c-ed2a12ba4e7e",
+        "course_id": "PHA G621",
+        "name": "Advanced Medicinal Chem",
+        "units": 5,
+        "ic": "Hemant Ramanlal Jadhav (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "795bfd5d-8091-4f88-a415-e90ad0bea89c",
+        "course_id": "PHA G632",
+        "name": "Dosage Form Design",
+        "units": 5,
+        "ic": "Jindal Anil Brijbhushan (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4aa9eb6b-2727-44e8-bf02-b7ff1ba066ec",
+        "course_id": "PHY F101",
+        "name": "Oscillations And Waves",
+        "units": 3,
+        "ic": "Rakesh Choubisa (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2c987c94-ab6e-4222-866f-a5d1223c176f",
+        "course_id": "PHY F111",
+        "name": "Mech Oscillations & Wave",
+        "units": 3,
+        "ic": "Vaidya Rishikesh D (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "9aa2cb8f-0291-47ce-bce6-a50820d98315",
+        "course_id": "PHY F215",
+        "name": "Intro To Astro & Astroph",
+        "units": 3,
+        "ic": "Kaushar Vaidya (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "72e320f8-d48e-4eea-a883-14da7d55487c",
+        "course_id": "PHY F241",
+        "name": "Electromagnetic Theo II",
+        "units": 4,
+        "ic": "Amol Holkundkar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1469c5c4-85a9-4c31-beaa-b7b6d31b287a",
+        "course_id": "PHY F242",
+        "name": "Quantum Mechanics I",
+        "units": 3,
+        "ic": "Debi Datt Pant (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "ccaca454-cbd5-41b6-aef0-5ce3e6c534ed",
+        "course_id": "PHY F243",
+        "name": "Math Methods Of Physics",
+        "units": 3,
+        "ic": "Sajal Mukherjee (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7c0a827e-ece0-4536-81a6-3bd8e239214e",
+        "course_id": "PHY F244",
+        "name": "Modren Physics Lab",
+        "units": 2,
+        "ic": "Kaushar Vaidya (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "f1cf7872-c420-4303-9d8b-f97501e94705",
+        "course_id": "PHY F266",
+        "name": "Study Project",
+        "units": 3,
+        "ic": "V Manjuladevi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "79343d1c-7bea-416d-83a3-d31cadc14b3f",
+        "course_id": "PHY F315",
+        "name": "Theory Of Relativity",
+        "units": 3,
+        "ic": "Tanmoy Mondal (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "3f23def4-97e3-44ac-8343-7e113fb02fe8",
+        "course_id": "PHY F341",
+        "name": "Solid State Physics",
+        "units": 3,
+        "ic": "Niladri Sarkar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c56b795b-1ae0-422f-8174-48e437865cca",
+        "course_id": "PHY F342",
+        "name": "Atomic & Molecular Phy",
+        "units": 3,
+        "ic": "Madhukar Mishra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "2d054197-a3ae-4cdb-a125-d1003a90ca11",
+        "course_id": "PHY F343",
+        "name": "Nuclear & Particle Phy",
+        "units": 3,
+        "ic": "Aritra Banerjee (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "785da864-4126-445a-8b1e-5f2e3f42ba5d",
+        "course_id": "PHY F344",
+        "name": "Advanced Physics Lab",
+        "units": 3,
+        "ic": "Debashis Bandyopadhyay (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "fb499b35-d72a-499f-953b-dc1ed7901a2e",
+        "course_id": "PHY F366",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "V Manjuladevi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "4572b212-f6de-4998-9845-ca7c923e122d",
+        "course_id": "PHY F367",
+        "name": "Laboratory Project",
+        "units": 3,
+        "ic": "V Manjuladevi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "7864defa-f79b-4192-ae22-a691501ffc09",
+        "course_id": "PHY F376",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "V Manjuladevi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "21da30c6-a1dd-491b-8363-51457c505eaa",
+        "course_id": "PHY F377",
+        "name": "Design Project",
+        "units": 3,
+        "ic": "V Manjuladevi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "dc6c1073-4066-485c-a738-2910def105cf",
+        "course_id": "PHY F415",
+        "name": "Gen Theo Of Rel & Cosmo",
+        "units": 4,
+        "ic": "Vaidya Rishikesh D (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "b29784ab-2216-4a2e-b4c4-61227e5f44b2",
+        "course_id": "PHY F491",
+        "name": "Special Project",
+        "units": 3,
+        "ic": "V Manjuladevi (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "1b7c0a9f-d782-42ee-b744-0c855e16cbda",
+        "course_id": "PHY G515",
+        "name": "Condensed Matter Phy I",
+        "units": 4,
+        "ic": "Jayendra Nath Bandyop.. (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "abfaeaaa-2ee1-40ff-b79c-64d3396832f0",
+        "course_id": "PHY G521",
+        "name": "Nuclear & Particle Phy",
+        "units": 5,
+        "ic": "Aritra Banerjee (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "c8bd44c6-c162-4d55-ac63-77cf7f7d9de9",
+        "course_id": "SS G552",
+        "name": "Software Testing Methods",
+        "units": 4,
+        "ic": "Rajesh Kumar (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    },
+    {
+        "static_id": "38298d12-5b8d-48cf-a31d-bf1d8afac6f4",
+        "course_id": "SS G653",
+        "name": "Software Architechtures",
+        "units": 5,
+        "ic": "Tanmay Mahapatra (Professor)",
+        "is_added": false,
+        "type": "OPEL",
+        "nickname": ""
+    }
+]

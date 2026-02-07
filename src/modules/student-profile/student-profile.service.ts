@@ -1,4 +1,4 @@
-import { eq, and, desc, sql } from 'drizzle-orm';
+import { eq, and, desc, sql, gte } from 'drizzle-orm';
 import { db } from '../../core/database/client';
 import {
     studentProfiles,
@@ -6,8 +6,11 @@ import {
     studentExperiences,
     studentCommitments,
     activityLogs,
+    studentAssignments,
+    studentEvaluations,
     type learningStyleEnum
 } from './student-profile.schema';
+import { user as userTable } from '../auth/auth.schema';
 
 /**
  * Student Profile Service
@@ -219,6 +222,120 @@ export class StudentProfileService {
                 suggestions
             }
         };
+    }
+
+    /**
+     * Get Focus Screen Data
+     * All data needed for the frontend Focus screen
+     */
+    async getFocusScreenData(userId: string) {
+        // Get user info
+        const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
+
+        // Get upcoming assignments (due in next 7 days)
+        const now = new Date();
+        const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+        const assignments = await db.select()
+            .from(studentAssignments)
+            .where(
+                and(
+                    eq(studentAssignments.userId, userId),
+                    gte(studentAssignments.dueDate, now)
+                )
+            )
+            .orderBy(studentAssignments.dueDate)
+            .limit(10);
+
+        // Get upcoming evaluations (next 30 days)
+        const monthFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+        const evaluations = await db.select()
+            .from(studentEvaluations)
+            .where(
+                and(
+                    eq(studentEvaluations.userId, userId),
+                    gte(studentEvaluations.date, now)
+                )
+            )
+            .orderBy(studentEvaluations.date)
+            .limit(10);
+
+        // Get behavioral insights
+        const behaviorAnalysis = await this.analyzeBehavior(userId);
+
+        return {
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                bitsId: user.bitsId,
+            },
+            assignments: assignments.map(a => ({
+                id: a.id,
+                course: a.courseCode || 'Unknown',
+                title: a.title,
+                due: a.dueDate.toISOString(),
+                priority: a.priority,
+                status: a.status,
+                description: a.description,
+            })),
+            evaluations: evaluations.map(e => ({
+                id: e.id,
+                course: e.courseCode || 'Unknown',
+                title: e.title,
+                date: e.date.toISOString(),
+                type: e.type,
+                location: e.location,
+                duration: e.duration,
+                description: e.description,
+            })),
+            behavior: behaviorAnalysis,
+            aiTips: this.generateAiTips(assignments, evaluations),
+        };
+    }
+
+    /**
+     * Generate AI Tips based on upcoming items
+     */
+    private generateAiTips(assignments: any[], evaluations: any[]): string[] {
+        const tips: string[] = [];
+
+        // Check for evaluations tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        const dayAfterTomorrow = new Date(tomorrow);
+        dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1);
+
+        const tomorrowEvals = evaluations.filter(e => {
+            const evalDate = new Date(e.date);
+            return evalDate >= tomorrow && evalDate < dayAfterTomorrow;
+        });
+
+        if (tomorrowEvals.length > 0) {
+            const eval_ = tomorrowEvals[0];
+            tips.push(`You have a ${eval_.type} tomorrow. I've blocked 7 PM - 9 PM for revision.`);
+        }
+
+        // Check for high priority assignments due soon
+        const highPriorityDueSoon = assignments.filter(a => {
+            const dueDate = new Date(a.due);
+            const daysUntilDue = Math.ceil((dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+            return a.priority === 'high' && daysUntilDue <= 2;
+        });
+
+        if (highPriorityDueSoon.length > 0) {
+            const assignment = highPriorityDueSoon[0];
+            tips.push(`High priority: "${assignment.title}" is due soon. Consider working on it today.`);
+        }
+
+        // Default tip if nothing urgent
+        if (tips.length === 0) {
+            tips.push('You have a productive day ahead. Check your schedule for optimal study times.');
+        }
+
+        return tips;
     }
 }
 

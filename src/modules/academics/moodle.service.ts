@@ -68,7 +68,7 @@ export class MoodleClient {
 
   constructor(baseUrl?: string) {
     // Use environment variable or default to BITS Pilani Moodle
-    this.baseUrl = baseUrl || process.env.MOODLE_BASE_URL || 'https://cms.bits-pilani.ac.in';
+    this.baseUrl = baseUrl || process.env.MOODLE_BASE_URL || 'https://nalanda.bits-pilani.ac.in';
   }
 
   /**

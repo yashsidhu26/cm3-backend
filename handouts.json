@@ -1,0 +1,1827 @@
+[
+    {
+        "course_code": "BIO F101",
+        "course_name": "INTRO TO BIO SCI",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F101_2863_0ad16ba2-d04f-483c-b974-7e12e1d108bc-c2ae7a13-1898-4fc8-b437-2d8156190adb.pdf"
+    },
+    {
+        "course_code": "BIO F215",
+        "course_name": "BIOPHYSICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F215_1423_6fdb721a-b49d-4867-9f36-41f33e2d782c-379bbe5f-d219-43be-803a-47a69a196ed2.pdf"
+    },
+    {
+        "course_code": "BIO F241",
+        "course_name": "ECOLOGY &amp; ENVIRON SCI",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F241_1424_4bd8a819-ef10-4508-b249-a90c85507d2b_02e7222c-01f6-40b7-a87f-1730820c5fdc.pdf"
+    },
+    {
+        "course_code": "BIO F242",
+        "course_name": "INTRO TO BIOINFORMATICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F242_1430_d119c7b1-a1db-428b-b2de-8a741a70331b-92e17316-4f3d-4f9b-81e8-3126faaac24e.pdf"
+    },
+    {
+        "course_code": "BIO F243",
+        "course_name": "GENETICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F243_1425_ecf36a6e-608e-44b3-8fd5-89e204c02020-49f00c63-7bfc-4b98-a453-b0601f1b0a8e.pdf"
+    },
+    {
+        "course_code": "BIO F244",
+        "course_name": "INSTRU METHODS OF ANAL",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F244_1426_274abf3c-e82a-40ba-a38f-b9a51966ac91_2b3fc780-5e01-4090-942d-51b68c7d17f5.pdf"
+    },
+    {
+        "course_code": "BIO F266",
+        "course_name": "STUDY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F266_1651_33a34349-6c62-4f77-b318-83009413f0ab-087cfcf3-784b-49a8-a5de-c6ef3a8d60b1.pdf"
+    },
+    {
+        "course_code": "BIO F314",
+        "course_name": "CONSERVATION BIOLOGY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F314_1454_6af86463-89a5-44e6-85da-6952c62d3a26_4aeabf3a-6eb4-4bac-b1d7-6338a1514894.pdf"
+    },
+    {
+        "course_code": "BIO F315",
+        "course_name": "APPLIED NUTRITION &amp; NUTRACEUTI",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F315_2287_ed7c8613-4495-4f46-a0fa-16abaddee01d_9f2d178d-9bff-42b6-bc58-da972b66a6bc.pdf"
+    },
+    {
+        "course_code": "BIO F341",
+        "course_name": "DEVELOPMENTAL BIOLOGY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F341_1431_157cb477-d95f-49de-9a8c-87ab897f8c47-e0a35c4f-0dcb-4ab1-b71c-4778ee808bdc.pdf"
+    },
+    {
+        "course_code": "BIO F342",
+        "course_name": "IMMUNOLOGY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F342_1432_3877501a-c1b4-4aa8-961b-d6bbfb7b9aec_a864c5dd-1667-4fe8-8ca9-7776450ff665.pdf"
+    },
+    {
+        "course_code": "BIO F366",
+        "course_name": "LABORATORY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F366_1650_1504fddd-0c8d-4313-b5db-06865bd86cd4-9a67c08c-747c-4916-a651-0779b32d8d11.pdf"
+    },
+    {
+        "course_code": "BIO F367",
+        "course_name": "LABORATORY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F367_1736_50cb6546-fbda-4248-9364-a53df13d302e-779c43bb-7205-4897-b13d-192c72e61583.pdf"
+    },
+    {
+        "course_code": "BIO F376",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F376_1685_b45f2d00-2227-4159-9900-67930d43e2e6-6d83787e-edcb-4ff5-94c7-52cc308e4ef8.pdf"
+    },
+    {
+        "course_code": "BIO F377",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F377_1752_9334e10b-663b-4ede-9493-ec2a71811cec-6214843b-6199-4090-beb8-717c36b940ca.pdf"
+    },
+    {
+        "course_code": "BIO F418",
+        "course_name": "GENETIC ENGINEERING TECH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F418_1434_ec5c40e8-94a9-4e0a-b5d2-8e27209d0d92-f7298c2d-4fd9-40fa-80a2-39377cb54609.pdf"
+    },
+    {
+        "course_code": "BIO F491",
+        "course_name": "SPECIAL PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_F491_1710_da1b474a-5506-43f9-b894-ecbbab90c3e9-c9c2d36f-10bf-4f04-9315-6e4dbd8ae82a.pdf"
+    },
+    {
+        "course_code": "BIO G515",
+        "course_name": "STEM CELL &amp; REGENER BIO",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_G515_111_75032d82-8057-4ab6-b4cc-3228bcbe1e34_fc5ec096-1d1f-4678-8adb-5c5dfa952441.pdf"
+    },
+    {
+        "course_code": "BIO G545",
+        "course_name": "MOL PARASIT &amp; VECTOR BIO",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_G545_2124_4c27b2aa-1476-4bd6-bd97-514c312f423b-90879a36-eb13-4ab9-a467-b3b7684723ee.pdf"
+    },
+    {
+        "course_code": "BIO G561",
+        "course_name": "ADV RECOMBINANT DNA TECH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_G561_2168_2bb54d8b-c389-4541-af1a-6e9894e6d506-49c4cd68-5f34-496f-9970-07ef32faf3a1.pdf"
+    },
+    {
+        "course_code": "BIO G642",
+        "course_name": "EXPERIMENTAL TECHNIQUES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_G642_203_896eb5f9-0e87-4cc4-bfdf-5faf91b60f58-8d869572-b1e4-4a42-89bc-98df7441b401.pdf"
+    },
+    {
+        "course_code": "BIO G643",
+        "course_name": "PLANT BIOTECHNOLOGY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIO_G643_956_0416d86d-4089-4d69-84b9-66fcf1f9e612-f501495e-fb42-49a2-8350-a710e7477309.pdf"
+    },
+    {
+        "course_code": "BIOT F416",
+        "course_name": "INTRO TO PHARMA BIOTECH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BIOT_F416_1374_61c09fc0-f5ef-49e9-ba3b-367f0762a04d-4f3fb7c8-3a23-474f-b271-ca4cdb711a53.pdf"
+    },
+    {
+        "course_code": "BITS C790T",
+        "course_name": "INDEPENDENT STUDY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_C790T_549_254f6f14-4ae0-40f5-9a57-a521a1a8c112-60ffe132-3a30-4b4d-b7dc-202b103f43eb.pdf"
+    },
+    {
+        "course_code": "BITS C791T",
+        "course_name": "TEACHING PRACTICE I",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_C791T_596_01c3fb15-1e69-46fb-8b17-40e6e61c3c95-820faf48-a373-4eea-8dd8-407244a9c010.pdf"
+    },
+    {
+        "course_code": "BITS C797T",
+        "course_name": "PH D SEMINAR",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_C797T_520_576ffcbe-58c1-43bf-8073-88917fbfd762-45b2a35a-8f3d-41c1-bd24-0fe42a7f3350.pdf"
+    },
+    {
+        "course_code": "BITS C799T",
+        "course_name": "PH D THESIS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_C799T_553_1cb9c3d7-724d-4d6b-84b6-aad5d924f735-7d360ff0-665a-4d32-bfcc-e5f5daa27ae5.pdf"
+    },
+    {
+        "course_code": "BITS E584",
+        "course_name": "CASE STUDIES II",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_E584_2488_c3136f73-3a0a-41fa-8459-3ce0f1e3bf07-1776ec6a-ed3d-4843-8ce2-51f60a276306.pdf"
+    },
+    {
+        "course_code": "BITS E793T",
+        "course_name": "PRACTICE LECT SERIES I",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_E793T_857_c3074a19-1ece-47ca-a65a-49d2feb7b69e-8f05310b-2861-4434-815a-b5b36d772010.pdf"
+    },
+    {
+        "course_code": "BITS F102",
+        "course_name": "INNO &amp; DES THINK",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F102_2861_bfacaece-a9dd-431c-91b9-07fe988559c1_c010bac0-e183-4a19-af93-eb5efa565d39.pdf"
+    },
+    {
+        "course_code": "BITS F111",
+        "course_name": "THERMODYNAMICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F111_1004_72c5df4c-37c3-42ec-9ae8-00c436c1079b-11918fda-2a04-48a1-9f1f-ba1d3c653cc5.pdf"
+    },
+    {
+        "course_code": "BITS F114",
+        "course_name": "GENERAL MATHEMATICS  II",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F114_1860_53a73015-87ce-40c8-95ad-4fa2b3afcf7d-25e3e905-3978-48f6-9608-fffe5b3212cc.pdf"
+    },
+    {
+        "course_code": "BITS F214",
+        "course_name": "SCIENCE TECH &amp; MODERNITY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F214_1892_98b4b71a-9ddd-43e6-85e8-59aa0d08d554-3aa12da9-24ce-45ce-aa11-b81673621510.pdf"
+    },
+    {
+        "course_code": "BITS F225",
+        "course_name": "ENVIRONMENTAL STUDIES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F225_1632_e7bd193a-396a-4128-ba49-caf1aadf754f_41855171-807d-4381-afc3-90f95458181d.pdf"
+    },
+    {
+        "course_code": "BITS F226",
+        "course_name": "SOFT SKILLS FOR PROFESSIONALS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F226_2303_c8a90919-eabd-43ec-9df5-2b732ea73981-48ebcdf7-258e-4194-ae4d-e9f6597fc98b.pdf"
+    },
+    {
+        "course_code": "BITS F241",
+        "course_name": "SYSTEMS ENGG PRINCIPLES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F241_2752_da8ea2a1-ff44-4060-bf5f-653e55a5e53d-9fe2bf1d-1b3c-41d0-90d8-3278a4514da5.pdf"
+    },
+    {
+        "course_code": "BITS F311",
+        "course_name": "IMAGE PROCESSING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F311_1332_329fa650-a03e-4146-a15c-69294234aa56_e1722b7d-960f-4553-adf8-57438e447f3a.pdf"
+    },
+    {
+        "course_code": "BITS F314",
+        "course_name": "GAME THEO AND ITS APPL",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F314_2277_111cf1e2-5e19-4b51-be49-2aa51dd48b83-cf28fdcb-48f3-4473-b14b-f13efded1c6f.pdf"
+    },
+    {
+        "course_code": "BITS F316",
+        "course_name": "NONLINEAR DYNA &amp; CHAOS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F316_1511_33ba34a3-825f-415c-a804-04a2caf24a12-f732c3ff-5b04-4c12-bc27-aef54c69cf87.pdf"
+    },
+    {
+        "course_code": "BITS F385",
+        "course_name": "INTRO TO GENDER STUDIES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F385_1512_8a4e1ad7-a1d8-4bad-98b0-868c5337a292-29d17e2f-35e2-4185-9cd8-23cf1e78538f.pdf"
+    },
+    {
+        "course_code": "BITS F386",
+        "course_name": "QUANTUM INFO &amp; COMPUTING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F386_1337_2cf4b5f0-6a79-422c-92d9-c418d6f886f6-206cb4ab-f26f-4b10-be18-be8940f76b5d.pdf"
+    },
+    {
+        "course_code": "BITS F415",
+        "course_name": "INTRODUCTION TO MEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F415_1248_08d025f1-e3a1-481a-a4fb-cce5666c55e5-38ed8e15-bce1-44c7-8354-0ade91e804a1.pdf"
+    },
+    {
+        "course_code": "BITS F416",
+        "course_name": "INTRO TO NANO SCIENCE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F416_1808_e9bd1941-67bc-49ec-b40c-39c311f3244a_8efbded4-fa16-4bae-bcc4-01493ab8a0e4.pdf"
+    },
+    {
+        "course_code": "BITS F417",
+        "course_name": "MICRO-FLUIDICS &amp; ITS APP",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F417_1809_3b7b032c-85f9-47f7-85ce-68cd5cde053b-ece9894b-3e70-4c39-9466-b50934802248.pdf"
+    },
+    {
+        "course_code": "BITS F418",
+        "course_name": "INTRO TO BIOMEDICAL ENGG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F418_1770_f1ee13d8-4861-4a5d-881a-23e38dee41af-f0554221-eb05-4324-a6c9-9a5c363d5752.pdf"
+    },
+    {
+        "course_code": "BITS F427",
+        "course_name": "DIGITAL MARKETING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F427_2317_e797d712-3abe-4f05-b28b-042c8ea343af-db169438-7d42-49c0-92a2-27d736898ceb.pdf"
+    },
+    {
+        "course_code": "BITS F441",
+        "course_name": "ROBOTICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F441_1811_794d5ef2-e77d-4319-b5ad-4daf79a9bcf9_a5b427e8-4145-445b-93e5-fe22389f1aa8.pdf"
+    },
+    {
+        "course_code": "BITS F442",
+        "course_name": "REMOTE SENS &amp; IMAGE PROC",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F442_1812_79d44dd2-c164-47e1-8155-9e84e9297088-41ce884e-ef4b-48e9-90ee-f9b076b27085.pdf"
+    },
+    {
+        "course_code": "BITS F455",
+        "course_name": "ANALYTICS FOR SUPPLY CHAIN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F455_2518_8bf25470-5d35-40f3-943c-05e9998777d6-803e046f-8168-4643-8d0b-a4b8c826e3b8.pdf"
+    },
+    {
+        "course_code": "BITS F459",
+        "course_name": "COMPUTER VISION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F459_2760_7bc7cffe-95f4-4087-baca-51bdc5881c1f_f199ac33-4ba6-4a3e-9a24-f2ae612f4041.pdf"
+    },
+    {
+        "course_code": "BITS F463",
+        "course_name": "CRYPTOGRAPHY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F463_1338_34fe9f45-8495-4f23-8e66-bad67e62de77-465124f5-bd31-44c0-8e44-c1125f2308ff.pdf"
+    },
+    {
+        "course_code": "BITS F464",
+        "course_name": "MACHINE LEARNING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F464_1339_54e1489e-dcec-4a0d-810e-722f62aab9e3_5bf0ee0c-8798-4380-9978-acbecc710635.pdf"
+    },
+    {
+        "course_code": "BITS F471",
+        "course_name": "INTRO TO LARGE LANGUAGE MODELS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F471_2779_8b1d0ab7-d066-4ad1-ae2a-f3e2dbb03c16-7b2a126a-702e-4b23-bde7-ae4215e432bc.pdf"
+    },
+    {
+        "course_code": "BITS F482",
+        "course_name": "CREAT &amp; LEAD ENTREP ORGN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F482_1641_fafb2c75-3be8-4ddd-8ff9-ddd587d323c4-a326220f-1c18-408b-ac72-23c18104465f.pdf"
+    },
+    {
+        "course_code": "BITS F490",
+        "course_name": "PROJECT MANAGEMENT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/BITS_F490_1852_8d6103a0-7c78-4c17-94d1-b18807110747-e80f76cb-2d47-47bc-a2f6-e2f746c0f79d.pdf"
+    },
+    {
+        "course_code": "CE F241",
+        "course_name": "ANALYSIS OF STRUCTURES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F241_1191_55afb182-2925-4067-a94d-cb0907d23f05-336540ff-31fc-4f9c-94e9-bdcfa9c68041.pdf"
+    },
+    {
+        "course_code": "CE F242",
+        "course_name": "CONSTRUCTION PLAN &amp; TECH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F242_1192_cb25f9f3-71b9-4916-8e6f-45c3ae3bd522-aaa74f05-0bcb-4b8c-ada7-b3cffd749160.pdf"
+    },
+    {
+        "course_code": "CE F243",
+        "course_name": "SOIL MECHANICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F243_1193_7ed142d1-ccba-4fe7-bbe4-ca304ccc2cd2-4eed97db-4133-416e-9f49-66428eee9b98.pdf"
+    },
+    {
+        "course_code": "CE F244",
+        "course_name": "HIGHWAY ENGINEERING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F244_1194_9064d628-9fd5-40ba-8ea8-2d49d7178c94-b8490afd-f85e-461c-b97b-f8f4ba0cd409.pdf"
+    },
+    {
+        "course_code": "CE F321",
+        "course_name": "ENGINEERING HYDROLOGY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F321_2282_d8cba0c1-c4ac-4cac-96fe-44521d7e5e97-d3fd4b10-5e93-410d-a593-45b8e868b3c3.pdf"
+    },
+    {
+        "course_code": "CE F323",
+        "course_name": "INTRO TO ENVIRN ENGG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F323_1215_cfff6342-d71d-494d-a2e5-33f6350c8eb8_fe6823c2-e009-4a73-85bc-1a0c7d8e02ca.pdf"
+    },
+    {
+        "course_code": "CE F331",
+        "course_name": "IN-SITU TEST METHOD GTECH ENG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F331_2780_6c8a01d8-0e6e-44bb-8f5f-dcb6c39a21e2-fb94efe4-ead5-4ab5-b4bd-e33be4f1321d.pdf"
+    },
+    {
+        "course_code": "CE F342",
+        "course_name": "WATER &amp; WASTEWATER TREAT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F342_1199_ff759060-ec39-46d2-84ae-6a557026acdb-73467185-d9f4-4593-b627-4115f7ea4905.pdf"
+    },
+    {
+        "course_code": "CE F345",
+        "course_name": "COMPUTATIONAL GEOMECHANI",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F345_2198_05171b5d-0bbb-47ee-9305-652e0e029510-0a9e281a-f52d-44a4-b083-91bf9ccc6d2b.pdf"
+    },
+    {
+        "course_code": "CE F415",
+        "course_name": "DES OF PREST CONC STRUCT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F415_1223_a886cd95-5404-435c-ae15-36333c67ec64-90ed149f-c441-4d19-8cf4-faec77916563.pdf"
+    },
+    {
+        "course_code": "CE F416",
+        "course_name": "COMP APPL IN CIVIL ENGG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F416_1230_74ed0035-5c18-4393-8e0c-53676b305072_9304868a-29c4-4fea-99a5-f1c09973cb38.pdf"
+    },
+    {
+        "course_code": "CE F419",
+        "course_name": "GEOTECH EQ ENG &amp; MC FOUN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F419_1232_f1ff64a9-cfc7-4067-a837-ba0dd851a890-8471683a-5e38-4444-81c4-fb20f55de750.pdf"
+    },
+    {
+        "course_code": "CE F422",
+        "course_name": "URBAN HYDROLOGY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F422_1924_519050b2-28b5-48a2-a9ed-771b982ab87f_a7069457-2d00-4359-b2c2-ca63d30963ad.pdf"
+    },
+    {
+        "course_code": "CE F425",
+        "course_name": "AIRPORT RAIL &amp; WATERWAYS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F425_1218_81c5a8f0-8fb6-41ad-8b3b-d2a5c4add35e_32563b9f-c6bc-4a9f-b889-bd4f61389a8b.pdf"
+    },
+    {
+        "course_code": "CE F429",
+        "course_name": "DES OF FOUNDATION SYSTEM",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F429_1225_db2237a0-d088-4836-b078-c3f75ee69dfa-dddb544e-8022-4b73-948b-24ba4c629a34.pdf"
+    },
+    {
+        "course_code": "CE F431",
+        "course_name": "PRIN OF GEO INFO SYST",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F431_1227_42eb821f-a45a-4c37-9fb5-b57e81e47dcd_415622c5-d20d-4896-8100-efc726232f05.pdf"
+    },
+    {
+        "course_code": "CE F432",
+        "course_name": "STRUCTURAL DYNAMICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F432_1219_170f356a-7246-4dc1-90ee-157e14234c31_1a6c30da-52e9-43df-9dc8-9ee95bb90d81.pdf"
+    },
+    {
+        "course_code": "CE F435",
+        "course_name": "INTRODUCTION TO FEM",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_F435_1234_42e3b0ef-8293-4a85-b514-ff28f0f881e1-efa1b0ed-fb25-4556-ade3-24d605427e52.pdf"
+    },
+    {
+        "course_code": "CE G516",
+        "course_name": "MULTICRITER ANAL IN ENGG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_G516_804_046a3cf8-d88e-426e-9915-b2305fb91d1b-95fa6ce5-41ed-4834-aec8-4fed99ba1018.pdf"
+    },
+    {
+        "course_code": "CE G518",
+        "course_name": "PAVEMENT ANALYSIS &amp; DES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_G518_256_a80ea2d6-292a-4034-924b-7efb1f972513_19326028-2705-4737-8f9a-a9360d43be1e.pdf"
+    },
+    {
+        "course_code": "CE G520",
+        "course_name": "INFRASTRUC PLAN &amp; MANAG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_G520_347_ba6d0e1b-8a76-4f3a-bd04-b2d03b048882-c1a80ffc-19d9-46b3-90e9-66c82866c6e0.pdf"
+    },
+    {
+        "course_code": "CE G566",
+        "course_name": "PUBLIC TRANSPORTATION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_G566_2338_7fce2c46-026a-4abf-9cb2-2794ee6d7f0f-fda1fe8d-808e-4606-a390-44bcf1b16818.pdf"
+    },
+    {
+        "course_code": "CE G570",
+        "course_name": "HIGHWAY CONSTRUCTION TECH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_G570_2342_2f1ff201-8223-41b5-a4d5-fa6a7a879ff8-804e6a01-fd87-4b0b-beb9-221c8b97bda3.pdf"
+    },
+    {
+        "course_code": "CE G573",
+        "course_name": "ROAD SAFETY AND ACCIDENT ANALY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_G573_2345_1318986f-8457-4343-9add-1997cf6a4636-77b81d3e-6739-4ca1-acd3-03828bbc76f6.pdf"
+    },
+    {
+        "course_code": "CE G612",
+        "course_name": "ADVANCED STEEL STRUCTURE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_G612_345_6a5d05b4-b0f9-4d6a-b0b2-f195ee70b6cc_4569db0b-49ee-4220-9b70-8f161fbb707c.pdf"
+    },
+    {
+        "course_code": "CE G618",
+        "course_name": "DESIGN OF MULTI-STOR STR",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_G618_621_caf2fa15-151e-49e4-9856-9e8027533247-58fac454-303f-4341-b5eb-adb4ebc82268.pdf"
+    },
+    {
+        "course_code": "CE G632",
+        "course_name": "DES OF FOUN FOR DYN LOAD",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CE_G632_2119_b46a88b6-2ca5-48e4-a935-93691b09a30d-1a9dea9d-0f57-49ea-b4e9-1d63cea073f1.pdf"
+    },
+    {
+        "course_code": "CHE F241",
+        "course_name": "HEAT TRANSFER",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F241_1180_3d3f46bf-43de-4f91-ada1-6a37de7f4de9-12962680-206c-44e8-a8c7-c20d8250b9f0.pdf"
+    },
+    {
+        "course_code": "CHE F242",
+        "course_name": "NUM METHOD FOR CHEM ENGG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F242_1181_22b8fde2-ca10-4ac7-bef1-73ad1c5cd123_a50a6f30-9b79-4d87-8fca-0eeb09997eae.pdf"
+    },
+    {
+        "course_code": "CHE F243",
+        "course_name": "MATERIAL SCIENCE &amp; ENGG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F243_1182_3a829e5f-defe-4dc0-9ed4-ce139e529096-92d6c635-f888-40e1-b823-a29f1abd0983.pdf"
+    },
+    {
+        "course_code": "CHE F244",
+        "course_name": "SEPARATION PROCESSES I",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F244_1183_b3e7fb4d-d1aa-473c-9e28-39d3a62d9de8-4e703dd9-08dc-4d85-be07-41611b06a7ec.pdf"
+    },
+    {
+        "course_code": "CHE F266",
+        "course_name": "STUDY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F266_1653_0ce31bca-4840-41f0-9505-bef0ff7f2dc6-bc371077-87fb-4f36-8a06-e956df0ba8a2.pdf"
+    },
+    {
+        "course_code": "CHE F311",
+        "course_name": "KINETICS &amp; REACTOR DESIG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F311_1184_932e6c05-2285-45b6-a82b-34f84afd2d2b_b185cfe7-8b51-471d-a543-1eb54c638658.pdf"
+    },
+    {
+        "course_code": "CHE F341",
+        "course_name": "CHEMICAL ENGG LAB II",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F341_1188_63ebd439-2445-4418-b7bf-6f02e11f31b4-83bc1707-d491-470c-8526-9011b1b0f472.pdf"
+    },
+    {
+        "course_code": "CHE F342",
+        "course_name": "PROCESS DYN &amp; CONTROL",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F342_1189_0592501b-6c32-4b98-9dae-b6c8257f013c-f830149c-13f4-49ef-ba4f-a610b97826dd.pdf"
+    },
+    {
+        "course_code": "CHE F343",
+        "course_name": "PROCESS DES PRINCIPLE II",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F343_1190_6d041527-4c61-4cc5-b39b-6d45a5aa5e1a-2c5e0376-311d-4c2c-99bb-16d974b438b5.pdf"
+    },
+    {
+        "course_code": "CHE F366",
+        "course_name": "LABORATORY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F366_1668_7bd6dce8-cf31-49ef-8fd6-bb3a26deb789-ec851476-a55d-4a89-b811-b08c7b343231.pdf"
+    },
+    {
+        "course_code": "CHE F367",
+        "course_name": "LABORATORY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F367_1738_1cacd4f5-1d0c-4545-a1cc-3df53b4f95a6-1b0bd8ea-14b0-4124-ac81-d14503d4e259.pdf"
+    },
+    {
+        "course_code": "CHE F376",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F376_1687_62562930-1661-4c7a-9d7b-d15b82f2d751-a9a16ae8-5517-42fe-b1c4-6db1928e732d.pdf"
+    },
+    {
+        "course_code": "CHE F377",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F377_1754_110e5e5c-500c-4571-8948-0be4bedc991b-ffa09f44-9445-4e72-aea6-22fda5f97f80.pdf"
+    },
+    {
+        "course_code": "CHE F413",
+        "course_name": "PROCESS PLANT SAFETY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F413_1204_59464514-34ce-4ff0-b36c-aa4bea0ff3f5-af0c7886-27b0-45fd-8b94-af84523115be.pdf"
+    },
+    {
+        "course_code": "CHE F414",
+        "course_name": "TRANSPORT PHENOMENA",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F414_1201_c7b6508e-f573-4af2-bbc5-124e9c9670f0_a9298ad1-3c68-4e1c-943d-a6bb79c6db93.pdf"
+    },
+    {
+        "course_code": "CHE F418",
+        "course_name": "MODEL &amp; SIMU IN CHE ENGG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F418_1213_cd7b4a1e-a7f9-471f-9972-04cecf2d58f5_83a7714d-a333-4c2b-b3a2-6d3023ae0d9c.pdf"
+    },
+    {
+        "course_code": "CHE F419",
+        "course_name": "CHEMICAL PROCESS TECH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F419_1203_a94f5b98-386d-46c2-83dc-25b92d09eaef-e5ebb414-5fb5-4335-a862-ee25cc013d38.pdf"
+    },
+    {
+        "course_code": "CHE F423",
+        "course_name": "MEMBRANE SCIENCE &amp; ENGINEERING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F423_2305_696e28ee-1bec-4569-aff3-9abf057ac9f5-231a985f-4495-4722-a0e1-39f0372efe70.pdf"
+    },
+    {
+        "course_code": "CHE F491",
+        "course_name": "SPECIAL PROJECTS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_F491_1209_a7ab656d-1e71-4148-89ef-9dcf583da86e-7244fea1-2cc5-4cad-ac36-8713043e212e.pdf"
+    },
+    {
+        "course_code": "CHE G622",
+        "course_name": "ADV CHEMICAL ENGG THERMO",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_G622_2032_c19fe496-f307-4ff9-ae26-7bc8c53311ed-55139740-f3d9-4a8e-a5f7-52e60bdc42ac.pdf"
+    },
+    {
+        "course_code": "CHE G641",
+        "course_name": "REACTION ENGINEERING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHE_G641_729_f5359062-33b6-47a2-9688-7c4ae251c931-de4dfd80-9992-4c69-9f7d-cba32e55ecac.pdf"
+    },
+    {
+        "course_code": "CHEM F101",
+        "course_name": "FUNDA OF CHEM",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F101_2864_2455be59-0702-4917-b45b-9238f887daff-7c180518-bde5-4956-b1ed-e89c5220407c.pdf"
+    },
+    {
+        "course_code": "CHEM F211",
+        "course_name": "PHYSICAL CHEMISTRY I",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F211_1116_745d381a-510d-4feb-8077-e2377e5211b2-25a98c52-f31f-408b-b421-76a1ef750f40.pdf"
+    },
+    {
+        "course_code": "CHEM F241",
+        "course_name": "INORGANIC CHEMISTRY II",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F241_1554_06b2af7e-d194-461f-9571-a533a6c2d20b-2ce9d191-a3c4-4993-bab4-5c7ccf4af1d8.pdf"
+    },
+    {
+        "course_code": "CHEM F243",
+        "course_name": "ORGANIC CHEMISTRY II",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F243_1556_2b27b78f-fd45-4121-82f5-f9d09c108d0a-a392cc6c-c290-4ea1-8d54-7dcb03cb54f6.pdf"
+    },
+    {
+        "course_code": "CHEM F244",
+        "course_name": "PHYSICAL CHEMISTRY III",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F244_1557_37a43114-3387-4c84-84ef-7f9718415b62-97ce3e8f-42ce-4dc9-9364-91bc3089ae08.pdf"
+    },
+    {
+        "course_code": "CHEM F323",
+        "course_name": "BIOPHYSICAL CHEMISTRY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F323_1570_692c768e-3386-47ff-b79a-e7c519d33a62-dd6798ae-e2dd-4a22-8956-babbfc1bc462.pdf"
+    },
+    {
+        "course_code": "CHEM F325",
+        "course_name": "POLYMER CHEMISTRY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F325_1572_aef52477-c77c-42fc-888a-704e301d873d-a24c2afb-0e84-402f-bbec-d49c3830823b.pdf"
+    },
+    {
+        "course_code": "CHEM F336",
+        "course_name": "NANOCHEMISTRY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F336_1586_4ffeb6bf-a6a7-4224-9b57-3a248db1bf2f_4528994e-ca7b-4e70-878c-2d7201615b8d.pdf"
+    },
+    {
+        "course_code": "CHEM F341",
+        "course_name": "CHEMICAL EXPER II",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F341_1561_5038b341-1c1b-479b-bb10-e3a1c364725e-c3d0051b-08ef-44dc-9b6a-73c646f6d5df.pdf"
+    },
+    {
+        "course_code": "CHEM F342",
+        "course_name": "ORGANIC CHEMISTRY IV",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F342_1562_7ff9f8f1-defa-45af-817b-199533d70b71-4cd27ba2-ea39-42d9-be94-77dbb4b4e26b.pdf"
+    },
+    {
+        "course_code": "CHEM F343",
+        "course_name": "INORGANIC CHEMISTRY III",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F343_1563_662b9c0e-0f5a-45e5-bd77-61bf92d60848-c1ac5dbb-3869-43c6-99f0-3f14287e2917.pdf"
+    },
+    {
+        "course_code": "CHEM F415",
+        "course_name": "FRONTIERS IN ORGANIC SYN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F415_1581_f989f96a-2cfc-450c-9cae-792b35bf1c88-89dc575a-4120-408b-bc87-476c0e63b23a.pdf"
+    },
+    {
+        "course_code": "CHEM F430",
+        "course_name": "ATMOSPHERIC CHEMISTRY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_F430_2284_8214ab71-05ee-4dcd-a4b5-fb366040b57b-090cc179-dbf2-4cc1-a8d4-52dea98e278a.pdf"
+    },
+    {
+        "course_code": "CHEM G554",
+        "course_name": "PHY METHODS IN CHEMISTRY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CHEM_G554_242_379491ef-525f-40c2-a8ac-0090cb172a43-22d5211c-3db3-4dae-bb5f-5deb59b390cf.pdf"
+    },
+    {
+        "course_code": "CS F111",
+        "course_name": "COMPUTER PROGRAMMING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F111_1008_f283cbee-9334-41aa-bf37-ea1a6e8bcac4-2d371298-1b54-4dac-a834-2ded6148e338.pdf"
+    },
+    {
+        "course_code": "CS F211",
+        "course_name": "DATA STRUCTURES &amp; ALGO",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F211_1094_4f4a186c-8134-43fd-ab0b-daf76fe7299a-9718e05a-d30c-47bd-b38b-70df1e6e232d.pdf"
+    },
+    {
+        "course_code": "CS F212",
+        "course_name": "DATABASE SYSTEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F212_1095_471d2cf4-308c-4f00-b47d-b111b738b85b-fdfdbb96-9b74-4fb1-a119-3bd8e12ccc18.pdf"
+    },
+    {
+        "course_code": "CS F213",
+        "course_name": "OBJECT ORIENTED PROG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F213_1092_4a06f3d8-9b14-46c1-ae44-722777620e06_91041f3c-867d-4a94-a0e9-49e8eab3979b.pdf"
+    },
+    {
+        "course_code": "CS F241",
+        "course_name": "MICROPROC &amp; INTERFACING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F241_1313_db3e72c4-0fcf-4471-8075-21e995e2558a-c5aab0bd-43d4-465a-9764-61348fa81802.pdf"
+    },
+    {
+        "course_code": "CS F303",
+        "course_name": "COMPUTER NETWORKS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F303_1320_587afeb5-1b28-4e07-a597-e6a7cbbc5b3e-21a9f869-96c6-4bfc-86da-4cad678e0b21.pdf"
+    },
+    {
+        "course_code": "CS F320",
+        "course_name": "FOUNDATIONS OF DATA SCIENCE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F320_2266_e042a584-52d6-4c5d-a8ac-6d36ee12bd4f-622184e1-adef-46b2-86c8-26e2d971be16.pdf"
+    },
+    {
+        "course_code": "CS F342",
+        "course_name": "COMPUTER ARCHITECTURE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F342_1317_5d0051ed-266a-4643-b77e-27103347f090_4c371bc9-0349-4ca1-a10e-e4caa202f9da.pdf"
+    },
+    {
+        "course_code": "CS F351",
+        "course_name": "THEORY OF COMPUTATION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F351_1314_a480cc6c-dca1-481a-a91c-bf03b85cadec-3395be11-ed7e-4b80-b7a6-3219f797d2f9.pdf"
+    },
+    {
+        "course_code": "CS F363",
+        "course_name": "COMPILER CONSTRUCTION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F363_1318_2187e5f1-f4f6-471d-9715-d4dfe6b4479d-0935062a-bdff-4bde-a9ad-962000d62002.pdf"
+    },
+    {
+        "course_code": "CS F364",
+        "course_name": "DESIGN &amp; ANAL OF ALGO",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F364_1319_33a48060-a57d-4681-9a91-872267b52fe3_28369974-2d14-4d24-8580-52b7853efafc.pdf"
+    },
+    {
+        "course_code": "CS F372",
+        "course_name": "OPERATING SYSTEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F372_1315_db88f963-6159-4918-b4ea-41af1d9e1e7b-93cb7cb9-1ff5-497e-ac3e-5046ed9f4ec5.pdf"
+    },
+    {
+        "course_code": "CS F407",
+        "course_name": "ARTIFICIAL INTELLIGENCE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F407_1333_760e43e3-d8e5-495f-9ed1-1fd0efbb9f56-bcde792a-f152-45f1-b634-ac4a8330c98d.pdf"
+    },
+    {
+        "course_code": "CS F422",
+        "course_name": "PARALLEL COMPUTING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F422_1323_4328d74d-18ac-4d45-9b85-da115923bf72-d4959885-a5dd-4dd8-866e-d4923293b6ac.pdf"
+    },
+    {
+        "course_code": "CS F425",
+        "course_name": "DEEP LEARNING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F425_2440_6b7a4815-792a-4066-a889-97a32070e16a-8cfca09a-fe40-48d4-909f-26333147579d.pdf"
+    },
+    {
+        "course_code": "CS F426",
+        "course_name": "GRAPH MINING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F426_2441_723a99fc-2a7a-4288-832a-475cb5e01b4d-8e0882c3-b6d4-4ae4-bef7-71ef7158eb9a.pdf"
+    },
+    {
+        "course_code": "CS F437",
+        "course_name": "GENERATIVE AI",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_F437_2629_b0fb4847-42b4-445d-b786-1e4a62c514ee-d0c1f7d4-99c2-428a-86b4-63b9c8d60d1b.pdf"
+    },
+    {
+        "course_code": "CS G513",
+        "course_name": "NETWORK SECURITY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_G513_507_d7a15afe-e1a6-4640-89b9-1d325d9796a6_402bc7d9-6457-4695-8c65-093cdb2b5d24.pdf"
+    },
+    {
+        "course_code": "CS G516",
+        "course_name": "ADVANCED DATABASE SYSTEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_G516_2449_30ab8066-7f40-4467-8693-8a8efba9892a-73a5162a-5dbd-417f-b9fd-9d06a1939478.pdf"
+    },
+    {
+        "course_code": "CS G523",
+        "course_name": "SOFTWARE FOR EMBEDDE SYS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_G523_2052_539014e7-8126-4f6d-b147-923c596fa150-c71d73cc-6962-40d4-8b81-632258180797.pdf"
+    },
+    {
+        "course_code": "CS G524",
+        "course_name": "ADV COMPUTER ARCHITECTUR",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_G524_2006_2a07c967-d397-4187-8123-ebf2f6ba1be9-9819d357-082f-4cf8-9c90-5bf234761ef9.pdf"
+    },
+    {
+        "course_code": "CS G653",
+        "course_name": "SOFTWARE ARCHITECHTURES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/CS_G653_331_897347fe-f5a4-41ed-b3d9-e00825bcc1a9_63779426-ed01-4ccc-b7ae-0c8cd29c4589.pdf"
+    },
+    {
+        "course_code": "DE G514",
+        "course_name": "FRACTURE MECHANICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/DE_G514_436_487804be-965b-4a65-934e-28bba4fa6e5b-647c13ab-ddc7-413b-a4cc-6479883c7085.pdf"
+    },
+    {
+        "course_code": "DE G522",
+        "course_name": "DESIGN PROJECTS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/DE_G522_144_07051c8e-e1c9-4085-9799-ad984e1b6557-9b812969-a811-46ab-9f66-3ccb90b8db0b.pdf"
+    },
+    {
+        "course_code": "ECE F241",
+        "course_name": "MICROPROC &amp; INTERFACING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F241_1384_c5c68a4e-5167-4c35-99b1-f00290698075-00a50b93-6dde-43c2-ac4a-e63ec517a35f.pdf"
+    },
+    {
+        "course_code": "ECE F242",
+        "course_name": "CONTROL SYSTEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F242_1385_308901dd-8fd7-490b-b751-4f3de10fdb15-50ed52f8-cb06-4e3e-bad6-55652a362e18.pdf"
+    },
+    {
+        "course_code": "ECE F243",
+        "course_name": "SIGNALS &amp; SYSTEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F243_1386_c9cf8057-75b4-4925-9b04-5461f5637a92-689e0084-d0fe-4210-92c3-708d83fe25dd.pdf"
+    },
+    {
+        "course_code": "ECE F244",
+        "course_name": "MICROELECTRONIC CIRCUITS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F244_1387_b8f4e224-c355-4e02-88ff-4d95ab76304c-34b5f461-9293-4e0e-b9ff-e65508da2bca.pdf"
+    },
+    {
+        "course_code": "ECE F266",
+        "course_name": "STUDY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F266_1701_59b658ee-d914-4d7b-a8dc-e3cda442f7bc-284b8b85-d545-411b-a842-43ae551d2b17.pdf"
+    },
+    {
+        "course_code": "ECE F341",
+        "course_name": "ANALOG ELECTRONICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F341_1391_42358d7f-3573-48d4-a7b7-8a507ff0ea2c_22192494-c910-4125-8212-206f7741293c.pdf"
+    },
+    {
+        "course_code": "ECE F343",
+        "course_name": "COMMUNICATION NETWORKS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F343_1595_9e13f9cb-aef3-4873-aa11-2c7eabb74a18-74f0e4f5-243b-4310-b023-1b0b541b8def.pdf"
+    },
+    {
+        "course_code": "ECE F344",
+        "course_name": "INFO THEORY &amp; CODING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F344_1390_50b3b6f9-5781-4602-962e-c3a7a157d03a-fcdc80fb-4a81-4993-80d3-6c84463bafff.pdf"
+    },
+    {
+        "course_code": "ECE F366",
+        "course_name": "LABORATORY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F366_1702_4373df2c-114e-4cd3-8fed-f7ffc49fc928-c47e4f25-8a05-4941-8f00-074301458df3.pdf"
+    },
+    {
+        "course_code": "ECE F367",
+        "course_name": "LABORATORY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F367_1705_cb18a3ae-0f1c-44c2-bdaa-f340c234c770-da0e499f-6713-4e76-9dd8-3f47ed57e780.pdf"
+    },
+    {
+        "course_code": "ECE F376",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F376_1703_543355d0-f0a3-4887-b6be-b8232831d129-a950543d-e653-41e4-bd12-39cb81e32c92.pdf"
+    },
+    {
+        "course_code": "ECE F377",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECE_F377_1706_69a8e52e-eea5-491e-9682-72fbf2a655bf-27f1ed8d-9048-4494-97ed-f8c35d15197b.pdf"
+    },
+    {
+        "course_code": "ECON F211",
+        "course_name": "PRINCIPLES OF ECONOMICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F211_1023_85f9ccb1-7b6b-4ee4-b5db-342b4685c512_ec7bb2a3-c391-4872-9bcb-d9bc39079c80.pdf"
+    },
+    {
+        "course_code": "ECON F212",
+        "course_name": "FUNDA OF FIN AND ACCOUNT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F212_1120_e7910d64-b07a-4c94-9947-0ae7c7414528-53a5e726-5de6-4920-8386-0a48aa9df7ef.pdf"
+    },
+    {
+        "course_code": "ECON F215",
+        "course_name": "COMPUTATIONAL METHODS FOR ECON",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F215_2534_ba4f8303-733e-43b2-82df-d0c1d9e69f83-350b4b84-adb1-4525-b74f-07ac4b8a5857.pdf"
+    },
+    {
+        "course_code": "ECON F241",
+        "course_name": "ECONOMETRIC METHODS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F241_1442_00628545-1585-4b65-90ca-6d9169df62d1-9654c2fb-d0e5-4039-b558-8fb57a07aeae.pdf"
+    },
+    {
+        "course_code": "ECON F242",
+        "course_name": "MICROECONOMICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F242_1443_639104ce-2d8a-4f7f-acf8-9cebfe7760aa-e647c489-40ab-4ff2-8b35-25e5312c494c.pdf"
+    },
+    {
+        "course_code": "ECON F243",
+        "course_name": "MACROECONOMICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F243_1444_2e955817-d594-4eab-9b0b-e8b90e658126-53516dc5-850b-4574-988b-8265e06391a8.pdf"
+    },
+    {
+        "course_code": "ECON F244",
+        "course_name": "ECONOMIC OF GROWTH &amp; DEV",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F244_1445_8df74948-720c-415d-b86b-d552512cd2fb-bf4aa48d-3f6e-4484-b7cb-fb3330aca071.pdf"
+    },
+    {
+        "course_code": "ECON F315",
+        "course_name": "FINANCIAL MANAGEMENT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F315_1923_2da72707-82ca-4c13-a3ad-bc2ecb298d61-60126a64-c704-473a-b071-145830f21652.pdf"
+    },
+    {
+        "course_code": "ECON F341",
+        "course_name": "PUBLIC FIN THEO &amp; POLICY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F341_1449_b6afcd65-ea78-4b93-828a-7e0076955545_5e60059d-b9ed-47b8-b712-5e1d44c17d21.pdf"
+    },
+    {
+        "course_code": "ECON F342",
+        "course_name": "APPLIED ECONOMETRICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F342_1450_d0fbcfcb-e1c4-47b0-ba8d-199dd9c4911d-c3b6f1d6-2029-4067-90ac-5b29457fdff4.pdf"
+    },
+    {
+        "course_code": "ECON F343",
+        "course_name": "ECONOMIC ANAL OF PUB POL",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F343_1451_c46518fe-facf-4788-bc0c-b64d69a4f836-a9aa6035-8cc2-4bb8-80be-43c2450d28d1.pdf"
+    },
+    {
+        "course_code": "ECON F353",
+        "course_name": "ENERGY ECONOMIC &amp; POLICY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F353_1564_1b083d4a-7558-4b58-a94d-425d5e2649f5-905b75f9-c5e4-4d87-b6d6-9687a4a35fac.pdf"
+    },
+    {
+        "course_code": "ECON F354",
+        "course_name": "DERIVATIVES &amp; RISK MGMT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F354_1565_b7b05c1a-508b-4352-a881-68b67f529ca1-8dcb24b6-939a-4202-b266-73ff4908c368.pdf"
+    },
+    {
+        "course_code": "ECON F355",
+        "course_name": "BUSS ANAL &amp; VALUATION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F355_1547_7bd643dd-7791-452f-9671-ba5076d8183a_d2ea1550-7827-4b43-8b06-9154b0446d67.pdf"
+    },
+    {
+        "course_code": "ECON F414",
+        "course_name": "CREAT &amp; LEAD ENTREP ORGN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F414_1552_9862a014-cc12-4f3e-b73b-c0a92f132811-1f6b5360-2752-4fec-a740-d047a64f8975.pdf"
+    },
+    {
+        "course_code": "ECON F435",
+        "course_name": "MARKETING RESEARCH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ECON_F435_1875_7b719c98-503c-426a-9416-fe6af967c96b_417ebdaf-4ebe-4671-97cb-a57d7ab58af0.pdf"
+    },
+    {
+        "course_code": "EE G502",
+        "course_name": "Water and Wastewater Treatment",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EE_G502_2592_674faf30-4078-4b16-9e2a-49112932247c_e2a84da4-6978-4184-9295-8381b6cb40bb.pdf"
+    },
+    {
+        "course_code": "EE G506",
+        "course_name": "ENVIRONMENTAL STATISTICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EE_G506_2596_db4b7525-ba51-4385-8ad9-dfad2425ba65-e024e4aa-4ba7-4315-b106-fea7ff8392c1.pdf"
+    },
+    {
+        "course_code": "EEE F111",
+        "course_name": "ELECTRICAL SCIENCES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F111_1009_0e5f6191-b480-4f65-be65-a2165f240ed2-5612ab0d-4d93-40a3-bc43-4481a3e08538.pdf"
+    },
+    {
+        "course_code": "EEE F216",
+        "course_name": "ELECTRONIC DEV SIMULATION LAB",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F216_2494_29d1a2ca-7b2d-4ca8-9c22-ef437595f779_2d620ac0-8ba3-4c3a-86eb-3257ab41e752.pdf"
+    },
+    {
+        "course_code": "EEE F241",
+        "course_name": "MICROPROC &amp; INTERFACING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F241_1238_68fc382e-1df2-4f58-a393-83b4a0300366-4927e91a-35a4-4c4a-a46a-6c2c0793cf23.pdf"
+    },
+    {
+        "course_code": "EEE F242",
+        "course_name": "CONTROL SYSTEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F242_1239_a3ccbac9-439e-4608-85f2-21b9155aa654-f494f3bd-0937-46b8-963f-e6e6f43c1260.pdf"
+    },
+    {
+        "course_code": "EEE F243",
+        "course_name": "SIGNALS &amp; SYSTEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F243_1240_b6e602a6-bc30-4fa0-a707-c44c7550cd7b-03883203-d1fe-469f-94fc-515dd9c2787d.pdf"
+    },
+    {
+        "course_code": "EEE F244",
+        "course_name": "MICROELECTRONIC CIRCUITS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F244_1241_ded0d0d1-f0f2-4ac0-a616-d65591f8d13c-b6b05f1e-b8f2-4659-83dc-b447e53fa0a9.pdf"
+    },
+    {
+        "course_code": "EEE F246",
+        "course_name": "E &amp; E  CIRCUIT  LABORATORY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F246_1900_84eed780-e95d-405d-ad6b-35331749100c-9fa78eb3-0f96-4d85-9b01-dcbb9064b161.pdf"
+    },
+    {
+        "course_code": "EEE F266",
+        "course_name": "STUDY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F266_1657_4fe01854-4899-425a-8e11-7927aa6035f1-b8b4c348-e36c-4976-a5bf-cf5aef787413.pdf"
+    },
+    {
+        "course_code": "EEE F312",
+        "course_name": "POWER SYSTEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F312_1244_3bbf88cf-47a8-42e9-8442-15cdbc9496c1-7999684d-483b-4cb3-9380-f4a86182b93a.pdf"
+    },
+    {
+        "course_code": "EEE F341",
+        "course_name": "ANALOG ELECTRONICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F341_1245_58adccdc-361a-49c4-aab0-89a34ca9b060_bcb934d9-0f4e-457e-a0eb-176acfa40b45.pdf"
+    },
+    {
+        "course_code": "EEE F342",
+        "course_name": "POWER ELECTRONICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F342_1246_87e362f9-e80d-4a7a-91ea-ac5cf93fb270-a506fbaf-2e7a-422b-93a0-56cd67ee0bf1.pdf"
+    },
+    {
+        "course_code": "EEE F366",
+        "course_name": "LABORATORY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F366_1731_d3bb191e-ebab-4c52-87c8-fa00e8e361a7-b9be6618-663c-4fdb-9baf-444a31760423.pdf"
+    },
+    {
+        "course_code": "EEE F367",
+        "course_name": "LABORATORY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F367_1742_83c4aafd-ac73-4d79-a6c5-82979429d71f-142c4c73-3ca8-48da-8e84-389648a35a40.pdf"
+    },
+    {
+        "course_code": "EEE F376",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F376_1691_4d52972a-63c8-4b9e-a9c1-e2c3e80c5485-82a062a3-c877-4dc7-ace9-b9adcc4fdeec.pdf"
+    },
+    {
+        "course_code": "EEE F377",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F377_1758_5ca2211a-a2c5-403d-852c-5dda83f926a5-35248733-17dd-4e40-a520-d03a002ced8d.pdf"
+    },
+    {
+        "course_code": "EEE F416",
+        "course_name": "DIGITAL COMMUNICATION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F416_1260_df90c8ae-b320-417c-8789-a5ffe69b374b-63c966ea-a8ea-45ab-86ae-b90953006251.pdf"
+    },
+    {
+        "course_code": "EEE F419",
+        "course_name": "FLEXIBLE AND STRETCHABLE ELECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F419_2445_fc9da1ee-a8b9-46dd-a741-915016afd13e-eb801a95-0c21-4766-a5b1-2570813df2e8.pdf"
+    },
+    {
+        "course_code": "EEE F424",
+        "course_name": "SMART GRID FOR SUSTAIN ENERGY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F424_2496_72822429-a4f6-4b96-94cc-50d510105b94-b4868d76-2a1e-4599-bb19-6b49199e136e.pdf"
+    },
+    {
+        "course_code": "EEE F430",
+        "course_name": "GREEN COMMUNICATIONS &amp; NETWORK",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F430_2499_9a0efd82-9fc3-412a-924e-75b08a794e34-21f6ff05-2544-415d-8e24-a87e9bbd4101.pdf"
+    },
+    {
+        "course_code": "EEE F431",
+        "course_name": "MOBILE TELECOM NETWORKS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F431_1250_21f589ea-df71-4e5f-b24f-b10b746eac5a-5d5d52c2-21f7-4abf-8453-f58607fdb7ba.pdf"
+    },
+    {
+        "course_code": "EEE F432",
+        "course_name": "MEDICAL INSTRUMENTATION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F432_1247_10cde59a-7d66-47ec-938d-4dd82c5d0b82-2289348e-f293-4814-8967-233e24557b76.pdf"
+    },
+    {
+        "course_code": "EEE F437",
+        "course_name": "SEMICONDUCTOR FAB TECH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F437_2761_51b436e3-b2af-4f57-905b-3f7ea1989c13_f4104578-ca0a-43f3-9fb6-63cca08641df.pdf"
+    },
+    {
+        "course_code": "EEE F438",
+        "course_name": "ELECTRIC VEHICLES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F438_2783_07c1aa14-154a-4c56-a6f1-a367a09c3ba9-4ed92995-ca08-4ace-b2c9-d8707301f0fc.pdf"
+    },
+    {
+        "course_code": "EEE F439",
+        "course_name": "COMM &amp; COMP FOR DRON",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F439_2865_0b2d711d-5f22-422d-9305-4d91aaac38ee_99060830-215e-4dd7-8c8d-0f3765d354bf.pdf"
+    },
+    {
+        "course_code": "EEE F474",
+        "course_name": "ANTENNA THEO AND DESIGN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F474_1855_3a7f7db2-b7f8-4378-a61f-0226a33da716-13c7e7b1-6004-4917-a795-2e152cc4642b.pdf"
+    },
+    {
+        "course_code": "EEE F477",
+        "course_name": "MODELING OF FIELD-EFFECT NANO",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F477_1895_45d97eb6-4a1b-4b87-9a38-db08486b5f2e-a9b32e9f-67d8-40d1-a536-1c6dca12dd24.pdf"
+    },
+    {
+        "course_code": "EEE F491",
+        "course_name": "SPECIAL PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_F491_1716_7a7631f2-e385-431f-9e1d-a811e35fc20b-b312cbef-7f22-4b3e-b07c-9770c6224bb7.pdf"
+    },
+    {
+        "course_code": "EEE G510",
+        "course_name": "RF MICROELECTRONICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_G510_462_faf7742c-7f07-40a8-acca-15f8e0c03dfc_4b324163-21f4-4186-a19b-097b85587e83.pdf"
+    },
+    {
+        "course_code": "EEE G523",
+        "course_name": "PROCESSOR ARCHITECTURE AND DES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_G523_2919_b8b1309b-27bc-493a-8bf8-b5abaf6bd7f8-5e32ed61-cc6c-4f2b-b5e0-7d679de38946.pdf"
+    },
+    {
+        "course_code": "EEE G525",
+        "course_name": "WIRELESS COMMUNICATION SYSTEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_G525_2921_fc41088e-d543-4f73-8f59-d9e3ff2563de_7d5cdc55-8fea-4240-998a-9b2d539e3e82.pdf"
+    },
+    {
+        "course_code": "EEE G526",
+        "course_name": "LIGHTWAVE ENGINEERING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_G526_2939_a8f030ea-3714-4b57-a1b8-232b96f9d52e_dee9f947-89ed-41d1-aefa-955bdd0f1fd3.pdf"
+    },
+    {
+        "course_code": "EEE G540",
+        "course_name": "ADVANCED CONTROL TECHNIQUES FO",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_G540_2941_0d271302-76eb-43bc-b915-94e6eadc0ddb_fcc318da-dfc2-4d41-a935-9d70d115b950.pdf"
+    },
+    {
+        "course_code": "EEE G548",
+        "course_name": "DISTR. &amp; NETWORKED EMB. SYS.",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_G548_2928_520201cd-2ed3-496e-811c-9ef5aff5162a_1e2b7a93-6ba7-4935-b34c-cfd3a9cc98d7.pdf"
+    },
+    {
+        "course_code": "EEE G552",
+        "course_name": "SOLID STATE DRIVES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/EEE_G552_816_f58f0c22-8b10-4112-a43e-a27355c03154-0c5e0627-1051-444e-9b55-9aaf772d0605.pdf"
+    },
+    {
+        "course_code": "FIN F212",
+        "course_name": "FUNDA OF FIN AND ACCOUNT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/FIN_F212_1143_4402c243-06ca-483e-9565-43330a317334-c9fb869d-cc16-41a7-85ee-2bc4ac98e61d.pdf"
+    },
+    {
+        "course_code": "FIN F311",
+        "course_name": "DERIVATIVES &amp; RISK MGMT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/FIN_F311_1539_407f8646-d00f-451c-8a4c-dd13dabc9d33-89c6836a-2056-49a9-8600-b12a42a40293.pdf"
+    },
+    {
+        "course_code": "FIN F315",
+        "course_name": "FINANCIAL MANAGEMENT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/FIN_F315_1542_0d788d75-eede-4a2a-8747-bd874ccd1941-af867170-6019-4e37-ae67-a346f28d27b3.pdf"
+    },
+    {
+        "course_code": "FIN F414",
+        "course_name": "FINANCIAL RISK ANAL AND MGMT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/FIN_F414_1942_1e80d847-b529-41ed-a4b9-c6c87df429a0-9eb76c2f-2d25-41ae-8b70-047db77f8154.pdf"
+    },
+    {
+        "course_code": "GS F223",
+        "course_name": "INTRO TO MASS COMM",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F223_1135_51972b5f-5f58-4b32-a9e0-8819f990ab02-9f5425e4-e099-410a-aae8-5f506be43776.pdf"
+    },
+    {
+        "course_code": "GS F231",
+        "course_name": "DYN OF SOCIAL CHANGE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F231_1169_6e30b046-2453-4d98-873a-88e619ba224c-bd1a4cd5-d922-4cba-8403-c0c3e496292f.pdf"
+    },
+    {
+        "course_code": "GS F232",
+        "course_name": "INTRODUCTORY PSYCHOLOGY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F232_1170_bd1ec30d-4c34-4b27-a0ca-526f1b52aa74_8211a6a6-37ff-46b9-8b45-e296a7557e1e.pdf"
+    },
+    {
+        "course_code": "GS F233",
+        "course_name": "PUBLIC POLICY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F233_1171_5a608bd7-d6e7-416a-ad69-5681997e6a21-eeeb2a63-7ce0-4d9d-a918-14f774c6d09f.pdf"
+    },
+    {
+        "course_code": "GS F234",
+        "course_name": "DEVELOPMENT ECONOMICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F234_1172_6ac50a0c-8e39-45c9-aa89-166cfe5908a3-a0cea3a5-c3b8-4403-bf67-29857caf6c5b.pdf"
+    },
+    {
+        "course_code": "GS F241",
+        "course_name": "CREATIVE WRITING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F241_1158_eec0ead4-596b-4c6b-9844-f13672b469a9-809f1799-29ac-4b11-bccc-5fad4ce55ba1.pdf"
+    },
+    {
+        "course_code": "GS F242",
+        "course_name": "CULTURAL STUDIES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F242_1159_a0d004d3-551f-405f-a133-6c3abf562d93_2d41ba89-15f8-45f9-9e4e-c6f65a6c9f1b.pdf"
+    },
+    {
+        "course_code": "GS F243",
+        "course_name": "CURRENT AFFAIRS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F243_1160_caa7a188-fbd7-4c1c-87ce-914364356f16_e23f2a8f-b418-4e6f-be12-1884400382b7.pdf"
+    },
+    {
+        "course_code": "GS F244",
+        "course_name": "REPORT &amp; WRITE FOR MEDIA",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F244_1161_3d308092-c285-43ee-bb71-075aefe99b14-338c9913-72ce-40b6-9df1-b360c2afeb0c.pdf"
+    },
+    {
+        "course_code": "GS F245",
+        "course_name": "EFFECTIVE PUBLIC SPEAK",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F245_1165_4b1d8893-4476-4d8e-a151-47afaf05ab8c_ebf282fb-5752-440f-8e86-5fd5842158bd.pdf"
+    },
+    {
+        "course_code": "GS F322",
+        "course_name": "CRITI ANAL OF LIT &amp; CINE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F322_1137_13336321-dfa4-4dd4-9552-4ecb7c173055-4fb350a3-f4b8-483a-884c-6756e681fd62.pdf"
+    },
+    {
+        "course_code": "GS F331",
+        "course_name": "TECH IN SOCIAL RESEARCH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F331_1175_9d35db68-2baa-4546-bd4a-841ca2b1c635_dac72433-7e67-4695-b448-23e337be7024.pdf"
+    },
+    {
+        "course_code": "GS F332",
+        "course_name": "CONTEMPORARY INDIA",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F332_1176_98a7a958-73d2-44c8-9c4b-837236f12f36_a4b87fd2-3dce-4a40-a2cc-ad3a9f4b541f.pdf"
+    },
+    {
+        "course_code": "GS F334",
+        "course_name": "GLOBAL BUSINESS TEC &amp; KS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F334_1178_b241e6a9-c154-41f2-b0e4-f74569778b2b-2499827c-6645-44f3-9538-0d9b4472ad79.pdf"
+    },
+    {
+        "course_code": "GS F342",
+        "course_name": "COMPUTER MEDIATED COMM",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F342_1164_9828201a-dfd2-4931-8b63-55d88162bc2e_51b99862-ab50-45eb-ae1e-a20c7fb282c8.pdf"
+    },
+    {
+        "course_code": "GS F343",
+        "course_name": "SHORT FILM &amp; VIDEO PROD",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F343_1168_38ff8037-03f9-48db-9520-e4b33ff8c2fc-0bc52e82-b4fa-438a-a3ae-280bb35f220e.pdf"
+    },
+    {
+        "course_code": "GS F344",
+        "course_name": "COPYWRITING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/GS_F344_1873_ac689383-f745-4ddd-b4b2-c9f008f3bab6-dc0f6854-f3f2-4070-8ec2-c934b1bd7ace.pdf"
+    },
+    {
+        "course_code": "HSS F222",
+        "course_name": "LINGUISTICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F222_1603_6cd7ad56-972c-4f6f-b59b-02138c52ea24-fb63de7e-b52a-49af-8840-d28d3de5f3a8.pdf"
+    },
+    {
+        "course_code": "HSS F223",
+        "course_name": "APPR OF INDIAN MUSIC",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F223_1596_55f02293-8f7c-4257-aa77-13f25697bf17_11a35bbe-0814-4898-822b-0bff0ee32655.pdf"
+    },
+    {
+        "course_code": "HSS F224",
+        "course_name": "ENGLISH SKILLS FOR ACADEMICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F224_2447_f33e14a4-b210-4891-95eb-926009da0690-38dd5bae-cff9-4179-8782-ee1c7239f638.pdf"
+    },
+    {
+        "course_code": "HSS F226",
+        "course_name": "POST MODERNISM",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/__1150_0aed4e45-df5f-457a-92f5-e3518b7a2ec4-4114b11f-366d-4790-a396-875b90d5235f.pdf"
+    },
+    {
+        "course_code": "HSS F235",
+        "course_name": "INTRODUCTORY PHILOSOPHY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F235_1627_1a64fab1-5ee7-4d19-8d3c-c7bfc3309843-668e4e88-8750-424d-8b3a-198de78a7be4.pdf"
+    },
+    {
+        "course_code": "HSS F236",
+        "course_name": "SYMBOLIC LOGIC",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F236_1628_6b5556d5-38d8-40ef-9150-329f090e3702-1ffd5087-e685-40bb-b972-8a2464783e4e.pdf"
+    },
+    {
+        "course_code": "HSS F247",
+        "course_name": "SOCIAL INFORMATICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F247_2425_eaf26d5f-95ba-4261-8442-4caa659658c0_954e46e9-c6fc-40db-8be5-2bd97842a32d.pdf"
+    },
+    {
+        "course_code": "HSS F250",
+        "course_name": "COMICS AND VISUAL CULTURE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F250_2522_e10d9bb9-9efa-4d57-b156-7f80c1a6c6c1-ac36500e-ee04-4dd5-84db-2f1fc8ebeeee.pdf"
+    },
+    {
+        "course_code": "HSS F316",
+        "course_name": "POP LITER &amp; CULT S ASIA",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F316_1643_617fdab9-f7f0-4f2e-8a2d-99b6b52227f9_14a958ad-a6c9-4a53-90ea-f4753f462c69.pdf"
+    },
+    {
+        "course_code": "HSS F323",
+        "course_name": "ORGANIZATIONAL PSYCHOLOGY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F323_1777_461affc2-bb15-4d6b-8cbe-8ce404d48c37-292585b6-d7c6-4b1f-ad53-051cb47cb4d2.pdf"
+    },
+    {
+        "course_code": "HSS F328",
+        "course_name": "HUMAN RESOURCE DEVELOP",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F328_1609_777de5f6-b1c6-4aa3-8d97-2834379390aa-3b40ff8c-f1f0-41ac-bad8-0543d9352fc7.pdf"
+    },
+    {
+        "course_code": "HSS F329",
+        "course_name": "MUSICOLOGY-AN INTRODUCTN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F329_1597_52f96d64-b18b-4d05-b6fd-5a7744e51915_40b1d784-6256-4a0a-81ba-6ddf47b3bfa5.pdf"
+    },
+    {
+        "course_code": "HSS F334",
+        "course_name": "SRIMAD BHAGAVAD GITA",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F334_1599_2a0aec9e-775b-4e3e-b778-023f056223b8_9c442366-6a03-40cf-ae35-e539bea3623f.pdf"
+    },
+    {
+        "course_code": "HSS F346",
+        "course_name": "INTERNATIONAL RELATIONS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F346_1626_d214f077-557a-43cc-aa12-65807970f05f-98025bd4-13e8-4166-b247-a257e992f575.pdf"
+    },
+    {
+        "course_code": "HSS F349",
+        "course_name": "ECOCRITICISM",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F349_1828_c2dda72d-8c85-4d3a-8f26-3756859a113e-b45b1ef6-bcc1-4d81-8668-35befeecda46.pdf"
+    },
+    {
+        "course_code": "HSS F380",
+        "course_name": "PERFORMANCE STUDIES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F380_2630_c7677f58-0148-4eab-9159-0299d9b6d938-4ff53912-7247-45a6-9346-dbc8c12a92a8.pdf"
+    },
+    {
+        "course_code": "HSS F381",
+        "course_name": "ENVIRONMENTAL SUSTAIN VENTURES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/HSS_F381_2631_1742565b-a8e5-4f3c-bbb6-d2687d8d626b-a006d7c0-d589-4b97-9ecb-6dc3a93080e9.pdf"
+    },
+    {
+        "course_code": "INSTR F216",
+        "course_name": "ELECTRONIC DEV SIMULATION LAB",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F216_2500_a4d4d5e1-2485-4ac7-af0b-629d12b8f32f_d01587f7-6a35-45f8-aecf-5733b5711067.pdf"
+    },
+    {
+        "course_code": "INSTR F241",
+        "course_name": "MICROPROC &amp; INTERFACING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F241_1341_20427d01-4aa9-4d77-af85-94777874cdb4-917d252b-df67-43fe-ba03-efef7c52891a.pdf"
+    },
+    {
+        "course_code": "INSTR F242",
+        "course_name": "CONTROL SYSTEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F242_1342_3d527ece-a670-4ee5-b739-92dfa12ad0f3-033f6aec-e739-4df8-ba7e-c8c704436cce.pdf"
+    },
+    {
+        "course_code": "INSTR F243",
+        "course_name": "SIGNALS &amp; SYSTEMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F243_1343_bb7aadec-3177-44fd-97a6-8ca220a26ada-eaa10841-9318-4d4f-9158-0e4d24a5f045.pdf"
+    },
+    {
+        "course_code": "INSTR F244",
+        "course_name": "MICROELECTRONIC CIRCUITS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F244_1344_43972bec-f27e-42dd-b586-81071fb51766-37fa5fbc-545e-4198-96ed-620810a08bb4.pdf"
+    },
+    {
+        "course_code": "INSTR F266",
+        "course_name": "STUDY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F266_1660_0d8b1594-102e-48e6-8f8d-37835c1bd51d-af5858e2-f738-4d7d-8076-94c75a3f90cc.pdf"
+    },
+    {
+        "course_code": "INSTR F341",
+        "course_name": "ANALOG ELECTRONICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F341_1348_f16d65f6-9f2d-4234-8711-d3c82b9b3632_2e395f84-32bc-4c94-9635-8f5e50a1e254.pdf"
+    },
+    {
+        "course_code": "INSTR F342",
+        "course_name": "POWER ELECTRONICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F342_1349_8fccf205-6cea-4faa-bae5-f7a1c3c13045-7898a0bc-ffe7-4970-bd56-c3def981d7d4.pdf"
+    },
+    {
+        "course_code": "INSTR F343",
+        "course_name": "INDUS INSTRUMENT &amp; CONT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F343_1350_45f53846-a060-41dd-a0b9-cfc1ab7cc5ea-3198bee0-7930-4bf9-b0f4-375520dacb02.pdf"
+    },
+    {
+        "course_code": "INSTR F366",
+        "course_name": "LABORATORY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F366_1734_854440cb-3037-4b8b-a2d3-d0e2c05249de-7a5cfb02-3304-4205-8a73-0a0a707830dc.pdf"
+    },
+    {
+        "course_code": "INSTR F367",
+        "course_name": "LABORATORY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F367_1745_ea5f3b05-4b5d-433e-9c6c-bcfbace633eb-6f742a32-19eb-4f21-b836-09a071c8b45d.pdf"
+    },
+    {
+        "course_code": "INSTR F376",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F376_1694_4fe67099-ba31-4ae4-a7fd-e1fcc9d39f19-c740086f-9f8f-483f-9c0d-bc8dcd355abf.pdf"
+    },
+    {
+        "course_code": "INSTR F377",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F377_1761_380f8cc7-0d64-47b1-8e12-e75d9e26fdc7-1fb9e3bb-4dc1-40c2-aa52-47fe8102056e.pdf"
+    },
+    {
+        "course_code": "INSTR F424",
+        "course_name": "SMART GRID FOR SUSTAIN ENERGY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F424_2502_c22d1db1-3888-417a-8ab8-1ebd7bcae582-45c4f794-128a-4fe6-98cb-597e6608d74b.pdf"
+    },
+    {
+        "course_code": "INSTR F432",
+        "course_name": "MEDICAL INSTRUMENTATION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F432_1351_293ce7d4-2273-47c0-b926-435be645ec0f-3380adea-72a2-4f2b-8d6c-4ebbe5a6b199.pdf"
+    },
+    {
+        "course_code": "INSTR F491",
+        "course_name": "SPECIAL PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/INSTR_F491_1719_6878fd34-eb1c-4c38-ba24-6a5dc64ea8bf-71666e6a-21ec-4cb1-8925-f868e96fa202.pdf"
+    },
+    {
+        "course_code": "MAC F212",
+        "course_name": "OBJECT ORIENTED PROGRAMMING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MAC_F212_2642_a9628218-5047-45a0-b053-e1c29f00c730_c57834aa-9d67-4eab-8f1e-f30c710bd275.pdf"
+    },
+    {
+        "course_code": "MAC F241",
+        "course_name": "NUMERICAL ANALYSIS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MAC_F241_2645_b8db27fe-aa82-444b-9b78-dac2263901a8-31439a7a-be91-4e62-90ce-35f9f28094e2.pdf"
+    },
+    {
+        "course_code": "MAC F242",
+        "course_name": "DATA STRUCTURES &amp; ALGORITHMS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MAC_F242_2646_4e7a11cf-a948-40aa-b86d-e874fc36497e-f36a7918-0f49-4963-b193-1db46b345cee.pdf"
+    },
+    {
+        "course_code": "MAC F243",
+        "course_name": "NUMERICAL OPTIMIZATION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MAC_F243_2647_8b261409-faf1-437c-943c-2d48ffd1ac17-09222f67-0cca-4fea-ae50-5b750f662928.pdf"
+    },
+    {
+        "course_code": "MAC F244",
+        "course_name": "STOCHASTIC CALCU &amp; APP TO FIN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MAC_F244_2648_dd8b3108-0dc3-467f-8276-0f011e4ccb49-2ede52bb-418e-42bb-8b7b-94558caacc7d.pdf"
+    },
+    {
+        "course_code": "MAC F266",
+        "course_name": "STUDY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MAC_F266_2657_3ee5e324-3e75-429a-97a8-7af30e8a058a-92384c73-87a8-49fe-8419-f3ed5a6a05d9.pdf"
+    },
+    {
+        "course_code": "MATH F102",
+        "course_name": "LIN ALGEB &amp; COMP VARIA",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F102_2888_52af5cda-60cf-4609-a590-f395b4dce1e6-c823fd5f-7191-4969-ac96-d9728ce540df.pdf"
+    },
+    {
+        "course_code": "MATH F112",
+        "course_name": "MATHEMATICS II",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F112_1011_12ab4653-1b48-4ac8-bcac-f658af00baae-ec79eeb5-d488-45f6-a212-988f850b3e66.pdf"
+    },
+    {
+        "course_code": "MATH F113",
+        "course_name": "PROBABILITY &amp; STATISTICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F113_1012_8a1b3ca1-1feb-4f1a-b01e-939c84601487-11bed47f-856c-4430-808b-e73e9cff6834.pdf"
+    },
+    {
+        "course_code": "MATH F231",
+        "course_name": "NUMBER THEORY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F231_1340_d0604247-9652-41ce-af5d-f2c2688dbc28-ea1d497a-cdbd-40ed-8130-d67e6459df40.pdf"
+    },
+    {
+        "course_code": "MATH F241",
+        "course_name": "MATHEMATICAL METHODS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F241_1465_32553580-7951-4df4-b3de-3b56bb3dbef3-cc989d14-506d-436e-ac3f-e073215bef68.pdf"
+    },
+    {
+        "course_code": "MATH F242",
+        "course_name": "OPERATIONS RESEARCH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F242_1466_499b3326-526f-4ae4-8c6d-083e9335e7a4-b7edd2c0-7591-4505-b474-1ff1975f4150.pdf"
+    },
+    {
+        "course_code": "MATH F243",
+        "course_name": "GRAPHS AND NETWORKS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F243_1467_fed6f849-50b2-43e4-bc9f-2f5f25793651-de7bc654-8d79-498c-8c13-4edd04114613.pdf"
+    },
+    {
+        "course_code": "MATH F244",
+        "course_name": "MEASURE &amp; INTEGRATION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F244_1468_930b73c9-01ce-461c-8b5b-820a0c5c716c-54fe0979-6263-4c1f-90be-8b8312e48ac3.pdf"
+    },
+    {
+        "course_code": "MATH F266",
+        "course_name": "STUDY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F266_1662_ad94df98-8746-4fb0-a163-6c07b4125fcf-4dc3e867-25be-4270-a938-80e13ac95c58.pdf"
+    },
+    {
+        "course_code": "MATH F317",
+        "course_name": "SAMPLING THEORY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F317_2617_2cad930c-af35-4bae-b686-2f97a8fb54d0-359a2dde-d560-4221-be93-48f208707c02.pdf"
+    },
+    {
+        "course_code": "MATH F341",
+        "course_name": "INTRO TO FUNCTIONAL ANAL",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F341_1472_860e72c3-76e9-4554-95d8-ea168fa141a1-70d62820-dd18-44a4-b187-eaa59ae60174.pdf"
+    },
+    {
+        "course_code": "MATH F342",
+        "course_name": "DIFFERENTIAL GEOMETRY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F342_1473_28bf86bd-a69d-4930-8b63-5b41514a69f2-19d67c99-696b-4e72-a410-ac0f5d1cab6c.pdf"
+    },
+    {
+        "course_code": "MATH F343",
+        "course_name": "PARTIAL DIFF EQUATIONS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F343_1474_545f3c09-11a5-41ec-a35d-eaff4f899554-41a5ebdd-ca3d-48fd-8d51-26a6100bb767.pdf"
+    },
+    {
+        "course_code": "MATH F353",
+        "course_name": "STATISTICAL INFER &amp; APP",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F353_1479_8bad5f37-4c4d-4507-a632-747d4b34a1aa-c7a72757-feda-4c0d-910d-109a472d4945.pdf"
+    },
+    {
+        "course_code": "MATH F366",
+        "course_name": "LABORATORY PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F366_1679_54fc2a2b-71dd-4745-9971-516425ed0d91-7216a595-57ef-4e91-bca4-411cf431fbf2.pdf"
+    },
+    {
+        "course_code": "MATH F376",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F376_1696_e0eeae85-f167-46f9-a6f1-cc2b8235d021-32f7c8dc-80e4-473b-b015-e605f0a09440.pdf"
+    },
+    {
+        "course_code": "MATH F377",
+        "course_name": "DESIGN PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F377_1763_8c59731f-ccfc-4c75-97b0-0594ac25dcb9-4da1c51b-3dbf-4a87-bb58-2dbd101b3d64.pdf"
+    },
+    {
+        "course_code": "MATH F422",
+        "course_name": "NUM MTHD FOR PARTIAL DIFF EQ",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F422_1921_58e26d44-a426-40df-a6ba-b371cc765ec5-8f412a16-e556-4dd5-8093-ad558511410e.pdf"
+    },
+    {
+        "course_code": "MATH F424",
+        "course_name": "APPLIED STOCHASTIC PROCE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F424_2191_0ca942e2-4173-40eb-89b9-12af81b5e713-8fcd640e-b849-40d5-a40a-b4ac43ef83a8.pdf"
+    },
+    {
+        "course_code": "MATH F425",
+        "course_name": "NUMERICAL LINEAR ALGEBRA",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F425_2526_87e007b0-f79b-47a5-b70c-acace6de4a4e_a38b16b3-7bbf-4e51-8a3a-8b3fe8af0b7f.pdf"
+    },
+    {
+        "course_code": "MATH F491",
+        "course_name": "SPECIAL PROJECT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MATH_F491_1721_ca838dd0-222c-4e89-9847-34e56b9eb35f-31debc7a-3bdc-4d0b-b580-0d21b7559056.pdf"
+    },
+    {
+        "course_code": "ME F112",
+        "course_name": "WORKSHOP PRACTICE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F112_2379_daeee191-d470-444c-afb6-8f31663665ab-a5a60efe-4178-413b-97f5-6238fbd1e47b.pdf"
+    },
+    {
+        "course_code": "ME F218",
+        "course_name": "ADVANCED MECHANICS OF SOLIDS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F218_2397_61c9cf0c-7ebc-4dca-b852-8f41a84056cc-09e9a1ee-4442-40ac-af75-c29b3a54496f.pdf"
+    },
+    {
+        "course_code": "ME F219",
+        "course_name": "MANUFACTURING PROCESSES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F219_2398_62d1da46-0aef-44d1-82af-e65765ea9cbc_8e84aae2-96f4-4ffd-8557-0bea334453f0.pdf"
+    },
+    {
+        "course_code": "ME F220",
+        "course_name": "HEAT TRANSFER",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F220_2430_faf2fd26-fa74-4bce-9c59-338fa829fb9a-24764a69-aacb-4610-bbf0-5027be2cf451.pdf"
+    },
+    {
+        "course_code": "ME F221",
+        "course_name": "MECHANISMS AND MACHINES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F221_2399_024e6339-49a1-4808-9bd2-4da30853fdb2-93737d74-d5e8-4a43-8227-f0270f502cd1.pdf"
+    },
+    {
+        "course_code": "ME F316",
+        "course_name": "MANUFACTURING MANAGEMENT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F316_2404_e0d974d9-5cc6-4d7b-9806-5b260fe534cf-336a43fc-ac87-42a3-98b7-426aee4d1d6a.pdf"
+    },
+    {
+        "course_code": "ME F318",
+        "course_name": "COMPUTER-AIDED DESIGN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F318_2406_867f2214-fb61-4948-abe2-3c22dd937bec_ef149d40-7000-4dec-8001-da10a32fa139.pdf"
+    },
+    {
+        "course_code": "ME F319",
+        "course_name": "VIBRATIONS AND CONTROL",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F319_2407_7021e4ca-1f1c-44e4-8ddc-d85ae27a7734-8f42b19a-0853-47a3-97aa-c84141ca44e4.pdf"
+    },
+    {
+        "course_code": "ME F320",
+        "course_name": "ENGINEERING OPTIMIZATION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F320_2408_277b200c-4bb9-456f-8a3b-a91e2322282f-1917cc20-f42d-461a-8d79-739e6fcbe8e6.pdf"
+    },
+    {
+        "course_code": "ME F325",
+        "course_name": "FUNDAMENTALS OF SOFT MATTER",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F325_2766_05754184-7721-43a4-94e9-7629ee3c7478_c01d471b-03dd-4726-beac-6ac34c0d84da.pdf"
+    },
+    {
+        "course_code": "ME F341",
+        "course_name": "PRIMEMOVERS &amp; FLUID MACH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F341_1270_07201f23-95c8-42c4-8f65-79204d4b1928_b1463c3b-0360-4773-ab4e-f7704995ffee.pdf"
+    },
+    {
+        "course_code": "ME F424",
+        "course_name": "Energy Management",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F424_2309_677b1246-245e-4504-b986-39cc3176a9e3_b7a13a24-4732-49e9-a5b6-9cd61e8df83a.pdf"
+    },
+    {
+        "course_code": "ME F430",
+        "course_name": "FLUID-STRUCTURE INTERACTIONS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F430_2750_0802b1ad-3716-4105-ade4-9629b6d03ca1_739ba1aa-4095-424e-814b-5afbe2270a22.pdf"
+    },
+    {
+        "course_code": "ME F434",
+        "course_name": "DIGITAL TWINS IN MECH ENGG",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F434_2767_07a7b06d-7edf-456e-9293-4249a977c314-13288160-2749-49b7-9a46-66c65421b3e2.pdf"
+    },
+    {
+        "course_code": "ME F441",
+        "course_name": "AUTOMOTIVE VEHICLES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F441_1283_13a2d85b-2108-4275-87a1-625bf52a9bfc_aaa7efe1-5b06-46bb-913e-f0bdb62af2e5.pdf"
+    },
+    {
+        "course_code": "ME F452",
+        "course_name": "COMPOSITE MATERIAL &amp;  DES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F452_1286_6632e57e-e568-4981-8b54-6c7554990649_0a85fd8b-5d24-49d0-9280-beec690b4144.pdf"
+    },
+    {
+        "course_code": "ME F485",
+        "course_name": "NUM FL FLOW &amp; HEAT TRANS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_F485_1869_ee558b10-d5b3-4f74-85a2-7197322200b2-c81559c9-7d51-45d7-8999-0bb9aecdb341.pdf"
+    },
+    {
+        "course_code": "ME G515",
+        "course_name": "COMPUT FLUID DYNAMICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_G515_410_c8f8f09d-b451-480e-ac2f-9768a97e9212_995d93aa-56bd-4c69-80ac-9f80bebfc24c.pdf"
+    },
+    {
+        "course_code": "ME G536",
+        "course_name": "THERMAL EQUIPMENT DESIGN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/ME_G536_2096_df242d17-eda3-4d91-b048-cbe721e81fc6-51a4f1e9-56c7-4a5c-a953-3c711d8f03d3.pdf"
+    },
+    {
+        "course_code": "MEL G632",
+        "course_name": "ANALOG IC DESIGN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MEL_G632_224_56a0c880-4ff5-4a7f-8dc8-fcf6a39f6944-5be56946-d199-4415-92cb-42bb6dad17ee.pdf"
+    },
+    {
+        "course_code": "MEL G641",
+        "course_name": "CAD FOR IC DESIGN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MEL_G641_484_db4b5553-9a5d-4135-abb3-f215ce961f6d_f771ed18-285c-4a3e-b670-9084360bf9a3.pdf"
+    },
+    {
+        "course_code": "MF F219",
+        "course_name": "OPERATIONS MANAGEMENT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MF_F219_2412_85206662-2d0d-48bf-b15f-39193d25f3ec_4e8564da-e1af-4357-9069-2878424f33af.pdf"
+    },
+    {
+        "course_code": "MF F221",
+        "course_name": "MECHANISMS AND MACHINES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MF_F221_2400_a701aa95-73a8-45de-85b5-7d7f59539d80-fa276af7-646a-4013-91e6-c816f70bfe11.pdf"
+    },
+    {
+        "course_code": "MF F222",
+        "course_name": "CASTING FORMING AND WELDING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MF_F222_2414_1e63e631-efdd-427f-9c80-79a28f8fc8ac-d9353d0d-36ff-4f4a-9914-f803a54bafb5.pdf"
+    },
+    {
+        "course_code": "MF F317",
+        "course_name": "COMPUTER AIDED DESIGN AND MANU",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MF_F317_2417_13c827d0-7ac7-4a1c-85fe-61e329906ba2_8fdcf43c-1378-465f-993a-80fad3371e40.pdf"
+    },
+    {
+        "course_code": "MF F318",
+        "course_name": "NON TRADITIONAL MANU PROCESSES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MF_F318_2418_598ea3f0-794f-4a7a-b285-b2e7198746b0-2f15b10a-347c-40c8-8cea-21b8e542be58.pdf"
+    },
+    {
+        "course_code": "MF F319",
+        "course_name": "SUPPLY CHAIN MANAGEMENT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MF_F319_2419_8a043495-13bd-47b6-8ee8-b6a828f447f0-e1814b40-78c2-4a97-be77-49fb99caad63.pdf"
+    },
+    {
+        "course_code": "MF F320",
+        "course_name": "ENGINEERING OPTIMIZATION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MF_F320_2409_ac841290-f023-417f-9b74-bcc6ae797689-3e2189f6-48d0-4077-bb4a-fb1597bb8d26.pdf"
+    },
+    {
+        "course_code": "MF F421",
+        "course_name": "SUPPLY CHAIN MANAGEMENT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MF_F421_1418_1b36e2d2-3307-42b7-b68b-9790670feecd-6c055ab1-dbd5-415e-b104-4ef77ed5410c.pdf"
+    },
+    {
+        "course_code": "MF F473",
+        "course_name": "PRODUCT DESIGN &amp; DEVELOP",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MF_F473_1420_27b0be9e-8748-4bbe-86c7-d18eccb0891f_f964c1e0-9abd-4da8-ab6f-7e62514f9ec9.pdf"
+    },
+    {
+        "course_code": "MGTS F211",
+        "course_name": "PRINCIPLES OF MANAGEMENT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MGTS_F211_1024_e6ff279c-a7fd-4334-b50a-c074fe1a2913-7cd2a909-6180-479e-9e8d-b028902c6181.pdf"
+    },
+    {
+        "course_code": "MGTS F314",
+        "course_name": "ESSENTIALS OF FINANCIAL MANAGE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MGTS_F314_2546_81f52adf-efd4-45a9-b486-3aa7561e6813-6dc667c1-b145-413f-b0e2-4588f1989396.pdf"
+    },
+    {
+        "course_code": "MPBA G506",
+        "course_name": "DATA MANAGEMENT &amp; WAREHOUSING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MPBA_G506_2458_c1de18aa-c283-4073-9703-12bdb84593e0-0ee4cb04-59e1-4348-b26a-20ea3701c930.pdf"
+    },
+    {
+        "course_code": "MPBA G508",
+        "course_name": "STRATEGIC MANAGEMENT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MPBA_G508_2460_cad44863-3a98-46d5-8013-4713af4f099d-c29f4d0c-e678-463b-9a9e-8f7d7a77931e.pdf"
+    },
+    {
+        "course_code": "MPBA G509",
+        "course_name": "CORPORATE FINANCE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MPBA_G509_2461_12b1d723-97b1-41a4-a75b-3654f7c0c283-0c8cfa0f-cac1-486f-a5fb-7ca7b40f0c59.pdf"
+    },
+    {
+        "course_code": "MPBA G510",
+        "course_name": "OPERATIONS &amp; SUPPLY CHAIN MGMT",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MPBA_G510_2462_ee3bb3d4-4690-4f1e-868f-1966c3369401-46c579c6-2603-42cd-84c8-9ca5108aaef9.pdf"
+    },
+    {
+        "course_code": "MPBA G511",
+        "course_name": "DATA VISUAL, ETHIC &amp; DATA PRIV",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MPBA_G511_2463_d904852c-b209-44b1-a943-d40428bf061d-6d04cb34-97f3-4d47-a043-1d2ba034c9ec.pdf"
+    },
+    {
+        "course_code": "MPBA G512",
+        "course_name": "TIME SERIES ANALYSIS &amp; FORECAS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MPBA_G512_2464_c721e954-8071-4072-8b3a-a5899d8afa40-d52fb997-52a8-4df8-84b7-c6002199b5be.pdf"
+    },
+    {
+        "course_code": "MPBA G513",
+        "course_name": "PREDICTIVE ANALYTICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MPBA_G513_2465_9c38b0c1-ceb5-4719-ab64-1bad08f37414_4c425126-506f-4179-b8cc-bb6d3a8dece4.pdf"
+    },
+    {
+        "course_code": "MPBA G514",
+        "course_name": "DEEP LEARNING FOR BUSINESS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MPBA_G514_2466_eb9e4006-9ca6-4687-8b43-c58f3ca4d657-a557a56c-b680-478e-93a0-c13f4a128c72.pdf"
+    },
+    {
+        "course_code": "MPBA G516",
+        "course_name": "ADV SPREAD &amp; MAC PROG FOR BUSI",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MPBA_G516_2468_23b64a4f-c645-4315-96e6-c8aeaa92cedb_0df46d3a-0b35-463b-822c-8bb573ab0cba.pdf"
+    },
+    {
+        "course_code": "MPBA G519",
+        "course_name": "NATURAL LANG PROCES FOR BUSI",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MPBA_G519_2471_1c7884f1-e994-4ba6-bc7a-e3f198c3f9e7-25f08eb8-0702-4c17-b353-31c2182ba79c.pdf"
+    },
+    {
+        "course_code": "MSE G511",
+        "course_name": "MECHATRONICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MSE_G511_369_b3cf7e55-40bc-447a-8402-74a423137c19-8e24f646-1ce5-4608-a619-fbd2a1cbdb5b.pdf"
+    },
+    {
+        "course_code": "MSE G513",
+        "course_name": "MAINTENANCE ENGINEERING",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MSE_G513_917_0312116b-494b-46a5-9356-a67c47e5642f-8be17c3b-e948-4171-a5de-83de8554a7c7.pdf"
+    },
+    {
+        "course_code": "MSE G601",
+        "course_name": "Supply Chain Management",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MSE_G601_2797_1d2de251-9643-4f7a-82fa-acf477332733-265a58eb-bfa9-4ae7-8ff6-67dfc9186e2f.pdf"
+    },
+    {
+        "course_code": "MST F331",
+        "course_name": "MATERIALS CHARACTERIZATION",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MST_F331_1931_38cb78ec-8b78-40ab-adce-29454d46505b-de044698-a549-48ae-b30a-205811eae5e5.pdf"
+    },
+    {
+        "course_code": "MST G521",
+        "course_name": "MATERIAL CHARACTERIZATION TECH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/MST_G521_2515_a4ae707e-41bc-498f-89f2-bacd57172716-a6f68bed-27ce-4d6d-99f8-b53e733524c8.pdf"
+    },
+    {
+        "course_code": "PHA F214",
+        "course_name": "ANATOMY PHYSIO &amp; HYGIENE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_F214_1087_4273977a-3197-45f1-bb4a-ef14e28489e9-bbf72e30-3782-4062-aa55-64fddc6047da.pdf"
+    },
+    {
+        "course_code": "PHA F216",
+        "course_name": "PHARMACEUTICAL FORMULATIONS I",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_F216_2504_7c8cf4cc-8f6d-41ec-ac8c-1aa1fb2df73c_c81f7622-5ae3-413d-9e30-8789d4c163df.pdf"
+    },
+    {
+        "course_code": "PHA F241",
+        "course_name": "PHARMACEUTICAL CHEMISTRY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_F241_1291_d6bf263e-d328-4053-8d0e-6dc14e17d7e3-963bf6b3-82eb-4ce5-a643-d8f218200352.pdf"
+    },
+    {
+        "course_code": "PHA F316",
+        "course_name": "PHARMACEUTICAL REGULATORY SCI",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_F316_2507_0d6dc0f9-51d8-44d9-97ca-0929dbcb55f8-e11e7b4c-9f6b-40d3-a161-fe4423e7ca59.pdf"
+    },
+    {
+        "course_code": "PHA F341",
+        "course_name": "PHARMACOLOGY II",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_F341_1296_33e939c4-1f7c-46a3-b7f9-6ae8c54dd53c-bcf8ef47-b3b7-4173-8a6e-99896833754c.pdf"
+    },
+    {
+        "course_code": "PHA F342",
+        "course_name": "MEDICINAL CHEMISTRY II",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_F342_1298_58de2324-be2c-4ddb-ade0-bc1aa73dcbf7-f497aff8-e0a8-464d-9c9b-0a81827428c5.pdf"
+    },
+    {
+        "course_code": "PHA F343",
+        "course_name": "FORENSIC PHARMACY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_F343_1301_a626d725-7338-4025-95a2-9a71e1b6131f-4269735b-86b6-42a3-ad9c-39238937b643.pdf"
+    },
+    {
+        "course_code": "PHA F344",
+        "course_name": "NATURAL DRUGS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_F344_1302_ee21116f-a1ab-4333-933f-7e061abc866d-c9023892-141b-4498-9293-3d526a4192d1.pdf"
+    },
+    {
+        "course_code": "PHA F417",
+        "course_name": "PHARMACOECONOMICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_F417_1307_7c556b56-dbf4-44bc-827d-c00b800da834-3cd547bf-32d5-40f2-9211-e8a0c09f13e2.pdf"
+    },
+    {
+        "course_code": "PHA F418",
+        "course_name": "BIOPHARMACEUTIC &amp; PHARMACOKINE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_F418_2509_560658b4-5f71-41bc-a955-76bffcd48d01-a571fc1e-8940-46cd-9da1-213262f50183.pdf"
+    },
+    {
+        "course_code": "PHA F422",
+        "course_name": "COSMETICS SCIENCE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_F422_1308_c77c4337-082f-4071-8788-11d6e694ed0d-14d920a1-e669-41fd-bed6-a8491506709f.pdf"
+    },
+    {
+        "course_code": "PHA G522",
+        "course_name": "CHEM OF MACROMOLECULES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_G522_525_df254d22-00e8-4572-aa3b-6bb60c2c3cbb-6a28ca92-4c16-4d08-a2cc-dbbe185a4279.pdf"
+    },
+    {
+        "course_code": "PHA G535",
+        "course_name": "BIOMATERIALS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_G535_2382_32882498-2d2d-4e1b-813c-b89b48caac05-0c2aeb80-1cdc-4cd5-97b2-1d460940325f.pdf"
+    },
+    {
+        "course_code": "PHA G611",
+        "course_name": "ADVANCED PHARMACOLOGY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_G611_67_93be0755-f15c-434d-ba2d-b53141a0cdec_d3fc3c15-abea-4910-887b-84dee7cf3291.pdf"
+    },
+    {
+        "course_code": "PHA G614",
+        "course_name": "CLINICAL PHARMA &amp; THERAP",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_G614_953_cb4427b7-293a-4cfc-a47f-d2ce09105a60-2d786412-1988-46b9-bda6-7746afb36e9c.pdf"
+    },
+    {
+        "course_code": "PHA G632",
+        "course_name": "DOSAGE FORM DESIGN",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHA_G632_721_fa293d94-e7ee-47cb-9a39-1b556af47965-5794dfdf-3139-4759-89a4-bc5d8dce38d3.pdf"
+    },
+    {
+        "course_code": "PHY F101",
+        "course_name": "OSCILLATIONS AND WAVES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F101_2891_c8a56d5d-d22b-43b5-8806-2ac76fd00756-4c1132b7-c4d8-4b26-b8ef-35a906aaf8d3.pdf"
+    },
+    {
+        "course_code": "PHY F111",
+        "course_name": "MECH OSCILLATIONS &amp; WAVE",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F111_1015_d2f05c50-385e-455e-a63e-d563022754da-471e0fc0-967f-4f83-b29c-6fd31afd85f5.pdf"
+    },
+    {
+        "course_code": "PHY F215",
+        "course_name": "INTRO TO ASTRO &amp; ASTROPH",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F215_1493_b39c531f-1df5-4b10-92ad-40beea26cc2d-74f906cf-fb2e-473f-932a-7b0533c2e305.pdf"
+    },
+    {
+        "course_code": "PHY F241",
+        "course_name": "ELECTROMAGNETIC THEO II",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F241_1482_7467de50-f8ad-4009-a60b-877a36feeb3e-202d55ef-47cc-49dd-aa4d-cea7be76e618.pdf"
+    },
+    {
+        "course_code": "PHY F242",
+        "course_name": "QUANTUM MECHANICS I",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F242_1483_bb01e20c-5cc6-4b85-8158-1f4bfe2e1b37-7b9595cd-f96f-4997-b73e-2a72f326496a.pdf"
+    },
+    {
+        "course_code": "PHY F243",
+        "course_name": "MATH METHODS OF PHYSICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F243_1484_ba003510-4a41-4af8-a870-6bc0175e6a86-e56a721a-7ba1-46ba-9a9c-5ecbbd3a9f66.pdf"
+    },
+    {
+        "course_code": "PHY F244",
+        "course_name": "MODREN PHYSICS LAB",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F244_1485_4b50df6b-0a5c-49c2-8f96-118088f6011b-5bdef10d-cfe4-4d86-8281-7a2dc5ea8f72.pdf"
+    },
+    {
+        "course_code": "PHY F315",
+        "course_name": "THEORY OF RELATIVITY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F315_1494_8afd2643-0312-4a46-89d3-6b47b6aed284-98341255-d73b-4e53-bdfc-1778f7c768c3.pdf"
+    },
+    {
+        "course_code": "PHY F341",
+        "course_name": "SOLID STATE PHYSICS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F341_1489_8ab9fb44-672c-4915-8ea1-1016508c7d86-6acda8dc-b7ef-4a13-a83e-57fc15af5195.pdf"
+    },
+    {
+        "course_code": "PHY F342",
+        "course_name": "ATOMIC &amp; MOLECULAR PHY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F342_1490_c479893f-8564-4e45-b6d8-a99229fa088b-54ddeb52-62ee-4ce1-a8ef-cd2f6446ae49.pdf"
+    },
+    {
+        "course_code": "PHY F343",
+        "course_name": "NUCLEAR &amp; PARTICLE PHY",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F343_1491_f21f9f87-b609-470c-b37b-6eecb459eb68-dedadd61-3eac-463a-916c-ede7a3ada34f.pdf"
+    },
+    {
+        "course_code": "PHY F344",
+        "course_name": "ADVANCED PHYSICS LAB",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F344_1492_44a6ed6c-2c06-4228-9ecf-9a77a74b7a92-665f828f-882e-4189-936f-4010f9390ac9.pdf"
+    },
+    {
+        "course_code": "PHY F415",
+        "course_name": "GEN THEO OF REL &amp; COSMO",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_F415_1498_c926f6a7-b125-43e2-8c65-bacabf882dda-bbed3d8c-073c-4542-a7c7-5a2d52b546c6.pdf"
+    },
+    {
+        "course_code": "PHY G515",
+        "course_name": "CONDENSED MATTER PHY I",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/PHY_G515_2112_d550cccd-8653-4fe5-b975-b40949556246-ca0d90c2-a4c2-4e2c-bd34-eee7174e6e45.pdf"
+    },
+    {
+        "course_code": "SS G552",
+        "course_name": "SOFTWARE TESTING METHODS",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/SS_G552_485_ea27014e-e1f1-4cdd-a5ae-89ac2c69f2d0-37726f63-ce94-4dd9-a7f1-c154b6622a1c.pdf"
+    },
+    {
+        "course_code": "SS G653",
+        "course_name": "SOFTWARE ARCHITECHTURES",
+        "handout_link": "https://academic.bits-pilani.ac.in/Faculty/Course_Handouts/Handout_Files/Current_Handouts/SS_G653_333_5b6e93b6-ebc2-48d1-9474-5fdb88d533d5_fd1836c9-16bc-4549-9e8c-b96319c8f43d.pdf"
+    }
+]

@@ -7,6 +7,8 @@ import { protect, requireAdmin } from '../../core/auth/middleware';
 import { MoodleError } from './moodle.service';
 
 import moodleRouter from './moodle.router';
+import sectionsRouter from './sections.routes';
+import studyDeckAuthRouter from './studydeck-auth.routes';
 
 /**
  * Academics Module Routes
@@ -15,8 +17,19 @@ import moodleRouter from './moodle.router';
 
 const academics = new Hono();
 
+// Test route to verify academics module is working
+academics.get('/test', (c) => {
+  return c.json({ message: 'Academics module is working!' });
+});
+
 // Mount Moodle routes
 academics.route('/moodle', moodleRouter);
+
+// Mount Sections routes
+academics.route('/sections', sectionsRouter);
+
+// Mount StudyDeck Auth routes
+academics.route('/studydeck', studyDeckAuthRouter);
 
 /**
  * Validation Schemas
@@ -124,7 +137,7 @@ academics.post('/sync', protect, zValidator('json', moodleSyncSchema), async (c)
 
 /**
  * GET /my-courses
- * Get authenticated user's courses with resource counts
+ * Get authenticated user's courses with full details (sections, schedules, handouts, resources)
  * Requires authentication
  */
 academics.get('/my-courses', protect, async (c) => {
@@ -134,15 +147,11 @@ academics.get('/my-courses', protect, async (c) => {
       return errorResponse(c, 'User not authenticated', 401);
     }
 
-    const coursesWithResources = await academicsService.getUserCoursesWithResources(user.id);
+    const coursesWithDetails = await academicsService.getUserCoursesWithFullDetails(user.id);
 
     return successResponse(c, {
-      courses: coursesWithResources.map((item) => ({
-        ...item.course,
-        enrollment: item.enrollment,
-        resourceCount: item.resourceCount,
-      })),
-      count: coursesWithResources.length,
+      courses: coursesWithDetails,
+      count: coursesWithDetails.length,
     });
 
   } catch (error) {

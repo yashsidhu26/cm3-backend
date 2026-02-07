@@ -17,116 +17,117 @@ import {
 const gmailAuthRoutes = new Hono();
 
 /**
- * GET /auth/url
+ * GET /auth/url (Legacy)
+ * GET /auth/gmail/connect (New)
  * Returns Google OAuth2 authorization URL for Gmail
  * Requires authentication
  */
-gmailAuthRoutes.get('/url', protect, (c) => {
+const getAuthUrlHandler = (c: any) => {
   try {
     const authUrl = getAuthUrl();
-    return c.json({ authUrl });
+    return c.json({ success: true, data: { url: authUrl } });
   } catch (e: any) {
     return c.json(
       {
-        error: e?.message || 'Missing Gmail OAuth env (GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REDIRECT_URI)',
-        code: 'OAUTH_CONFIG_ERROR'
+        success: false,
+        error: {
+          message: e?.message || 'Missing Gmail OAuth env (GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REDIRECT_URI)',
+          code: 'OAUTH_CONFIG_ERROR'
+        }
       },
       500
     );
   }
-});
+};
+
+gmailAuthRoutes.get('/url', protect, getAuthUrlHandler);
+gmailAuthRoutes.get('/gmail/connect', protect, getAuthUrlHandler);
 
 /**
- * GET /auth/callback?code=...
+ * GET /auth/callback?code=... (Legacy)
+ * GET /auth/gmail/callback?code=... (New)
  * OAuth callback: exchange code for tokens, store them for the authenticated user
  * Requires authentication
  */
-gmailAuthRoutes.get('/callback', protect, async (c) => {
+const callbackHandler = async (c: any) => {
   const code = c.req.query('code');
   const user = c.get('user');
 
+  // Get frontend URL from env or default
+  const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+
   if (!code) {
-    return c.html(
-      `<!DOCTYPE html><html><head><title>Auth Failed</title></head><body><p>Missing authorization code.</p><script>if (window.opener) { window.opener.postMessage({ type: 'gmail-auth-done', success: false, error: 'missing_code' }, '*'); window.close(); }</script></body></html>`,
-      400
-    );
+    // Redirect to frontend with error
+    return c.redirect(`${FRONTEND_URL}?gmail_auth=failed&error=missing_code`);
   }
 
   try {
     await exchangeCodeForTokens(code, user!.id);
 
-    return c.html(
-      `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Gmail Authorized</title>
-  <style>
-    body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-    .container { text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.1); border-radius: 16px; backdrop-filter: blur(10px); }
-    h1 { margin: 0 0 1rem 0; font-size: 2rem; }
-    p { margin: 0; opacity: 0.9; }
-    .checkmark { font-size: 4rem; margin-bottom: 1rem; animation: scaleIn 0.3s ease-out; }
-    @keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="checkmark">✅</div>
-    <h1>Gmail Connected!</h1>
-    <p>You can close this window and return to the app.</p>
-  </div>
-  <script>
-    if (window.opener) {
-      window.opener.postMessage({ type: 'gmail-auth-done', success: true }, '*');
-      setTimeout(() => window.close(), 1500);
-    }
-  </script>
-</body>
-</html>`
-    );
+    // Redirect to frontend with success
+    return c.redirect(`${FRONTEND_URL}?gmail_auth=success`);
   } catch (e: any) {
     console.error('[gmail-auth] Callback error:', e);
-    return c.html(
-      `<!DOCTYPE html><html><head><title>Auth Failed</title></head><body><p>Error: ${escapeHtml(e?.message || 'Unknown error')}</p><script>if (window.opener) { window.opener.postMessage({ type: 'gmail-auth-done', success: false, error: 'exchange_failed' }, '*'); window.close(); }</script></body></html>`,
-      500
-    );
+
+    // Redirect to frontend with error
+    const errorMsg = encodeURIComponent(e?.message || 'Unknown error');
+    return c.redirect(`${FRONTEND_URL}?gmail_auth=failed&error=${errorMsg}`);
   }
-});
+};
+
+gmailAuthRoutes.get('/callback', protect, callbackHandler);
+gmailAuthRoutes.get('/gmail/callback', protect, callbackHandler);
 
 /**
- * GET /auth/status
+ * GET /auth/status (Legacy)
+ * GET /auth/gmail/status (New)
  * Returns Gmail connection status for the authenticated user
  * Requires authentication
  */
-gmailAuthRoutes.get('/status', protect, async (c) => {
+const statusHandler = async (c: any) => {
   const user = c.get('user');
 
   try {
     const status = await getAuthStatus(user!.id);
-    return c.json(status);
+    return c.json({ success: true, data: status });
   } catch (e: any) {
     console.error('[gmail-auth] Status error:', e);
-    return c.json({ error: 'Failed to get status', code: 'STATUS_ERROR' }, 500);
+    return c.json({
+      success: false,
+      error: { message: 'Failed to get status', code: 'STATUS_ERROR' }
+    }, 500);
   }
-});
+};
+
+gmailAuthRoutes.get('/status', protect, statusHandler);
+gmailAuthRoutes.get('/gmail/status', protect, statusHandler);
 
 /**
- * DELETE /auth/revoke
+ * DELETE /auth/revoke (Legacy)
+ * POST /auth/gmail/disconnect (New)
  * Revoke Gmail access and remove tokens from database
  * Requires authentication
  */
-gmailAuthRoutes.delete('/revoke', protect, async (c) => {
+const revokeHandler = async (c: any) => {
   const user = c.get('user');
 
   try {
     await revokeTokens(user!.id);
-    return c.json({ success: true, message: 'Gmail access revoked' });
+    return c.json({
+      success: true,
+      data: { message: 'Gmail access revoked' }
+    });
   } catch (e: any) {
     console.error('[gmail-auth] Revoke error:', e);
-    return c.json({ error: 'Failed to revoke access', code: 'REVOKE_ERROR' }, 500);
+    return c.json({
+      success: false,
+      error: { message: 'Failed to revoke access', code: 'REVOKE_ERROR' }
+    }, 500);
   }
-});
+};
+
+gmailAuthRoutes.delete('/revoke', protect, revokeHandler);
+gmailAuthRoutes.post('/gmail/disconnect', protect, revokeHandler);
 
 /**
  * GET /auth/email
