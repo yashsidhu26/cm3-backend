@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, timestamp, boolean, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, timestamp, boolean, pgEnum, decimal, integer } from 'drizzle-orm/pg-core';
 
 /**
  * Auth Module Schema - Better Auth Tables
@@ -18,11 +18,19 @@ export const user = pgTable('user', {
   email: varchar('email', { length: 255 }).notNull().unique(),
   emailVerified: boolean('email_verified').notNull().default(false),
   image: text('image'),
-  
+
   // Custom fields for our app
   role: userRoleEnum('role').notNull().default('student'),
   bitsId: varchar('bits_id', { length: 50 }),
-  
+
+  // Marketplace fields (PII - Privacy Protected)
+  phoneNumber: varchar('phone_number', { length: 20 }),
+  hostelRoom: varchar('hostel_room', { length: 50 }),
+
+  // Trust rating (calculated from reviews)
+  trustRating: decimal('trust_rating', { precision: 3, scale: 2 }).default('0.00'),
+  reviewsCount: integer('reviews_count').default(0),
+
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
