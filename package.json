@@ -13,16 +13,18 @@
     "db:studio": "drizzle-kit studio",
     "db:push": "drizzle-kit push:pg",
     "test": "bun run test-api.ts",
-    "test:gmail-auth": "bun test src/modules/gmail-auth --preload ./src/modules/gmail-auth/test-setup.ts",
+    "test:gmail-auth": "bun test src/modules/gmail-auth/gmail-auth.service.test.ts --preload ./src/modules/gmail-auth/test-setup.ts && bun test src/modules/gmail-auth/gmail-auth.routes.test.ts --preload ./src/modules/gmail-auth/test-setup.ts",
     "test:watch": "bun --watch test-api.ts"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@hono/zod-validator": "^0.2.0",
     "better-auth": "^1.4.18",
     "drizzle-orm": "^0.30.0",
     "extend": "^3.0.2",
     "googleapis": "^171.4.0",
     "hono": "^4.11.7",
+    "openai": "^6.18.0",
     "postgres": "^3.4.0",
     "zod": "^3.22.0"
   },

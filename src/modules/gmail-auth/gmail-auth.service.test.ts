@@ -177,13 +177,8 @@ describe('gmail-auth.service', () => {
         return;
       }
 
-      // Insert a token
-      await db.insert(gmailToken).values({
-        userId: testUserId,
-        encryptedAccessToken: 'plaintext-should-be-encrypted',
-        encryptedRefreshToken: 'refresh-should-be-encrypted',
-        email: 'test@gmail.com',
-      });
+      // Use the service to exchange code for tokens (which should trigger encryption)
+      await exchangeCodeForTokens('mock-code', testUserId);
 
       // Read directly from database
       const record = await db.query.gmailToken.findFirst({
@@ -191,15 +186,12 @@ describe('gmail-auth.service', () => {
       });
 
       // Verify tokens are stored in encrypted format (contains colons from iv:authTag:encrypted)
-      expect(record?.encryptedAccessToken).toBeDefined();
-      expect(record?.encryptedRefreshToken).toBeDefined();
+      expect(record?.encryptedAccessToken).toContain(':');
+      expect(record?.encryptedRefreshToken).toContain(':');
 
-      // If encryption is working, the stored value should be different from plaintext
-      // and should contain the encryption format markers
-      if (process.env.ENCRYPTION_KEY) {
-        expect(record?.encryptedAccessToken).not.toBe('plaintext-should-be-encrypted');
-        expect(record?.encryptedRefreshToken).not.toBe('refresh-should-be-encrypted');
-      }
+      // Verify they are not the mock values from test-setup.ts
+      expect(record?.encryptedAccessToken).not.toBe('mock-access-token');
+      expect(record?.encryptedRefreshToken).not.toBe('mock-refresh-token');
     });
   });
 

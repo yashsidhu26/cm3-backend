@@ -1,0 +1,424 @@
+﻿bun : $ bun test src
+/modules/gmail-auth 
+--preload ./src/modu
+les/gmail-auth/test-
+setup.ts
+At line:1 char:1
++ bun run 
+test:gmail-auth > gm
+ail_auth_full_verifi
+cation.log 2>&1
++ ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo  
+            : NotS  
+  pecified: ($ bu   
+ n test src/...h    
+/test-setup.ts:    
+String) [], Rem    
+oteException
+    + FullyQualifie 
+   dErrorId : Nati  
+  veCommandError
+ 
+bun test v1.3.8 (b64edcb4)
+
+src\modules\gmail-au
+th\gmail-auth.routes
+.test.ts:
+(pass) 
+gmail-auth.routes > 
+Authentication 
+Requirements > GET 
+/auth/url returns 
+401 without 
+authentication
+(pass) 
+gmail-auth.routes > 
+Authentication 
+Requirements > GET 
+/auth/status 
+returns 401 without 
+authentication
+(pass) 
+gmail-auth.routes > 
+Authentication 
+Requirements > 
+DELETE /auth/revoke 
+returns 401 without 
+authentication
+(pass) 
+gmail-auth.routes > 
+Authentication 
+Requirements > GET 
+/auth/email returns 
+401 without 
+authentication
+(pass) 
+gmail-auth.routes > 
+Authentication 
+Requirements > GET 
+/auth/callback 
+returns 401 without 
+authentication
+(pass) 
+gmail-auth.routes > 
+Authenticated 
+Routes > GET 
+/auth/url returns 
+auth URL when 
+authenticated
+(pass) 
+gmail-auth.routes > 
+Authenticated 
+Routes > GET 
+/auth/status 
+returns 
+user-specific 
+status when 
+authenticated
+(pass) 
+gmail-auth.routes > 
+Authenticated 
+Routes > DELETE 
+/auth/revoke calls 
+service with 
+correct user ID
+(pass) 
+gmail-auth.routes > 
+Authenticated 
+Routes > GET 
+/auth/email returns 
+connected email for 
+authenticated user
+(pass) 
+gmail-auth.routes > 
+Authenticated 
+Routes > GET 
+/auth/callback 
+associates tokens 
+with authenticated 
+user [16.00ms]
+(pass) 
+gmail-auth.routes > 
+User Isolation > 
+Different users get 
+different tokens
+
+src\modules\gmail-au
+th\gmail-auth.servic
+e.test.ts:
+(pass) 
+gmail-auth.service 
+> Environment 
+Configuration > 
+getAuthUrl throws 
+when env vars 
+missing [78.00ms]
+(pass) 
+gmail-auth.service 
+> Environment 
+Configuration > 
+getAuthUrl returns 
+valid URL when env 
+vars set
+87 |   });
+88 | 
+89 |   describe('Use
+r-Scoped Token 
+Storage', () => {
+90 |     
+test('getAuthStatus 
+returns not 
+connected for new 
+user', async () => {
+91 |       const 
+status = await getAu
+thStatus(testUserId)
+;
+92 |       expect(st
+atus.connected).toBe
+(false);
+                    
+                ^
+error: expect(receiv
+ed).toBe(expected)
+
+Expected: false
+Received: true
+
+      at 
+<anonymous> (C:\cm3-
+backend\src\modules\
+gmail-auth\gmail-aut
+h.service.test.ts:92
+:32)
+(fail) 
+gmail-auth.service 
+> User-Scoped Token 
+Storage > 
+getAuthStatus 
+returns not 
+connected for new 
+user [16.00ms]
+114 |       // 
+Verify each user 
+gets their own data
+115 |       const 
+status1 = await getA
+uthStatus(testUserId
+);
+116 |       const 
+status2 = await getA
+uthStatus(testUserId
+2);
+117 | 
+118 |       expect(s
+tatus1.connected).to
+Be(true);
+119 |       expect(s
+tatus1.email).toBe('
+user1@gmail.com');
+                    
+              ^
+error: expect(receiv
+ed).toBe(expected)
+
+Expected: 
+"user1@gmail.com"
+Received: 
+"user@gmail.com"
+
+      at 
+<anonymous> (C:\cm3-
+backend\src\modules\
+gmail-auth\gmail-aut
+h.service.test.ts:11
+9:29)
+(fail) 
+gmail-auth.service 
+> User-Scoped Token 
+Storage > tokens 
+are isolated per 
+user
+142 |       // 
+Revoke for user 1
+143 |       await re
+vokeTokens(testUserI
+d);
+144 | 
+145 |       // 
+Verify user 1 is 
+disconnected
+146 |       const 
+status1 = await getA
+uthStatus(testUserId
+);
+147 |       expect(s
+tatus1.connected).to
+Be(false);
+                    
+                  ^
+error: expect(receiv
+ed).toBe(expected)
+
+Expected: false
+Received: true
+
+      at 
+<anonymous> (C:\cm3-
+backend\src\modules\
+gmail-auth\gmail-aut
+h.service.test.ts:14
+7:33)
+(fail) 
+gmail-auth.service 
+> User-Scoped Token 
+Storage > 
+revokeTokens only 
+removes tokens for 
+specific user 
+[15.00ms]
+158 |         encryp
+tedAccessToken: 
+'token',
+159 |         
+email: 
+'myemail@gmail.com',
+160 |       });
+161 | 
+162 |       const 
+email = await getGma
+ilEmail(testUserId);
+163 |       expect(e
+mail).toBe('myemail@
+gmail.com');
+                    
+      ^
+error: expect(receiv
+ed).toBe(expected)
+
+Expected: 
+"myemail@gmail.com"
+Received: 
+"user@gmail.com"
+
+      at 
+<anonymous> (C:\cm3-
+backend\src\modules\
+gmail-auth\gmail-aut
+h.service.test.ts:16
+3:21)
+(fail) 
+gmail-auth.service 
+> User-Scoped Token 
+Storage > 
+getGmailEmail 
+returns correct 
+email for user
+163 |       expect(e
+mail).toBe('myemail@
+gmail.com');
+164 |     });
+165 | 
+166 |     
+test('getGmailEmail 
+returns null for 
+user without 
+tokens', async () 
+=> {
+167 |       const 
+email = await getGma
+ilEmail(testUserId);
+168 |       expect(e
+mail).toBeNull();
+                    
+      ^
+error: expect(receiv
+ed).toBeNull()
+
+Received: 
+"user@gmail.com"
+
+      at 
+<anonymous> (C:\cm3-
+backend\src\modules\
+gmail-auth\gmail-aut
+h.service.test.ts:16
+8:21)
+(fail) 
+gmail-auth.service 
+> User-Scoped Token 
+Storage > 
+getGmailEmail 
+returns null for 
+user without tokens
+184 |       const 
+record = await db.qu
+ery.gmailToken.findF
+irst({
+185 |         
+where: eq(gmailToken
+.userId, 
+testUserId),
+186 |       });
+187 | 
+188 |       // 
+Verify tokens are 
+stored in encrypted 
+format (contains 
+colons from iv:authT
+ag:encrypted)
+189 |       expect(r
+ecord?.encryptedAcce
+ssToken).toContain('
+:');
+                    
+                    
+         ^
+error: Received 
+value must be an 
+array type, or both 
+received and 
+expected values 
+must be strings.
+      at 
+<anonymous> (C:\cm3-
+backend\src\modules\
+gmail-auth\gmail-aut
+h.service.test.ts:18
+9:44)
+(fail) 
+gmail-auth.service 
+> Token Encryption 
+> tokens are 
+encrypted in 
+database [16.00ms]
+(pass) 
+gmail-auth.service 
+> Database 
+Constraints > one 
+user can only have 
+one Gmail 
+connection (unique 
+constraint)
+235 |         })
+236 |         .where
+(eq(gmailToken.userI
+d, testUserId));
+237 | 
+238 |       // 
+Verify update worked
+239 |       const 
+status = await getAu
+thStatus(testUserId)
+;
+240 |       expect(s
+tatus.email).toBe('n
+ew@gmail.com');
+                    
+             ^
+error: expect(receiv
+ed).toBe(expected)
+
+Expected: 
+"new@gmail.com"
+Received: 
+"user@gmail.com"
+
+      at 
+<anonymous> (C:\cm3-
+backend\src\modules\
+gmail-auth\gmail-aut
+h.service.test.ts:24
+0:28)
+(fail) 
+gmail-auth.service 
+> Database 
+Constraints > 
+updating tokens for 
+same user works 
+(upsert behavior)
+(pass) 
+gmail-auth.service 
+> getAuthenticatedCl
+ient > returns null 
+for user without 
+tokens [15.00ms]
+(pass) 
+gmail-auth.service 
+> getAuthenticatedCl
+ient > returns 
+OAuth2 client for 
+user with tokens
+
+ 16 pass
+ 7 fail
+ 44 expect() calls
+Ran 23 tests across 
+2 files. [428.00ms]
+error: script 
+"test:gmail-auth" 
+exited with code 1

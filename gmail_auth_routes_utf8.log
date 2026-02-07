@@ -1,0 +1,242 @@
+﻿bun test v1.3.8 (b64edcb4)
+bun : 
+At line:1 char:1
++ bun test src/modul
+es/gmail-auth/gmail-
+auth.routes.test.ts 
+--preload s ...
++ ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo  
+            : NotS  
+  pecified: (:Str   
+ ing) [], Remote    
+Exception
+    + FullyQualifie 
+   dErrorId : Nati  
+  veCommandError
+ 
+src\modules\gmail-au
+th\gmail-auth.routes
+.test.ts:
+19 |   describe('Aut
+hentication 
+Requirements', () 
+=> {
+20 |     test('GET 
+/auth/url returns 
+401 without 
+authentication', 
+async () => {
+21 |       const 
+res = await app.requ
+est('/auth/url');
+22 |       expect(re
+s.status).toBe(401);
+23 |       const 
+body = await 
+res.json();
+24 |       expect(bo
+dy.code).toBe('UNAUT
+HORIZED');
+                    
+         ^
+error: expect(receiv
+ed).toBe(expected)
+
+Expected: 
+"UNAUTHORIZED"
+Received: undefined
+
+      at 
+<anonymous> (C:\cm3-
+backend\src\modules\
+gmail-auth\gmail-aut
+h.routes.test.ts:24:
+25)
+(fail) 
+gmail-auth.routes > 
+Authentication 
+Requirements > GET 
+/auth/url returns 
+401 without 
+authentication 
+[15.00ms]
+26 | 
+27 |     test('GET 
+/auth/status 
+returns 401 without 
+authentication', 
+async () => {
+28 |       const 
+res = await app.requ
+est('/auth/status');
+29 |       expect(re
+s.status).toBe(401);
+30 |       const 
+body = await 
+res.json();
+31 |       expect(bo
+dy.code).toBe('UNAUT
+HORIZED');
+                    
+         ^
+error: expect(receiv
+ed).toBe(expected)
+
+Expected: 
+"UNAUTHORIZED"
+Received: undefined
+
+      at 
+<anonymous> (C:\cm3-
+backend\src\modules\
+gmail-auth\gmail-aut
+h.routes.test.ts:31:
+25)
+(fail) 
+gmail-auth.routes > 
+Authentication 
+Requirements > GET 
+/auth/status 
+returns 401 without 
+authentication
+33 | 
+34 |     
+test('DELETE 
+/auth/revoke 
+returns 401 without 
+authentication', 
+async () => {
+35 |       const 
+res = await app.requ
+est('/auth/revoke', 
+{ method: 'DELETE' 
+});
+36 |       expect(re
+s.status).toBe(401);
+37 |       const 
+body = await 
+res.json();
+38 |       expect(bo
+dy.code).toBe('UNAUT
+HORIZED');
+                    
+         ^
+error: expect(receiv
+ed).toBe(expected)
+
+Expected: 
+"UNAUTHORIZED"
+Received: undefined
+
+      at 
+<anonymous> (C:\cm3-
+backend\src\modules\
+gmail-auth\gmail-aut
+h.routes.test.ts:38:
+25)
+(fail) 
+gmail-auth.routes > 
+Authentication 
+Requirements > 
+DELETE /auth/revoke 
+returns 401 without 
+authentication
+40 | 
+41 |     test('GET 
+/auth/email returns 
+401 without 
+authentication', 
+async () => {
+42 |       const 
+res = await app.requ
+est('/auth/email');
+43 |       expect(re
+s.status).toBe(401);
+44 |       const 
+body = await 
+res.json();
+45 |       expect(bo
+dy.code).toBe('UNAUT
+HORIZED');
+                    
+         ^
+error: expect(receiv
+ed).toBe(expected)
+
+Expected: 
+"UNAUTHORIZED"
+Received: undefined
+
+      at 
+<anonymous> (C:\cm3-
+backend\src\modules\
+gmail-auth\gmail-aut
+h.routes.test.ts:45:
+25)
+(fail) 
+gmail-auth.routes > 
+Authentication 
+Requirements > GET 
+/auth/email returns 
+401 without 
+authentication
+(pass) 
+gmail-auth.routes > 
+Authentication 
+Requirements > GET 
+/auth/callback 
+returns 401 without 
+authentication
+(pass) 
+gmail-auth.routes > 
+Authenticated 
+Routes > GET 
+/auth/url returns 
+auth URL when 
+authenticated
+(pass) 
+gmail-auth.routes > 
+Authenticated 
+Routes > GET 
+/auth/status 
+returns 
+user-specific 
+status when 
+authenticated
+(pass) 
+gmail-auth.routes > 
+Authenticated 
+Routes > DELETE 
+/auth/revoke calls 
+service with 
+correct user ID
+(pass) 
+gmail-auth.routes > 
+Authenticated 
+Routes > GET 
+/auth/email returns 
+connected email for 
+authenticated user
+(pass) 
+gmail-auth.routes > 
+Authenticated 
+Routes > GET 
+/auth/callback 
+associates tokens 
+with authenticated 
+user
+(pass) 
+gmail-auth.routes > 
+User Isolation > 
+Different users get 
+different tokens
+
+ 7 pass
+ 4 fail
+ 26 expect() calls
+Ran 11 tests across 
+1 file. [319.00ms]

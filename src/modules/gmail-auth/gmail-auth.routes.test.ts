@@ -20,29 +20,29 @@ describe('gmail-auth.routes', () => {
     test('GET /auth/url returns 401 without authentication', async () => {
       const res = await app.request('/auth/url');
       expect(res.status).toBe(401);
-      const body = await res.json();
-      expect(body.code).toBe('UNAUTHORIZED');
+      const body = (await res.json()) as any;
+      expect(body.error.code).toBe('UNAUTHORIZED');
     });
 
     test('GET /auth/status returns 401 without authentication', async () => {
       const res = await app.request('/auth/status');
       expect(res.status).toBe(401);
-      const body = await res.json();
-      expect(body.code).toBe('UNAUTHORIZED');
+      const body = (await res.json()) as any;
+      expect(body.error.code).toBe('UNAUTHORIZED');
     });
 
     test('DELETE /auth/revoke returns 401 without authentication', async () => {
       const res = await app.request('/auth/revoke', { method: 'DELETE' });
       expect(res.status).toBe(401);
-      const body = await res.json();
-      expect(body.code).toBe('UNAUTHORIZED');
+      const body = (await res.json()) as any;
+      expect(body.error.code).toBe('UNAUTHORIZED');
     });
 
     test('GET /auth/email returns 401 without authentication', async () => {
       const res = await app.request('/auth/email');
       expect(res.status).toBe(401);
-      const body = await res.json();
-      expect(body.code).toBe('UNAUTHORIZED');
+      const body = (await res.json()) as any;
+      expect(body.error.code).toBe('UNAUTHORIZED');
     });
 
     test('GET /auth/callback returns 401 without authentication', async () => {
@@ -76,7 +76,7 @@ describe('gmail-auth.routes', () => {
 
       const res = await authApp.request('/auth/url');
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.authUrl).toBeDefined();
       expect(body.authUrl).toContain('accounts.google.com');
     });
@@ -98,7 +98,7 @@ describe('gmail-auth.routes', () => {
 
       const res = await authApp.request('/auth/status');
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.connected).toBe(true);
       expect(body.email).toBe('user@gmail.com');
     });
@@ -114,7 +114,7 @@ describe('gmail-auth.routes', () => {
 
       const res = await authApp.request('/auth/revoke', { method: 'DELETE' });
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.success).toBe(true);
       expect(mockRevokeTokens).toHaveBeenCalledWith(mockUser.id);
     });
@@ -130,7 +130,7 @@ describe('gmail-auth.routes', () => {
 
       const res = await authApp.request('/auth/email');
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.email).toBe('user@gmail.com');
       expect(mockGetGmailEmail).toHaveBeenCalledWith(mockUser.id);
     });
