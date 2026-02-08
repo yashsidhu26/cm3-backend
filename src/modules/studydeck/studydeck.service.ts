@@ -227,18 +227,31 @@ class StudyDeckService {
 
   /**
    * Helper: Get course static ID from course code
-   * This is a placeholder - you'll need to implement proper mapping
+   * Queries the courses table to get the StudyDeck static ID
    */
   private async getCourseStaticId(courseCode: string): Promise<string | null> {
-    // TODO: Implement mapping from course code to StudyDeck course static ID
-    // This might involve:
-    // 1. A database table mapping course codes to StudyDeck IDs
-    // 2. An API call to StudyDeck to search for courses
-    // 3. A cached mapping
+    try {
+      const { db } = await import('../../core/database/client');
+      const { courses } = await import('../academics/academics.schema');
+      const { eq } = await import('drizzle-orm');
 
-    // For now, return null - you'll need to implement this based on your needs
-    console.warn(`getCourseStaticId not implemented for course: ${courseCode}`);
-    return null;
+      // Query courses table for the staticId
+      const [course] = await db
+        .select({ staticId: courses.staticId })
+        .from(courses)
+        .where(eq(courses.code, courseCode))
+        .limit(1);
+
+      if (!course || !course.staticId) {
+        console.warn(`[StudyDeck] No static ID found for course: ${courseCode}`);
+        return null;
+      }
+
+      return course.staticId;
+    } catch (error) {
+      console.error(`[StudyDeck] Error getting static ID for ${courseCode}:`, error);
+      return null;
+    }
   }
 }
 

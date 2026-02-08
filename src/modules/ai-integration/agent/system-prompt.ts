@@ -1,46 +1,18 @@
 /**
  * System Prompt Builder for Agent
+ * Separated into static (cacheable) and dynamic (per-request) parts
  */
 
 import type { ResponseFormat } from '../types';
 
-export function buildAgentSystemPrompt(format?: ResponseFormat): string {
-  const currentDate = new Date();
-  const day = String(currentDate.getDate()).padStart(2, '0');
-  const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-  const year = currentDate.getFullYear();
-  const dateString = `${day}/${month}/${year}`; // DD/MM/YYYY format
-  const dayOfWeek = currentDate.toLocaleDateString('en-US', { weekday: 'long' });
-
-  let formatInstructions = '';
-  if (format) {
-    switch (format) {
-      case 'schedule':
-        formatInstructions =
-          '\n**Response Format**: Provide a detailed schedule or timeline with specific time slots and activities.';
-        break;
-      case 'json':
-        formatInstructions =
-          '\n**Response Format**: Return structured JSON data that can be easily parsed by the frontend.';
-        break;
-      case 'overview':
-        formatInstructions =
-          '\n**Response Format**: Provide a comprehensive overview with sections, bullet points, and clear organization.';
-        break;
-      default:
-        formatInstructions = '\n**Response Format**: Provide a clear, conversational response.';
-    }
-  }
-
-  return `You are an intelligent AI assistant powered by Google Gemini for a student super-app at BITS Pilani (India).
+/**
+ * STATIC PROMPT - Cacheable (doesn't change between requests)
+ * This is the bulk of the prompt (~11 KB) that can be cached
+ */
+export const STATIC_SYSTEM_PROMPT = `You are an intelligent AI assistant powered by Google Gemini for a student super-app at BITS Pilani (India).
 You have access to the student's academic data, schedule, tasks, finances, Moodle LMS, and more through the tools provided to you.
 
-**Your AI Model**: You are running on ${format === 'schedule' || format === 'overview' ? 'gemini-3-flash-preview (advanced reasoning)' : 'gemini-2.5-flash-lite (fast responses)'}
-
-**Current date**: ${dateString}
-**Current day**: ${dayOfWeek}
 **Location**: India (use DD/MM/YYYY date format, IST timezone)
-${formatInstructions}
 
 **DATE FORMAT RULES**:
 - ALWAYS use DD/MM/YYYY format (e.g., 15/03/2024, NOT 03/15/2024)
@@ -201,4 +173,52 @@ You can help users track skills they want to learn, manage learning resources, a
 ✅ add_skill_resource, update_skill_resource, delete_skill_resource
 
 **Remember**: You're here to help students manage their academic life efficiently. Be encouraging, supportive, and actionable.`;
+
+/**
+ * DYNAMIC PROMPT - Changes per request (date, format, model)
+ * This is small (~200 bytes) and not cached
+ */
+export function buildDynamicContext(format?: ResponseFormat): string {
+  const currentDate = new Date();
+  const day = String(currentDate.getDate()).padStart(2, '0');
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+  const year = currentDate.getFullYear();
+  const dateString = `${day}/${month}/${year}`; // DD/MM/YYYY format
+  const dayOfWeek = currentDate.toLocaleDateString('en-US', { weekday: 'long' });
+
+  let formatInstructions = '';
+  if (format) {
+    switch (format) {
+      case 'schedule':
+        formatInstructions = 'Provide a detailed schedule or timeline with specific time slots and activities.';
+        break;
+      case 'json':
+        formatInstructions = 'Return structured JSON data that can be easily parsed by the frontend.';
+        break;
+      case 'overview':
+        formatInstructions = 'Provide a comprehensive overview with sections, bullet points, and clear organization.';
+        break;
+      default:
+        formatInstructions = 'Provide a clear, conversational response.';
+    }
+  }
+
+  const modelInfo = format === 'schedule' || format === 'overview'
+    ? 'gemini-3-flash-preview (advanced reasoning)'
+    : 'gemini-2.5-flash-lite (fast responses)';
+
+  return `
+**Current Context**:
+- Date: ${dateString} (${dayOfWeek})
+- AI Model: ${modelInfo}
+${formatInstructions ? `- Response Format: ${formatInstructions}` : ''}
+`;
+}
+
+/**
+ * Legacy function - builds full prompt without caching
+ * Use buildDynamicContext() with STATIC_SYSTEM_PROMPT for caching
+ */
+export function buildAgentSystemPrompt(format?: ResponseFormat): string {
+  return STATIC_SYSTEM_PROMPT + '\n' + buildDynamicContext(format);
 }

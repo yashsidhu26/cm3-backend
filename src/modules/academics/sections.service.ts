@@ -417,8 +417,32 @@ export class SectionsService {
 
   /**
    * Get available sections for a course with registration status
+   * Fetches fresh data from StudyDeck if course has staticId
    */
   async getAvailableSections(courseId: string, userId: string) {
+    // Get course details to check for staticId
+    const [course] = await db
+      .select()
+      .from(courses)
+      .where(eq(courses.id, courseId))
+      .limit(1);
+
+    if (!course) {
+      throw new Error('Course not found');
+    }
+
+    // If course has staticId, sync from StudyDeck first
+    if (course.staticId) {
+      try {
+        console.log(`[Sections] Syncing fresh sections from StudyDeck for ${course.code}`);
+        await this.syncCourseSections(courseId, course.staticId);
+      } catch (error: any) {
+        console.error('[Sections] Failed to sync from StudyDeck, using cached data:', error.message);
+        // Continue with cached data if sync fails
+      }
+    }
+
+    // Get sections from database (either freshly synced or cached)
     const sections = await db
       .select()
       .from(courseSections)

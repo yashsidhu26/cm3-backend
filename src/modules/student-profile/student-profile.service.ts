@@ -277,30 +277,53 @@ export class StudentProfileService {
         // Get what's up next from schedule (next upcoming item, no matter how far)
         let whatsUpNext = null;
         if (activeSchedule) {
-            const [nextItem] = await db.select()
+            // Get all schedule items (both recurring and one-time)
+            const allItems = await db.select()
                 .from(scheduleItems)
-                .where(
-                    and(
-                        eq(scheduleItems.scheduleId, activeSchedule.id),
-                        gte(scheduleItems.startDateTime, now)
-                    )
-                )
-                .orderBy(scheduleItems.startDateTime)
-                .limit(1);
+                .where(eq(scheduleItems.scheduleId, activeSchedule.id));
 
-            if (nextItem) {
+            // Calculate next occurrence for each item
+            const itemsWithNextOccurrence = allItems
+                .map(item => {
+                    let nextOccurrence: Date;
+
+                    if (item.isRecurring && item.recurrencePattern === 'weekly' && item.dayOfWeek) {
+                        // For recurring weekly items, calculate next occurrence
+                        nextOccurrence = this.calculateNextWeeklyOccurrence(
+                            item.dayOfWeek,
+                            item.startDateTime
+                        );
+                    } else {
+                        // For one-time events, use the startDateTime as-is
+                        nextOccurrence = item.startDateTime;
+                    }
+
+                    return {
+                        item,
+                        nextOccurrence,
+                    };
+                })
+                .filter(({ nextOccurrence }) => nextOccurrence >= now) // Only future occurrences
+                .sort((a, b) => a.nextOccurrence.getTime() - b.nextOccurrence.getTime()); // Sort by time
+
+            // Get the next upcoming item
+            if (itemsWithNextOccurrence.length > 0) {
+                const { item, nextOccurrence } = itemsWithNextOccurrence[0];
+
                 whatsUpNext = {
-                    id: nextItem.id,
-                    type: nextItem.type,
-                    title: nextItem.title,
-                    description: nextItem.description,
-                    startDateTime: nextItem.startDateTime.toISOString(),
-                    endDateTime: nextItem.endDateTime?.toISOString(),
-                    location: nextItem.location,
-                    linkedEntityType: nextItem.linkedEntityType,
-                    color: nextItem.color,
+                    id: item.id,
+                    type: item.type,
+                    title: item.title,
+                    description: item.description,
+                    startDateTime: nextOccurrence.toISOString(),
+                    endDateTime: item.endDateTime?.toISOString(),
+                    location: item.location,
+                    linkedEntityType: item.linkedEntityType,
+                    color: item.color,
+                    isRecurring: item.isRecurring,
+                    dayOfWeek: item.dayOfWeek,
                     // Calculate time until event
-                    timeUntil: this.calculateTimeUntil(nextItem.startDateTime),
+                    timeUntil: this.calculateTimeUntil(nextOccurrence),
                 };
             }
         }
@@ -338,6 +361,50 @@ export class StudentProfileService {
             behavior: behaviorAnalysis,
             aiTips: this.generateAiTips(assignments, evaluations, whatsUpNext),
         };
+    }
+
+    /**
+     * Calculate next occurrence of a weekly recurring event
+     * Takes a day of week and a template time, returns next occurrence from now
+     */
+    private calculateNextWeeklyOccurrence(dayOfWeek: string, templateDateTime: Date): Date {
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const targetDayIndex = daysOfWeek.indexOf(dayOfWeek);
+
+        if (targetDayIndex === -1) {
+            return templateDateTime; // Fallback if invalid day
+        }
+
+        const now = new Date();
+        const currentDayIndex = now.getDay();
+
+        // Extract time from template (in UTC to match how we store them)
+        const hours = templateDateTime.getUTCHours();
+        const minutes = templateDateTime.getUTCMinutes();
+
+        // Calculate days until next occurrence
+        let daysUntil = targetDayIndex - currentDayIndex;
+
+        // If target day is today, check if time has passed
+        if (daysUntil === 0) {
+            const todayAtTargetTime = new Date(now);
+            todayAtTargetTime.setUTCHours(hours, minutes, 0, 0);
+
+            // If time has passed, use next week
+            if (todayAtTargetTime <= now) {
+                daysUntil = 7;
+            }
+        } else if (daysUntil < 0) {
+            // Target day already passed this week, use next week
+            daysUntil += 7;
+        }
+
+        // Create next occurrence date
+        const nextOccurrence = new Date(now);
+        nextOccurrence.setDate(now.getDate() + daysUntil);
+        nextOccurrence.setUTCHours(hours, minutes, 0, 0);
+
+        return nextOccurrence;
     }
 
     /**

@@ -395,14 +395,18 @@ Be thorough and specific. Format in a clear, organized way.`,
     try {
       const { studydeckService } = await import('../../studydeck/studydeck.service');
 
-      // Get user's StudyDeck token
-      const jwtToken = await studydeckService.getUserToken(userId);
+      // Get user's StudyDeck token, fallback to environment variable
+      let jwtToken = await studydeckService.getUserToken(userId);
+
+      if (!jwtToken) {
+        jwtToken = process.env.STUDYDECK_JWT_TOKEN || null;
+      }
 
       if (!jwtToken) {
         return {
-          error: 'StudyDeck not connected',
+          error: 'StudyDeck not configured',
           message:
-            'You need to connect your StudyDeck account first to access lecture slides and study materials.',
+            'StudyDeck access is not configured. Please set STUDYDECK_JWT_TOKEN in environment variables or connect your StudyDeck account.',
         };
       }
 
@@ -454,13 +458,17 @@ Be thorough and specific. Format in a clear, organized way.`,
     try {
       const { studydeckService } = await import('../../studydeck/studydeck.service');
 
-      // Get user's StudyDeck token
-      const jwtToken = await studydeckService.getUserToken(userId);
+      // Get user's StudyDeck token, fallback to environment variable
+      let jwtToken = await studydeckService.getUserToken(userId);
+
+      if (!jwtToken) {
+        jwtToken = process.env.STUDYDECK_JWT_TOKEN || null;
+      }
 
       if (!jwtToken) {
         return {
-          error: 'StudyDeck not connected',
-          message: 'You need to connect your StudyDeck account first.',
+          error: 'StudyDeck not configured',
+          message: 'StudyDeck access is not configured.',
         };
       }
 

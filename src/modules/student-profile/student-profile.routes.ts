@@ -14,6 +14,45 @@ import { eq, and, gte, desc, or } from 'drizzle-orm';
 const runningSyncs = new Map<string, Promise<any>>();
 
 /**
+ * Helper: Calculate date for recurring weekly schedule item
+ * Uses a canonical reference week to ensure absolute consistency
+ * Creates dates in UTC to prevent timezone conversion issues
+ *
+ * Reference: Week of Feb 3, 2025 (Monday Feb 3, 2025)
+ * This ensures all recurring events map to the same reference dates
+ *
+ * @param dayOfWeek - Day of week (e.g., "Monday", "Tuesday")
+ * @param timeString - Time in HH:MM format (e.g., "09:00")
+ * @returns Date object set to that day/time in the reference week (UTC)
+ */
+function calculateRecurringDateTime(dayOfWeek: string, timeString: string): Date {
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const targetDayIndex = daysOfWeek.indexOf(dayOfWeek);
+
+    if (targetDayIndex === -1) {
+        throw new Error(`Invalid day of week: ${dayOfWeek}`);
+    }
+
+    // Parse time
+    const [hours, minutes] = timeString.split(':').map(s => parseInt(s));
+
+    // Use canonical reference week: Monday, Feb 3, 2025 (in UTC)
+    // This date is chosen as a stable reference point
+    const referenceMonday = new Date(Date.UTC(2025, 1, 3, 0, 0, 0, 0)); // Feb = month 1 (0-indexed)
+
+    // Calculate days from Monday to target day
+    // Monday = 0 days, Tuesday = 1 day, ..., Sunday = 6 days
+    const daysFromMonday = targetDayIndex === 0 ? 6 : targetDayIndex - 1;
+
+    // Create date in UTC to prevent timezone conversion
+    const result = new Date(referenceMonday);
+    result.setUTCDate(referenceMonday.getUTCDate() + daysFromMonday);
+    result.setUTCHours(hours, minutes, 0, 0);
+
+    return result;
+}
+
+/**
  * Helper: Check if sync is needed (> 6 hours since last sync)
  */
 async function shouldSync(userId: string): Promise<boolean> {
@@ -1478,26 +1517,9 @@ app.post('/schedules/:id/generate-from-sections', protect, async (c) => {
 
                 if (existing.length > 0) continue;
 
-                // Create schedule item
-                // Calculate the next occurrence of this day of week
-                const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                const today = new Date();
-                const targetDayIndex = daysOfWeek.indexOf(timing.dayOfWeek);
-                const currentDayIndex = today.getDay();
-
-                // Calculate days until next occurrence (0-6)
-                let daysUntilTarget = targetDayIndex - currentDayIndex;
-                if (daysUntilTarget < 0) {
-                    daysUntilTarget += 7; // Next week
-                }
-
-                const startDateTime = new Date(today);
-                startDateTime.setDate(today.getDate() + daysUntilTarget);
-                startDateTime.setHours(parseInt(timing.startTime.split(':')[0]), parseInt(timing.startTime.split(':')[1]), 0, 0);
-
-                const endDateTime = new Date(today);
-                endDateTime.setDate(today.getDate() + daysUntilTarget);
-                endDateTime.setHours(parseInt(timing.endTime.split(':')[0]), parseInt(timing.endTime.split(':')[1]), 0, 0);
+                // Create schedule item with consistent base date
+                const startDateTime = calculateRecurringDateTime(timing.dayOfWeek, timing.startTime);
+                const endDateTime = calculateRecurringDateTime(timing.dayOfWeek, timing.endTime);
 
                 await db.insert(scheduleItems).values({
                     scheduleId,
@@ -1687,6 +1709,80 @@ app.post('/schedules/:id/add-evaluations', protect, async (c) => {
 });
 
 /**
+ * POST /schedules/:id/regenerate-classes
+ * Delete and regenerate all class schedule items from registered sections
+ * Use this after fixing timezone issues
+ */
+app.post('/schedules/:id/regenerate-classes', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const scheduleId = c.req.param('id');
+
+        // Verify schedule belongs to user
+        const [schedule] = await db
+            .select()
+            .from(schedules)
+            .where(and(eq(schedules.id, scheduleId), eq(schedules.userId, user.id)))
+            .limit(1);
+
+        if (!schedule) {
+            return errorResponse(c, 'Schedule not found', 404);
+        }
+
+        // Delete all class-type schedule items
+        const deleted = await db
+            .delete(scheduleItems)
+            .where(and(
+                eq(scheduleItems.scheduleId, scheduleId),
+                eq(scheduleItems.type, 'class')
+            ))
+            .returning();
+
+        console.log(`[RegenerateClasses] Deleted ${deleted.length} class items`);
+
+        // Regenerate from sections
+        const { sectionsService } = await import('../academics/sections.service');
+        const registrations = await sectionsService.getUserRegistrations(user.id);
+
+        let itemsCreated = 0;
+
+        for (const registration of registrations) {
+            for (const timing of registration.schedule) {
+                const startDateTime = calculateRecurringDateTime(timing.dayOfWeek, timing.startTime);
+                const endDateTime = calculateRecurringDateTime(timing.dayOfWeek, timing.endTime);
+
+                await db.insert(scheduleItems).values({
+                    scheduleId,
+                    userId: user.id,
+                    title: `${registration.courseCode} - ${registration.sectionType}`,
+                    description: `${registration.courseName} (${registration.sectionType} ${registration.sectionNumber})`,
+                    type: 'class',
+                    linkedEntityId: registration.sectionId,
+                    linkedEntityType: 'section',
+                    startDateTime,
+                    endDateTime,
+                    isRecurring: true,
+                    recurrencePattern: 'weekly',
+                    dayOfWeek: timing.dayOfWeek,
+                    location: registration.roomNumber || undefined,
+                });
+
+                itemsCreated++;
+            }
+        }
+
+        return successResponse(c, {
+            message: 'Classes regenerated successfully',
+            deleted: deleted.length,
+            created: itemsCreated,
+        });
+    } catch (error: any) {
+        console.error('[RegenerateClasses] Error:', error);
+        return errorResponse(c, error.message || 'Failed to regenerate classes', 500);
+    }
+});
+
+/**
  * POST /schedules/:id/add-events
  * Add enrolled/interested campus events to schedule
  */
@@ -1833,7 +1929,6 @@ app.post('/fix-schedule-dates', protect, async (c) => {
                 eq(scheduleItems.isRecurring, true)
             ));
 
-        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         let itemsFixed = 0;
         let itemsSkipped = 0;
 
@@ -1844,28 +1939,19 @@ app.post('/fix-schedule-dates', protect, async (c) => {
                 continue;
             }
 
-            // Get current day index from startDateTime
-            const currentDayIndex = item.startDateTime.getDay();
-            const targetDayIndex = daysOfWeek.indexOf(item.dayOfWeek);
+            // Extract time from existing startDateTime
+            const existingStartTime = `${String(item.startDateTime.getHours()).padStart(2, '0')}:${String(item.startDateTime.getMinutes()).padStart(2, '0')}`;
+            const existingEndTime = `${String(item.endDateTime.getHours()).padStart(2, '0')}:${String(item.endDateTime.getMinutes()).padStart(2, '0')}`;
 
-            // If already correct, skip
-            if (currentDayIndex === targetDayIndex) {
+            // Calculate correct dates using helper function
+            const newStartDateTime = calculateRecurringDateTime(item.dayOfWeek, existingStartTime);
+            const newEndDateTime = calculateRecurringDateTime(item.dayOfWeek, existingEndTime);
+
+            // Check if already correct (same day of week)
+            if (item.startDateTime.getDay() === newStartDateTime.getDay()) {
                 itemsSkipped++;
                 continue;
             }
-
-            // Calculate days to adjust (forward only, to next occurrence)
-            let daysToAdjust = targetDayIndex - currentDayIndex;
-            if (daysToAdjust < 0) {
-                daysToAdjust += 7;
-            }
-
-            // Create new dates with correct day
-            const newStartDateTime = new Date(item.startDateTime);
-            newStartDateTime.setDate(newStartDateTime.getDate() + daysToAdjust);
-
-            const newEndDateTime = new Date(item.endDateTime);
-            newEndDateTime.setDate(newEndDateTime.getDate() + daysToAdjust);
 
             // Update the item
             await db
