@@ -5,6 +5,7 @@ import { getAuthenticatedClient } from '../gmail-auth/gmail-auth.service';
 import { eq, and, inArray } from 'drizzle-orm';
 import { academicsService } from '../academics/academics.service';
 import { sectionsService } from '../academics/sections.service';
+import { VertexAI } from '@google-cloud/vertexai';
 
 /**
  * Gmail Sync Service
@@ -228,15 +229,18 @@ export class GmailSyncService {
             return `${i + 1}. Subject: ${e.subject} | From: ${e.from} | Date: ${e.date} | Body: ${e.body} | ID:${e.id}`;
         }).join('\n');
 
-        // Use Groq for fast, cheap analysis
-        const GROQ_API_KEY = process.env.GROQ_API_KEY;
-        if (!GROQ_API_KEY) {
-            throw new Error('GROQ_API_KEY not configured');
+        // Use Gemini for analysis
+        const projectId = process.env.GCP_PROJECT_ID;
+        const location = 'global';
+        const apiEndpoint = 'aiplatform.googleapis.com';
+
+        if (!projectId) {
+            throw new Error('GCP_PROJECT_ID not configured');
         }
 
         const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
 
-        const systemPrompt = `You are an AI assistant that analyzes Gmail emails and extracts assignments and evaluations.
+        const systemPrompt = `You are an AI assistant that analyzes Gmail emails and extracts assignments, evaluations, and campus events.
 
 **USER'S ENROLLED COURSES:**
 ${JSON.stringify(coursesContext, null, 2)}
@@ -245,26 +249,45 @@ ${JSON.stringify(coursesContext, null, 2)}
 ${JSON.stringify(sectionsContext, null, 2)}
 
 IMPORTANT INSTRUCTIONS:
-1. Extract assignments, evaluations, and campus events from the emails
-2. **For Assignments/Evaluations**: Look for emails from professors, TAs, course management systems (Moodle, Canvas, etc.)
-   - Assignments: "assignment", "homework", "lab", "problem set", "due", "submit"
-   - Evaluations: "quiz", "exam", "test", "midterm", "final", "evaluation"
-3. **For Campus Events**: Look for emails about competitions, recruitments, workshops, hackathons, seminars, conferences
-   - Keywords: "competition", "hackathon", "recruitment", "workshop", "seminar", "register now", "participation", "event"
-   - Extract: organizer, dates, registration deadlines, prize pools, eligibility, registration URLs
-4. Ignore promotional emails, newsletters, social notifications
-5. **CRITICAL: ONLY extract items with dates AFTER today (${today}). Ignore past items.**
-6. **CRITICAL: For evaluations, ONLY extract exams/tests/quizzes. Other types can be assignments.**
-7. **CRITICAL: Match course codes from emails to the enrolled courses above. Use EXACT codes from the list.**
-8. Determine priority for assignments based on:
-   - high: Due within 24 hours, or marked as "urgent"
-   - medium: Due within 7 days
-   - low: Due after 7 days
-9. For events, classify type: competition, recruitment, workshop, seminar, hackathon, conference, cultural, sports, other
-10. Extract all dates/deadlines - be precise with date/time in ISO format
-11. Return ONLY valid JSON, no markdown, no explanations
 
-Return format:
+**CATEGORIZATION RULES (CRITICAL - READ CAREFULLY):**
+
+1. **ASSIGNMENTS** = Course work, homework, lab submissions, projects, problem sets
+   - Keywords: "assignment", "homework", "lab", "project", "problem set", "due", "submit", "upload"
+   - MUST be related to a course from the enrolled courses list above
+   - Goes to "assignments" array
+
+2. **EVALUATIONS** = Exams, quizzes, tests ONLY
+   - Keywords: "exam", "test", "quiz", "midterm", "final"
+   - MUST be related to a course from the enrolled courses list above
+   - Goes to "evaluations" array
+
+3. **CAMPUS EVENTS** = Everything else happening on campus (BE VERY INCLUSIVE)
+   - ✅ Include: Competitions, hackathons, workshops, seminars, talks, conferences, club events, cultural events, sports events, recruitment drives, guest lectures, career fairs, exhibitions, festivals, meetups, orientation programs, tech talks, coding contests, debate competitions, music/dance performances, sports tournaments, alumni events, industry visits, campus tours, student council elections, blood donation camps, social causes, NGO events, startup events, entrepreneurship summits, innovation challenges, research presentations, poster presentations, paper presentations, webinars, networking events, placement drives, internship opportunities, skill development workshops, certification programs, training sessions, open house events, college fests, department activities, club meetings, community service
+   - ✅ Be FORGIVING - if an email mentions ANY campus activity, gathering, or opportunity (even loosely), categorize as event
+   - ❌ NEVER include assignments, homework, labs, exams, tests, quizzes as events
+   - ❌ Ignore: Pure promotional emails, spam, shopping, personal social media notifications
+   - Extract: title, organizer, dates, registration deadlines, prize pools, eligibility, URLs
+   - Goes to "events" array
+
+**CRITICAL DATE RULES:**
+- ONLY extract items with dates AFTER today (${today})
+- Ignore anything that already happened
+
+**COURSE MATCHING:**
+- For assignments/evaluations: Match course codes EXACTLY from the enrolled courses list
+- For events: NO course matching needed (they're campus-wide)
+
+**PRIORITY (for assignments):**
+- high: Due within 24 hours or marked urgent
+- medium: Due within 7 days
+- low: Due after 7 days
+
+**EVENT TYPES:** competition, recruitment, workshop, seminar, hackathon, conference, cultural, sports, other
+
+**OUTPUT FORMAT:** Return ONLY valid JSON, no markdown, no explanations
+
+**EXAMPLE OUTPUT:**
 {
   "assignments": [
     {
@@ -294,8 +317,8 @@ Return format:
     {
       "title": "Smart India Hackathon 2026",
       "type": "hackathon",
-      "description": "36-hour national level hackathon",
-      "organizer": "MHRD, Govt. of India",
+      "description": "36-hour national level hackathon building solutions for government challenges",
+      "organizer": "Ministry of Education, Govt. of India",
       "date": "2026-03-15T09:00:00.000Z",
       "endDate": "2026-03-17T18:00:00.000Z",
       "registrationDeadline": "2026-02-28T23:59:00.000Z",
@@ -305,51 +328,83 @@ Return format:
       "prizePool": "Rs 1 Crore",
       "eligibility": "Students from all years",
       "emailId": "ghi789"
+    },
+    {
+      "title": "Tech Talk: AI in Healthcare",
+      "type": "seminar",
+      "description": "Guest lecture by industry expert on AI applications in healthcare",
+      "organizer": "Department of Computer Science",
+      "date": "2026-02-15T14:00:00.000Z",
+      "location": "Auditorium A",
+      "emailId": "jkl012"
+    },
+    {
+      "title": "Annual Sports Meet",
+      "type": "sports",
+      "description": "Inter-department sports competition",
+      "organizer": "Sports Committee",
+      "date": "2026-02-20T08:00:00.000Z",
+      "endDate": "2026-02-22T18:00:00.000Z",
+      "registrationDeadline": "2026-02-18T23:59:00.000Z",
+      "location": "Sports Complex",
+      "eligibility": "All students",
+      "emailId": "mno345"
     }
   ]
 }
 
-If nothing found, return empty arrays.
-Evaluation type: quiz, exam, report, presentation, project
-Event type: competition, recruitment, workshop, seminar, hackathon, conference, cultural, sports, other`;
+**REMEMBER:**
+- If nothing found in a category, return empty array []
+- Events should be BROAD and INCLUSIVE - capture any campus activity
+- NEVER put assignments, labs, homework, exams, tests, or quizzes in events array
+- Evaluation types: quiz, exam, report, presentation, project
+- Event types: competition, recruitment, workshop, seminar, hackathon, conference, cultural, sports, other`;
 
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${GROQ_API_KEY}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    {
-                        role: 'user',
-                        content: `Analyze these Gmail emails and extract assignments, evaluations, and campus events:\n\n${emailText}`
-                    }
-                ],
-                temperature: 0.1,
-                max_tokens: 3000,
-                response_format: { type: 'json_object' },
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Groq API error: ${response.status} ${await response.text()}`);
-        }
-
-        const data = await response.json();
-        const content = data.choices[0].message.content;
+        console.log(`[GmailSync] Analyzing ${emails.length} emails with Gemini...`);
 
         try {
-            const parsed = JSON.parse(content);
+            const vertexAI = new VertexAI({ project: projectId, location, apiEndpoint });
+            const model = vertexAI.getGenerativeModel({
+                model: 'gemini-2.5-flash-lite',
+            });
+
+            const userPrompt = `Analyze these Gmail emails and extract assignments, evaluations, and campus events:\n\n${emailText}`;
+
+            const result = await model.generateContent({
+                contents: [
+                    {
+                        role: 'user',
+                        parts: [
+                            { text: systemPrompt },
+                            { text: '\n\n' },
+                            { text: userPrompt }
+                        ]
+                    }
+                ],
+                generationConfig: {
+                    temperature: 0.1,
+                    maxOutputTokens: 4000,
+                    responseMimeType: 'application/json',
+                }
+            });
+
+            const responseText = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (!responseText) {
+                console.error('[GmailSync] Empty response from Gemini');
+                return { assignments: [], evaluations: [], events: [] };
+            }
+
+            const parsed = JSON.parse(responseText);
+            console.log(`[GmailSync] Extracted: ${parsed.assignments?.length || 0} assignments, ${parsed.evaluations?.length || 0} evaluations, ${parsed.events?.length || 0} events`);
+
             return {
                 assignments: parsed.assignments || [],
                 evaluations: parsed.evaluations || [],
                 events: parsed.events || [],
             };
-        } catch (error) {
-            console.error('[GmailSync] Failed to parse AI response:', content);
+        } catch (error: any) {
+            console.error('[GmailSync] Gemini analysis failed:', error.message);
             return { assignments: [], evaluations: [], events: [] };
         }
     }

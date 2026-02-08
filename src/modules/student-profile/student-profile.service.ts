@@ -8,6 +8,8 @@ import {
     activityLogs,
     studentAssignments,
     studentEvaluations,
+    schedules,
+    scheduleItems,
     type learningStyleEnum
 } from './student-profile.schema';
 import { user as userTable } from '../auth/auth.schema';
@@ -261,6 +263,48 @@ export class StudentProfileService {
             .orderBy(studentEvaluations.date)
             .limit(10);
 
+        // Get active schedule
+        const [activeSchedule] = await db.select()
+            .from(schedules)
+            .where(
+                and(
+                    eq(schedules.userId, userId),
+                    eq(schedules.isActive, true)
+                )
+            )
+            .limit(1);
+
+        // Get what's up next from schedule (next upcoming item, no matter how far)
+        let whatsUpNext = null;
+        if (activeSchedule) {
+            const [nextItem] = await db.select()
+                .from(scheduleItems)
+                .where(
+                    and(
+                        eq(scheduleItems.scheduleId, activeSchedule.id),
+                        gte(scheduleItems.startDateTime, now)
+                    )
+                )
+                .orderBy(scheduleItems.startDateTime)
+                .limit(1);
+
+            if (nextItem) {
+                whatsUpNext = {
+                    id: nextItem.id,
+                    type: nextItem.type,
+                    title: nextItem.title,
+                    description: nextItem.description,
+                    startDateTime: nextItem.startDateTime.toISOString(),
+                    endDateTime: nextItem.endDateTime?.toISOString(),
+                    location: nextItem.location,
+                    linkedEntityType: nextItem.linkedEntityType,
+                    color: nextItem.color,
+                    // Calculate time until event
+                    timeUntil: this.calculateTimeUntil(nextItem.startDateTime),
+                };
+            }
+        }
+
         // Get behavioral insights
         const behaviorAnalysis = await this.analyzeBehavior(userId);
 
@@ -271,6 +315,7 @@ export class StudentProfileService {
                 email: user.email,
                 bitsId: user.bitsId,
             },
+            whatsUpNext,
             assignments: assignments.map(a => ({
                 id: a.id,
                 course: a.courseCode || 'Unknown',
@@ -291,15 +336,63 @@ export class StudentProfileService {
                 description: e.description,
             })),
             behavior: behaviorAnalysis,
-            aiTips: this.generateAiTips(assignments, evaluations),
+            aiTips: this.generateAiTips(assignments, evaluations, whatsUpNext),
         };
     }
 
     /**
-     * Generate AI Tips based on upcoming items
+     * Calculate human-readable time until an event
      */
-    private generateAiTips(assignments: any[], evaluations: any[]): string[] {
+    private calculateTimeUntil(futureDate: Date): string {
+        const now = new Date();
+        const diffMs = futureDate.getTime() - now.getTime();
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffMins < 60) {
+            return `in ${diffMins} minute${diffMins !== 1 ? 's' : ''}`;
+        } else if (diffHours < 24) {
+            return `in ${diffHours} hour${diffHours !== 1 ? 's' : ''}`;
+        } else if (diffDays < 7) {
+            return `in ${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+        } else if (diffDays < 30) {
+            const weeks = Math.floor(diffDays / 7);
+            return `in ${weeks} week${weeks !== 1 ? 's' : ''}`;
+        } else if (diffDays < 365) {
+            const months = Math.floor(diffDays / 30);
+            return `in ${months} month${months !== 1 ? 's' : ''}`;
+        } else {
+            const years = Math.floor(diffDays / 365);
+            return `in ${years} year${years !== 1 ? 's' : ''}`;
+        }
+    }
+
+    /**
+     * Generate AI Tips based on upcoming items and schedule
+     */
+    private generateAiTips(assignments: any[], evaluations: any[], whatsUpNext: any): string[] {
         const tips: string[] = [];
+        const now = new Date();
+
+        // Tip about what's up next
+        if (whatsUpNext) {
+            const startTime = new Date(whatsUpNext.startDateTime);
+            const hoursUntil = (startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+            if (hoursUntil < 1) {
+                tips.push(`🔔 Your next item "${whatsUpNext.title}" is starting soon! ${whatsUpNext.timeUntil}`);
+            } else if (hoursUntil < 3) {
+                tips.push(`⏰ Coming up ${whatsUpNext.timeUntil}: ${whatsUpNext.title}${whatsUpNext.location ? ` at ${whatsUpNext.location}` : ''}`);
+            } else if (whatsUpNext.type === 'evaluation') {
+                const daysUntil = Math.ceil(hoursUntil / 24);
+                if (daysUntil <= 2) {
+                    tips.push(`📝 You have an evaluation "${whatsUpNext.title}" ${whatsUpNext.timeUntil}. Consider blocking time for revision today.`);
+                }
+            } else if (whatsUpNext.type === 'assignment' && hoursUntil < 48) {
+                tips.push(`📋 Assignment "${whatsUpNext.title}" is due ${whatsUpNext.timeUntil}. Make sure to allocate time to complete it.`);
+            }
+        }
 
         // Check for evaluations tomorrow
         const tomorrow = new Date();
@@ -313,26 +406,59 @@ export class StudentProfileService {
             return evalDate >= tomorrow && evalDate < dayAfterTomorrow;
         });
 
-        if (tomorrowEvals.length > 0) {
+        if (tomorrowEvals.length > 0 && tips.length === 0) {
             const eval_ = tomorrowEvals[0];
-            tips.push(`You have a ${eval_.type} tomorrow. I've blocked 7 PM - 9 PM for revision.`);
+            tips.push(`🎯 You have a ${eval_.type} tomorrow for ${eval_.course}. Block time for final revision tonight.`);
         }
 
         // Check for high priority assignments due soon
         const highPriorityDueSoon = assignments.filter(a => {
             const dueDate = new Date(a.due);
-            const daysUntilDue = Math.ceil((dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-            return a.priority === 'high' && daysUntilDue <= 2;
+            const daysUntilDue = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+            return a.priority === 'high' && daysUntilDue <= 2 && a.status !== 'completed';
         });
 
-        if (highPriorityDueSoon.length > 0) {
+        if (highPriorityDueSoon.length > 0 && tips.length === 0) {
             const assignment = highPriorityDueSoon[0];
-            tips.push(`High priority: "${assignment.title}" is due soon. Consider working on it today.`);
+            const dueDate = new Date(assignment.due);
+            const daysUntil = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+            const timeStr = daysUntil === 0 ? 'today' : daysUntil === 1 ? 'tomorrow' : `in ${daysUntil} days`;
+            tips.push(`⚠️ High priority: "${assignment.title}" is due ${timeStr}. Consider prioritizing this today.`);
         }
 
-        // Default tip if nothing urgent
+        // Check for multiple items today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow2 = new Date(today);
+        tomorrow2.setDate(tomorrow2.getDate() + 1);
+
+        const todayAssignments = assignments.filter(a => {
+            const due = new Date(a.due);
+            return due >= today && due < tomorrow2 && a.status !== 'completed';
+        });
+
+        if (todayAssignments.length > 2 && tips.length === 0) {
+            tips.push(`📚 You have ${todayAssignments.length} assignments due today. Focus on high-priority items first!`);
+        }
+
+        // Check schedule density for today
+        if (whatsUpNext && tips.length === 0) {
+            const nextDate = new Date(whatsUpNext.startDateTime);
+            if (nextDate >= today && nextDate < tomorrow2) {
+                tips.push(`📅 You have items scheduled for today. Stay organized and check your timetable regularly.`);
+            }
+        }
+
+        // Motivational tips if nothing urgent
         if (tips.length === 0) {
-            tips.push('You have a productive day ahead. Check your schedule for optimal study times.');
+            const motivationalTips = [
+                '✨ You\'re on track! Keep up the great work and stay consistent.',
+                '🌟 No urgent deadlines right now. Great time to get ahead on upcoming work!',
+                '💪 You have a productive day ahead. Check your schedule for optimal study times.',
+                '🎓 All caught up! Consider reviewing past material or planning ahead.',
+                '🚀 Smooth sailing ahead! Use this time wisely to stay ahead of deadlines.',
+            ];
+            tips.push(motivationalTips[Math.floor(Math.random() * motivationalTips.length)]);
         }
 
         return tips;

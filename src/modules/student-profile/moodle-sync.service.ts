@@ -3,6 +3,7 @@ import { studentAssignments, studentEvaluations, syncState } from './student-pro
 import { moodleClient } from '../academics/moodle.service';
 import * as moodleAuth from '../academics/moodle-auth.service';
 import { eq, and, gt } from 'drizzle-orm';
+import { VertexAI } from '@google-cloud/vertexai';
 
 /**
  * Moodle Auto-Sync Service
@@ -109,10 +110,13 @@ export class MoodleSyncService {
             return `${i + 1}. ${n.subject} | ${message} | ${time} | ID:${n.id}`;
         }).join('\n');
 
-        // Use Groq for fast, cheap analysis
-        const GROQ_API_KEY = process.env.GROQ_API_KEY;
-        if (!GROQ_API_KEY) {
-            throw new Error('GROQ_API_KEY not configured');
+        // Use Gemini for analysis
+        const projectId = process.env.GCP_PROJECT_ID;
+        const location = 'global';
+        const apiEndpoint = 'aiplatform.googleapis.com';
+
+        if (!projectId) {
+            throw new Error('GCP_PROJECT_ID not configured');
         }
 
         const systemPrompt = `You are an AI assistant that analyzes Moodle notifications and extracts assignments and evaluations.
@@ -160,42 +164,50 @@ Return format:
 If no assignments or evaluations found, return empty arrays.
 Type must be one of: quiz, exam, report, presentation, project`;
 
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${GROQ_API_KEY}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    {
-                        role: 'user',
-                        content: `Analyze these Moodle notifications and extract assignments and evaluations:\n\n${notificationText}`
-                    }
-                ],
-                temperature: 0.1, // Low temperature for consistent extraction
-                max_tokens: 2000,
-                response_format: { type: 'json_object' }, // Force JSON response
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Groq API error: ${response.status} ${await response.text()}`);
-        }
-
-        const data = await response.json();
-        const content = data.choices[0].message.content;
+        console.log(`[MoodleSync] Analyzing ${notifications.length} notifications with Gemini...`);
 
         try {
-            const parsed = JSON.parse(content);
+            const vertexAI = new VertexAI({ project: projectId, location, apiEndpoint });
+            const model = vertexAI.getGenerativeModel({
+                model: 'gemini-2.5-flash-lite',
+            });
+
+            const userPrompt = `Analyze these Moodle notifications and extract assignments and evaluations:\n\n${notificationText}`;
+
+            const result = await model.generateContent({
+                contents: [
+                    {
+                        role: 'user',
+                        parts: [
+                            { text: systemPrompt },
+                            { text: '\n\n' },
+                            { text: userPrompt }
+                        ]
+                    }
+                ],
+                generationConfig: {
+                    temperature: 0.1,
+                    maxOutputTokens: 3000,
+                    responseMimeType: 'application/json',
+                }
+            });
+
+            const responseText = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (!responseText) {
+                console.error('[MoodleSync] Empty response from Gemini');
+                return { assignments: [], evaluations: [] };
+            }
+
+            const parsed = JSON.parse(responseText);
+            console.log(`[MoodleSync] Extracted: ${parsed.assignments?.length || 0} assignments, ${parsed.evaluations?.length || 0} evaluations`);
+
             return {
                 assignments: parsed.assignments || [],
                 evaluations: parsed.evaluations || [],
             };
-        } catch (error) {
-            console.error('Failed to parse AI response:', content);
+        } catch (error: any) {
+            console.error('[MoodleSync] Gemini analysis failed:', error.message);
             return { assignments: [], evaluations: [] };
         }
     }

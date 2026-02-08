@@ -1161,8 +1161,152 @@ app.post('/schedules/:id/set-active', protect, async (c) => {
 // ============================================
 
 /**
+ * Helper: Auto-sync assignments, evaluations, and events to schedule
+ */
+async function autoSyncScheduleItems(scheduleId: string, userId: string): Promise<{
+    assignmentsAdded: number;
+    evaluationsAdded: number;
+    eventsAdded: number;
+}> {
+    let assignmentsAdded = 0;
+    let evaluationsAdded = 0;
+    let eventsAdded = 0;
+    const now = new Date();
+
+    try {
+        // 1. Sync Assignments
+        const assignments = await db
+            .select()
+            .from(studentAssignments)
+            .where(and(
+                eq(studentAssignments.userId, userId),
+                gte(studentAssignments.dueDate, now)
+            ))
+            .orderBy(studentAssignments.dueDate)
+            .limit(50);
+
+        for (const assignment of assignments) {
+            const existing = await db
+                .select()
+                .from(scheduleItems)
+                .where(and(
+                    eq(scheduleItems.scheduleId, scheduleId),
+                    eq(scheduleItems.linkedEntityId, assignment.id)
+                ))
+                .limit(1);
+
+            if (existing.length === 0) {
+                await db.insert(scheduleItems).values({
+                    scheduleId,
+                    userId,
+                    title: assignment.title,
+                    description: `${assignment.courseCode} - ${assignment.description || ''}`,
+                    type: 'assignment',
+                    linkedEntityId: assignment.id,
+                    linkedEntityType: 'assignment',
+                    startDateTime: assignment.dueDate,
+                    endDateTime: assignment.dueDate,
+                    isRecurring: false,
+                    recurrencePattern: 'none',
+                    color: '#FF6B6B',
+                });
+                assignmentsAdded++;
+            }
+        }
+
+        // 2. Sync Evaluations
+        const evaluations = await db
+            .select()
+            .from(studentEvaluations)
+            .where(and(
+                eq(studentEvaluations.userId, userId),
+                gte(studentEvaluations.date, now)
+            ))
+            .orderBy(studentEvaluations.date)
+            .limit(50);
+
+        for (const evaluation of evaluations) {
+            const existing = await db
+                .select()
+                .from(scheduleItems)
+                .where(and(
+                    eq(scheduleItems.scheduleId, scheduleId),
+                    eq(scheduleItems.linkedEntityId, evaluation.id)
+                ))
+                .limit(1);
+
+            if (existing.length === 0) {
+                await db.insert(scheduleItems).values({
+                    scheduleId,
+                    userId,
+                    title: evaluation.title,
+                    description: `${evaluation.courseCode} - ${evaluation.type} ${evaluation.description ? '- ' + evaluation.description : ''}`,
+                    type: 'evaluation',
+                    linkedEntityId: evaluation.id,
+                    linkedEntityType: 'evaluation',
+                    startDateTime: evaluation.date,
+                    endDateTime: evaluation.date,
+                    location: evaluation.location,
+                    isRecurring: false,
+                    recurrencePattern: 'none',
+                    color: '#FFA500',
+                });
+                evaluationsAdded++;
+            }
+        }
+
+        // 3. Sync Events (enrolled or interested)
+        const events = await db
+            .select()
+            .from(campusEvents)
+            .where(and(
+                eq(campusEvents.userId, userId),
+                gte(campusEvents.date, now),
+                or(eq(campusEvents.isEnrolled, true), eq(campusEvents.isInterested, true))
+            ))
+            .orderBy(campusEvents.date)
+            .limit(50);
+
+        for (const event of events) {
+            const existing = await db
+                .select()
+                .from(scheduleItems)
+                .where(and(
+                    eq(scheduleItems.scheduleId, scheduleId),
+                    eq(scheduleItems.linkedEntityId, event.id)
+                ))
+                .limit(1);
+
+            if (existing.length === 0) {
+                await db.insert(scheduleItems).values({
+                    scheduleId,
+                    userId,
+                    title: event.title,
+                    description: `${event.type} - ${event.description || ''}`,
+                    type: 'event',
+                    linkedEntityId: event.id,
+                    linkedEntityType: 'event',
+                    startDateTime: event.date,
+                    endDateTime: event.endDate || event.date,
+                    location: event.location,
+                    isRecurring: false,
+                    recurrencePattern: 'none',
+                    color: '#4CAF50',
+                });
+                eventsAdded++;
+            }
+        }
+
+        return { assignmentsAdded, evaluationsAdded, eventsAdded };
+    } catch (error) {
+        console.error('[AutoSync] Error syncing schedule items:', error);
+        return { assignmentsAdded, evaluationsAdded, eventsAdded };
+    }
+}
+
+/**
  * GET /schedules/:scheduleId/items
- * Get all items for a schedule
+ * Get all items for a schedule (auto-syncs assignments, evaluations, and events first)
  */
 app.get('/schedules/:scheduleId/items', protect, async (c) => {
     try {
@@ -1180,6 +1324,12 @@ app.get('/schedules/:scheduleId/items', protect, async (c) => {
             return errorResponse(c, 'Schedule not found', 404);
         }
 
+        // Auto-sync assignments, evaluations, and events before returning items
+        console.log(`[Schedule Items] Auto-syncing items for schedule ${scheduleId}...`);
+        const syncResult = await autoSyncScheduleItems(scheduleId, user.id);
+        console.log(`[Schedule Items] Synced: ${syncResult.assignmentsAdded} assignments, ${syncResult.evaluationsAdded} evaluations, ${syncResult.eventsAdded} events`);
+
+        // Get all items
         const items = await db
             .select()
             .from(scheduleItems)
