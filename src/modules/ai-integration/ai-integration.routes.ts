@@ -4,8 +4,6 @@ import { protect } from '../../core/auth/middleware';
 import { successResponse, errorResponse } from '../../core/utils/response';
 import { aiIntegrationService } from './ai-integration.service';
 import { chatRequestSchema, clearHistorySchema } from './ai-integration.schema';
-import { GroqError } from './groq-client';
-import { GeminiError } from './gemini-client';
 
 const app = new Hono();
 
@@ -20,15 +18,15 @@ app.post('/chat', protect, zValidator('json', chatRequestSchema), async (c) => {
   }
 
   try {
-    const { query, includeHistory, format, mode } = c.req.valid('json');
+    const { query, includeHistory, format } = c.req.valid('json');
 
     // Get conversation history if requested
     const history = includeHistory
       ? await aiIntegrationService.getConversationHistory(user.id, 10)
       : [];
 
-    // Process the query with mode
-    const result = await aiIntegrationService.processQuery(user.id, query, history, mode, format);
+    // Process the query with Gemini agent
+    const result = await aiIntegrationService.processQuery(user.id, query, history, format);
 
     // Save user message
     await aiIntegrationService.saveConversation(user.id, {
@@ -59,14 +57,6 @@ app.post('/chat', protect, zValidator('json', chatRequestSchema), async (c) => {
     });
   } catch (error: any) {
     console.error('[AI Routes] Error processing chat:', error);
-
-    if (error instanceof GroqError) {
-      return errorResponse(c, error.message, error.statusCode, error.code);
-    }
-
-    if (error instanceof GeminiError) {
-      return errorResponse(c, error.message, error.statusCode, error.code);
-    }
 
     // Import AgentError dynamically
     const { AgentError } = await import('./agent/agent-loop');

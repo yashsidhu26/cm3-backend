@@ -16,6 +16,95 @@ import { z } from 'zod';
 
 const app = new Hono();
 
+// ============================================
+// STATIC ROUTES (must come before dynamic routes like /:courseId)
+// ============================================
+
+/**
+ * GET /schedule/me
+ * Get user's schedule (all registered sections with timings)
+ */
+app.get('/schedule/me', protect, async (c) => {
+  const user = c.get('user');
+
+  try {
+    const schedule = await sectionsService.getUserSchedule(user.id);
+    return successResponse(c, schedule);
+  } catch (error: any) {
+    console.error('Failed to get user schedule:', error);
+    return errorResponse(c, 'Failed to fetch user schedule', 500);
+  }
+});
+
+/**
+ * GET /schedule/formatted
+ * Get user's schedule formatted by day of week
+ */
+app.get('/schedule/formatted', protect, async (c) => {
+  const user = c.get('user');
+
+  try {
+    const schedule = await sectionsService.getUserSchedule(user.id);
+
+    // Format by day of week
+    const scheduleByDay: Record<string, any[]> = {
+      Monday: [],
+      Tuesday: [],
+      Wednesday: [],
+      Thursday: [],
+      Friday: [],
+      Saturday: [],
+      Sunday: [],
+    };
+
+    for (const item of schedule) {
+      for (const timing of item.schedule) {
+        scheduleByDay[timing.dayOfWeek].push({
+          courseCode: item.courseCode,
+          courseName: item.courseName,
+          sectionType: item.sectionType,
+          sectionNumber: item.sectionNumber,
+          instructors: item.instructors,
+          roomNumber: item.roomNumber,
+          startTime: timing.startTime,
+          endTime: timing.endTime,
+        });
+      }
+    }
+
+    // Sort each day by start time
+    for (const day in scheduleByDay) {
+      scheduleByDay[day].sort((a, b) => a.startTime.localeCompare(b.startTime));
+    }
+
+    return successResponse(c, { schedule: scheduleByDay });
+  } catch (error: any) {
+    console.error('Failed to format schedule:', error);
+    return errorResponse(c, 'Failed to format user schedule', 500);
+  }
+});
+
+/**
+ * GET /registrations
+ * Get all sections user is registered for
+ */
+app.get('/registrations', protect, async (c) => {
+  try {
+    const user = c.get('user');
+
+    const registrations = await sectionsService.getUserRegistrations(user.id);
+
+    return successResponse(c, registrations);
+  } catch (error: any) {
+    console.error('Failed to get user registrations:', error);
+    return errorResponse(c, 'Failed to get user registrations', 500);
+  }
+});
+
+// ============================================
+// DYNAMIC ROUTES (must come after static routes)
+// ============================================
+
 /**
  * POST /sync/:courseId
  * Sync course sections from StudyDeck
@@ -168,67 +257,73 @@ app.post(
   }
 );
 
-/**
- * GET /schedule/me
- * Get user's complete schedule (all registered sections)
- */
-app.get('/schedule/me', protect, async (c) => {
-  const user = c.get('user');
+// ============================================
+// SECTION REGISTRATION ENDPOINTS
+// ============================================
 
+const sectionRegistrationSchema = z.object({
+  sectionId: z.string().uuid(),
+});
+
+/**
+ * POST /register
+ * Register user for a section (lecture/tutorial/lab)
+ * Automatically switches if already registered for another section of same type
+ */
+app.post('/register', protect, zValidator('json', sectionRegistrationSchema), async (c) => {
   try {
-    const schedule = await sectionsService.getUserSchedule(user.id);
-    return successResponse(c, { schedule, count: schedule.length });
+    const user = c.get('user');
+    const { sectionId } = c.req.valid('json');
+
+    const result = await sectionsService.registerUserForSection(user.id, sectionId);
+
+    return successResponse(c, {
+      message: 'Successfully registered for section',
+      registration: result,
+      note: 'If you were registered for another section of the same type, you have been switched to this one'
+    });
   } catch (error: any) {
-    console.error('Failed to get user schedule:', error);
-    return errorResponse(c, 'Failed to fetch user schedule', 500);
+    console.error('Failed to register for section:', error);
+    return errorResponse(c, error.message || 'Failed to register for section', 500);
   }
 });
 
 /**
- * GET /schedule/formatted
- * Get user's schedule formatted by day of week
+ * DELETE /register/:sectionId
+ * Unregister user from a section
  */
-app.get('/schedule/formatted', protect, async (c) => {
-  const user = c.get('user');
-
+app.delete('/register/:sectionId', protect, async (c) => {
   try {
-    const schedule = await sectionsService.getUserSchedule(user.id);
+    const user = c.get('user');
+    const sectionId = c.req.param('sectionId');
 
-    // Format by day of week
-    const scheduleByDay: Record<string, any[]> = {
-      Monday: [],
-      Tuesday: [],
-      Wednesday: [],
-      Thursday: [],
-      Friday: [],
-      Saturday: [],
-      Sunday: [],
-    };
+    await sectionsService.unregisterUserFromSection(user.id, sectionId);
 
-    for (const item of schedule) {
-      for (const timing of item.schedule) {
-        scheduleByDay[timing.dayOfWeek].push({
-          courseCode: item.courseCode,
-          courseName: item.courseName,
-          sectionType: item.sectionType,
-          sectionNumber: item.sectionNumber,
-          instructors: item.instructors,
-          roomNumber: item.roomNumber,
-          startTime: timing.startTime,
-          endTime: timing.endTime,
-        });
-      }
-    }
-
-    // Sort each day by start time
-    for (const day in scheduleByDay) {
-      scheduleByDay[day].sort((a, b) => a.startTime.localeCompare(b.startTime));
-    }
-
-    return successResponse(c, { schedule: scheduleByDay });
+    return successResponse(c, {
+      message: 'Successfully unregistered from section',
+    });
   } catch (error: any) {
-    console.error('Failed to format schedule:', error);
-    return errorResponse(c, 'Failed to format user schedule', 500);
+    console.error('Failed to unregister from section:', error);
+    return errorResponse(c, error.message || 'Failed to unregister from section', 500);
+  }
+});
+
+/**
+ * GET /:courseId/available
+ * Get available sections for a course (with registration status)
+ * NOTE: Dynamic routes must come AFTER static routes
+ */
+app.get('/:courseId/available', protect, async (c) => {
+  try {
+    const user = c.get('user');
+    const courseId = c.req.param('courseId');
+
+    const sections = await sectionsService.getAvailableSections(courseId, user.id);
+
+    return successResponse(c, sections);
+  } catch (error: any) {
+    console.error('Failed to get available sections:', error);
+    return errorResponse(c, 'Failed to get available sections', 500);
   }
 });
 

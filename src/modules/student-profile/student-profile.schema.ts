@@ -1,5 +1,6 @@
-import { pgTable, uuid, varchar, text, timestamp, jsonb, decimal, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, timestamp, jsonb, decimal, pgEnum, boolean } from 'drizzle-orm/pg-core';
 import { user } from '../auth/auth.schema';
+import { semesterEnum } from '../academics/academics.schema';
 import { relations } from 'drizzle-orm';
 
 /**
@@ -15,6 +16,9 @@ export const taskStatusEnum = pgEnum('task_status', ['completed', 'pending', 'ca
 export const assignmentStatusEnum = pgEnum('assignment_status', ['not_started', 'in_progress', 'submitted', 'graded']);
 export const evaluationTypeEnum = pgEnum('evaluation_type', ['quiz', 'exam', 'report', 'presentation', 'project']);
 export const syncSourceEnum = pgEnum('sync_source', ['moodle', 'gmail']);
+export const campusEventTypeEnum = pgEnum('campus_event_type', ['competition', 'recruitment', 'workshop', 'seminar', 'hackathon', 'conference', 'cultural', 'sports', 'other']);
+export const scheduleItemTypeEnum = pgEnum('schedule_item_type', ['class', 'assignment', 'evaluation', 'event', 'custom']);
+export const recurrencePatternEnum = pgEnum('recurrence_pattern', ['daily', 'weekly', 'biweekly', 'monthly', 'none']);
 
 /**
  * Student Profiles - Extends User
@@ -149,6 +153,93 @@ export const studentEvaluations = pgTable('student_evaluations', {
 });
 
 /**
+ * Campus Events (Competitions, Recruitments, Workshops, etc.)
+ */
+export const campusEvents = pgTable('campus_events', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+    title: varchar('title', { length: 255 }).notNull(),
+    type: campusEventTypeEnum('type').notNull(),
+    description: text('description'),
+    organizer: varchar('organizer', { length: 255 }), // Club/Department name
+    date: timestamp('date').notNull(), // Event start date
+    endDate: timestamp('end_date'), // Optional end date for multi-day events
+    registrationDeadline: timestamp('registration_deadline'), // Registration deadline
+    location: varchar('location', { length: 255 }),
+    websiteUrl: text('website_url'),
+    registrationUrl: text('registration_url'),
+    prizePool: varchar('prize_pool', { length: 100 }), // For competitions
+    eligibility: text('eligibility'), // Eligibility criteria
+    isInterested: boolean('is_interested').notNull().default(false), // User marked interest
+    isEnrolled: boolean('is_enrolled').notNull().default(false), // User enrolled/registered
+    sourceType: varchar('source_type', { length: 50 }).notNull(), // 'gmail', 'manual'
+    sourceId: varchar('source_id', { length: 255 }), // Email ID
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/**
+ * User Schedules/Timetables
+ * Users can create multiple schedules (current semester, next semester, custom)
+ */
+export const schedules = pgTable('schedules', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+    name: varchar('name', { length: 255 }).notNull(), // e.g., "Spring 2026", "My Schedule"
+    description: text('description'),
+    isActive: boolean('is_active').notNull().default(false), // Only one can be active
+    semester: semesterEnum('semester'),
+    year: varchar('year', { length: 10 }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/**
+ * Schedule Items
+ * Individual items in a schedule (classes, assignments, evaluations, events, custom)
+ */
+export const scheduleItems = pgTable('schedule_items', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    scheduleId: uuid('schedule_id')
+        .notNull()
+        .references(() => schedules.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+
+    // Item details
+    title: varchar('title', { length: 255 }).notNull(),
+    description: text('description'),
+    type: scheduleItemTypeEnum('type').notNull(),
+
+    // Linked entities (optional - for items linked to existing data)
+    linkedEntityId: uuid('linked_entity_id'), // ID of section/assignment/evaluation/event
+    linkedEntityType: varchar('linked_entity_type', { length: 50 }), // 'section', 'assignment', 'evaluation', 'event'
+
+    // Time details
+    startDateTime: timestamp('start_date_time').notNull(),
+    endDateTime: timestamp('end_date_time').notNull(),
+
+    // Recurrence (for classes that repeat weekly)
+    isRecurring: boolean('is_recurring').notNull().default(false),
+    recurrencePattern: recurrencePatternEnum('recurrence_pattern').default('none'),
+    recurrenceEndDate: timestamp('recurrence_end_date'), // When recurring stops
+    dayOfWeek: varchar('day_of_week', { length: 20 }), // Monday, Tuesday, etc.
+
+    // Additional details
+    location: varchar('location', { length: 255 }),
+    color: varchar('color', { length: 7 }), // Hex color for UI
+
+    // Metadata
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/**
  * Relations
  */
 export const studentProfilesRelations = relations(studentProfiles, ({ one }) => ({
@@ -200,6 +291,32 @@ export const studentEvaluationsRelations = relations(studentEvaluations, ({ one 
     }),
 }));
 
+export const campusEventsRelations = relations(campusEvents, ({ one }) => ({
+    user: one(user, {
+        fields: [campusEvents.userId],
+        references: [user.id],
+    }),
+}));
+
+export const schedulesRelations = relations(schedules, ({ one, many }) => ({
+    user: one(user, {
+        fields: [schedules.userId],
+        references: [user.id],
+    }),
+    items: many(scheduleItems),
+}));
+
+export const scheduleItemsRelations = relations(scheduleItems, ({ one }) => ({
+    user: one(user, {
+        fields: [scheduleItems.userId],
+        references: [user.id],
+    }),
+    schedule: one(schedules, {
+        fields: [scheduleItems.scheduleId],
+        references: [schedules.id],
+    }),
+}));
+
 /**
  * Sync State table
  * Tracks last synced position for Moodle notifications and Gmail emails
@@ -246,5 +363,11 @@ export type StudentAssignment = typeof studentAssignments.$inferSelect;
 export type NewStudentAssignment = typeof studentAssignments.$inferInsert;
 export type StudentEvaluation = typeof studentEvaluations.$inferSelect;
 export type NewStudentEvaluation = typeof studentEvaluations.$inferInsert;
+export type CampusEvent = typeof campusEvents.$inferSelect;
+export type NewCampusEvent = typeof campusEvents.$inferInsert;
+export type Schedule = typeof schedules.$inferSelect;
+export type NewSchedule = typeof schedules.$inferInsert;
+export type ScheduleItem = typeof scheduleItems.$inferSelect;
+export type NewScheduleItem = typeof scheduleItems.$inferInsert;
 export type SyncState = typeof syncState.$inferSelect;
 export type NewSyncState = typeof syncState.$inferInsert;

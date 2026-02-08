@@ -13,8 +13,8 @@ export class GeminiError extends Error {
 }
 
 export class GeminiClient {
-  private defaultModel = process.env.GEMINI_MODEL || 'gemini-1.5-flash-002';
-  private thinkingModel = process.env.GEMINI_MODEL_THINKING || 'gemini-1.5-pro-002';
+  private defaultModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
+  private thinkingModel = process.env.GEMINI_MODEL_THINKING || 'gemini-2.5-flash-lite';
   private vertexAI: VertexAI;
 
   constructor() {
@@ -46,7 +46,11 @@ export class GeminiClient {
   }
 
   private buildSystemPrompt(context: StudentContext, format: ResponseFormat): string {
-    const currentDate = new Date().toISOString().split('T')[0];
+    const currentDate = new Date();
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = currentDate.getFullYear();
+    const formattedDate = `${day}/${month}/${year}`; // DD/MM/YYYY
 
     let formatInstructions = '';
     switch (format) {
@@ -63,9 +67,10 @@ export class GeminiClient {
         formatInstructions = 'Provide a clear, conversational response.';
     }
 
-    return `You are an intelligent student assistant helping with academic planning, productivity, and course management.
+    return `You are an intelligent student assistant helping with academic planning, productivity, and course management for students in India.
 
-**Current Date**: ${currentDate}
+**Current Date**: ${formattedDate} (DD/MM/YYYY format)
+**DATE FORMAT REQUIREMENT**: ALWAYS use DD/MM/YYYY format (Indian standard). Example: 25/12/2024 means 25th December 2024.
 
 **Your Role**:
 - Analyze student data to provide personalized recommendations

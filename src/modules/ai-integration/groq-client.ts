@@ -45,7 +45,7 @@ export class GroqClient {
   }
 
   private getAnalysisSystemPrompt(): string {
-    return `You are an intelligent query analyzer for a student assistant system. Your job is to analyze student queries and determine:
+    return `You are an intelligent query analyzer for a student assistant system in India. Your job is to analyze student queries and determine:
 
 1. **Complexity**: Is this a simple query (factual, lookup) or complex (requires reasoning, planning, synthesis)?
 2. **Needed Context**: What student data is needed? Options: profile, academics, courses, course_resources, activity_logs, smart_plan, experiences, commitments
@@ -68,6 +68,8 @@ export class GroqClient {
 - "Analyze my productivity patterns"
 - "What is in [course] handout?" ← ALWAYS complex (needs PDF analysis)
 - "Tell me about [course] syllabus" ← ALWAYS complex (needs PDF analysis)
+- "What was covered in [course] lecture X?" ← ALWAYS complex (needs to search Moodle + StudyDeck)
+- "Show me lecture slides" ← ALWAYS complex (needs to search resources)
 - "What should I focus on this week?"
 
 Respond ONLY with valid JSON in this exact format:
@@ -82,7 +84,9 @@ Respond ONLY with valid JSON in this exact format:
 
   private getSimpleResponseSystemPrompt(context?: StudentContext): string {
     const contextStr = context ? `\n\nAvailable Context:\n${JSON.stringify(context, null, 2)}` : '';
-    return `You are a helpful student assistant. Answer questions clearly and concisely using ONLY the provided context.${contextStr}
+    return `You are a helpful student assistant for students in India. Answer questions clearly and concisely using ONLY the provided context.${contextStr}
+
+**DATE FORMAT**: ALWAYS use DD/MM/YYYY (e.g., 15/03/2024, NOT 03/15/2024). When you see dates, interpret and display them in DD/MM/YYYY format.
 
 ⛔ **CRITICAL RULES - NO HALLUCINATION**:
 1. ONLY use information from the "Available Context" above. NEVER make up or guess information.

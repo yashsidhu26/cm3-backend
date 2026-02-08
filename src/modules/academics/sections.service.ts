@@ -258,6 +258,200 @@ export class SectionsService {
   }
 
   /**
+   * Register user for a section
+   * Enforces one section per type (Lecture/Lab/Tutorial) per course
+   */
+  async registerUserForSection(
+    userId: string,
+    sectionId: string
+  ): Promise<UserSectionRegistration> {
+    // Get section details
+    const [section] = await db
+      .select()
+      .from(courseSections)
+      .where(eq(courseSections.id, sectionId))
+      .limit(1);
+
+    if (!section) {
+      throw new Error('Section not found');
+    }
+
+    // Check if already registered for this exact section
+    const exactMatch = await db
+      .select()
+      .from(userSectionRegistrations)
+      .where(
+        and(
+          eq(userSectionRegistrations.userId, userId),
+          eq(userSectionRegistrations.sectionId, sectionId)
+        )
+      )
+      .limit(1);
+
+    if (exactMatch.length > 0) {
+      throw new Error('Already registered for this section');
+    }
+
+    // Check if already registered for another section of same type for this course
+    const allUserRegistrations = await db
+      .select()
+      .from(userSectionRegistrations)
+      .where(eq(userSectionRegistrations.userId, userId));
+
+    let conflictingRegistration = null;
+
+    for (const registration of allUserRegistrations) {
+      const [registeredSection] = await db
+        .select()
+        .from(courseSections)
+        .where(eq(courseSections.id, registration.sectionId))
+        .limit(1);
+
+      if (registeredSection &&
+          registeredSection.courseId === section.courseId &&
+          registeredSection.sectionType === section.sectionType) {
+        conflictingRegistration = {
+          registrationId: registration.id,
+          sectionId: registeredSection.id,
+          sectionType: registeredSection.sectionType,
+          sectionNumber: registeredSection.sectionNumber,
+        };
+        break;
+      }
+    }
+
+    // If conflict found, automatically unregister from old and register for new
+    if (conflictingRegistration) {
+      console.log(
+        `[Sections] User already registered for ${section.sectionType} ${conflictingRegistration.sectionNumber}. ` +
+        `Switching to ${section.sectionType} ${section.sectionNumber}`
+      );
+
+      // Unregister from old section
+      await db
+        .delete(userSectionRegistrations)
+        .where(eq(userSectionRegistrations.id, conflictingRegistration.registrationId));
+    }
+
+    // Register for new section
+    const [registration] = await db
+      .insert(userSectionRegistrations)
+      .values({
+        userId,
+        sectionId,
+      })
+      .returning();
+
+    return registration;
+  }
+
+  /**
+   * Unregister user from a section
+   */
+  async unregisterUserFromSection(userId: string, sectionId: string): Promise<void> {
+    const deleted = await db
+      .delete(userSectionRegistrations)
+      .where(
+        and(
+          eq(userSectionRegistrations.userId, userId),
+          eq(userSectionRegistrations.sectionId, sectionId)
+        )
+      )
+      .returning();
+
+    if (deleted.length === 0) {
+      throw new Error('Registration not found');
+    }
+  }
+
+  /**
+   * Get all user registrations with full details
+   */
+  async getUserRegistrations(userId: string) {
+    const registrations = await db
+      .select()
+      .from(userSectionRegistrations)
+      .where(eq(userSectionRegistrations.userId, userId));
+
+    const details = [];
+
+    for (const registration of registrations) {
+      const section = await db
+        .select()
+        .from(courseSections)
+        .where(eq(courseSections.id, registration.sectionId))
+        .limit(1);
+
+      if (section.length === 0) continue;
+
+      const course = await db
+        .select()
+        .from(courses)
+        .where(eq(courses.id, section[0].courseId))
+        .limit(1);
+
+      if (course.length === 0) continue;
+
+      const timings = await db
+        .select()
+        .from(classSchedule)
+        .where(eq(classSchedule.sectionId, section[0].id));
+
+      details.push({
+        registrationId: registration.id,
+        sectionId: section[0].id,
+        courseId: course[0].id,
+        courseCode: course[0].code,
+        courseName: course[0].name,
+        sectionType: section[0].sectionType,
+        sectionNumber: section[0].sectionNumber,
+        instructors: section[0].instructors || [],
+        roomNumber: section[0].roomNumber,
+        schedule: timings,
+        registeredAt: registration.registeredAt,
+      });
+    }
+
+    return details;
+  }
+
+  /**
+   * Get available sections for a course with registration status
+   */
+  async getAvailableSections(courseId: string, userId: string) {
+    const sections = await db
+      .select()
+      .from(courseSections)
+      .where(eq(courseSections.courseId, courseId));
+
+    const userRegistrations = await db
+      .select()
+      .from(userSectionRegistrations)
+      .where(eq(userSectionRegistrations.userId, userId));
+
+    const registeredSectionIds = new Set(
+      userRegistrations.map((r) => r.sectionId)
+    );
+
+    const result = [];
+
+    for (const section of sections) {
+      const timings = await db
+        .select()
+        .from(classSchedule)
+        .where(eq(classSchedule.sectionId, section.id));
+
+      result.push({
+        ...section,
+        schedule: timings,
+        isRegistered: registeredSectionIds.has(section.id),
+      });
+    }
+
+    return result;
+  }
+
+  /**
    * Get sections user is registered for a specific course
    *
    * @param userId - User ID

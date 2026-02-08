@@ -45,7 +45,6 @@ export const chatRequestSchema = z.object({
   query: z.string().min(1, 'Query cannot be empty').max(2000, 'Query too long'),
   includeHistory: z.boolean().optional().default(true),
   format: z.enum(['text', 'json', 'schedule', 'overview']).optional(),
-  mode: z.enum(['agent', 'fast', 'auto']).optional().default('auto'),
 });
 
 export type ChatRequest = z.infer<typeof chatRequestSchema>;

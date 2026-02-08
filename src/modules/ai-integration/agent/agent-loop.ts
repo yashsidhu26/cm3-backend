@@ -11,7 +11,7 @@ import { executeToolCall } from './tool-registry';
 import { buildAgentSystemPrompt } from './system-prompt';
 
 const MAX_ITERATIONS = 7;
-const TOTAL_TIMEOUT_MS = 45000; // 45 seconds
+const TOTAL_TIMEOUT_MS = 120000; // 120 seconds (2 minutes) - generous timeout
 
 export class AgentError extends Error {
   constructor(
@@ -25,21 +25,36 @@ export class AgentError extends Error {
 }
 
 /**
- * Determine which model to use based on query and format
+ * Extract function calls from Vertex AI response
+ * Response structure varies by endpoint/model
+ */
+function extractFunctionCalls(result: any): any[] {
+  // Try the method-based API first (older SDK versions)
+  if (typeof result.response?.functionCalls === 'function') {
+    return result.response.functionCalls();
+  }
+
+  // Parse from response structure (newer/different endpoints)
+  const parts = result.response?.candidates?.[0]?.content?.parts || [];
+  return parts
+    .filter((part: any) => part.functionCall)
+    .map((part: any) => part.functionCall);
+}
+
+/**
+ * Determine which model to use based on query complexity
+ * - gemini-3-flash-preview: All queries (temporarily forced by user)
+ *
+ * TEMPORARY: User requested to force gemini-3-flash-preview for everything
+ * and use regional endpoint (us-central1) instead of global
  */
 function selectModel(query: string, format?: ResponseFormat): string {
-  const defaultModel = process.env.GEMINI_MODEL || 'gemini-1.5-flash-002';
-  const thinkingModel = process.env.GEMINI_MODEL_THINKING || 'gemini-1.5-pro-002';
+  // TEMPORARY: Force gemini-3-flash-preview for ALL queries (user request)
+  const model = 'gemini-3-flash-preview';
 
-  // Use thinking model for complex scheduling and planning
-  const needsThinking =
-    format === 'schedule' ||
-    query.toLowerCase().includes('schedule') ||
-    query.toLowerCase().includes('conflict') ||
-    query.toLowerCase().includes('plan my week') ||
-    query.toLowerCase().includes('manage my time');
+  console.log(`[Agent] Using model: ${model} (forced for all queries)`);
 
-  return needsThinking ? thinkingModel : defaultModel;
+  return model;
 }
 
 /**
@@ -53,14 +68,25 @@ export async function runAgentLoop(
 ): Promise<AgentAIResponse> {
   const startTime = Date.now();
   const projectId = process.env.GCP_PROJECT_ID;
-  const location = process.env.GCP_LOCATION || 'us-central1';
 
   if (!projectId) {
     throw new AgentError('GCP_PROJECT_ID not configured', 'MISSING_PROJECT_ID', 500);
   }
 
-  const vertexAI = new VertexAI({ project: projectId, location });
+  // Select model first
   const selectedModel = selectModel(query, format);
+
+  // TEMPORARY: Force global location with standard API endpoint
+  const location = 'global';
+  const apiEndpoint = 'aiplatform.googleapis.com';
+
+  console.log(`[Agent] Model: ${selectedModel}, Location: ${location}, Endpoint: ${apiEndpoint}`);
+
+  const vertexAI = new VertexAI({
+    project: projectId,
+    location,
+    apiEndpoint
+  });
 
   console.log(`[Agent] Using model: ${selectedModel}`);
 
@@ -118,7 +144,14 @@ export async function runAgentLoop(
       }
 
       // Check if response has function calls
-      const functionCalls = result.response.functionCalls();
+      const functionCalls = extractFunctionCalls(result);
+
+      // Debug: Log response structure when no function calls
+      if (!functionCalls || functionCalls.length === 0) {
+        const parts = result.response?.candidates?.[0]?.content?.parts || [];
+        console.log(`[Agent] Iteration ${iterations}: No function calls found`);
+        console.log(`[Agent] Response parts:`, JSON.stringify(parts, null, 2));
+      }
 
       if (!functionCalls || functionCalls.length === 0) {
         // Got final text response
