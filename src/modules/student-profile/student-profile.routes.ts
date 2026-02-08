@@ -1479,12 +1479,25 @@ app.post('/schedules/:id/generate-from-sections', protect, async (c) => {
                 if (existing.length > 0) continue;
 
                 // Create schedule item
+                // Calculate the next occurrence of this day of week
+                const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 const today = new Date();
+                const targetDayIndex = daysOfWeek.indexOf(timing.dayOfWeek);
+                const currentDayIndex = today.getDay();
+
+                // Calculate days until next occurrence (0-6)
+                let daysUntilTarget = targetDayIndex - currentDayIndex;
+                if (daysUntilTarget < 0) {
+                    daysUntilTarget += 7; // Next week
+                }
+
                 const startDateTime = new Date(today);
-                startDateTime.setHours(parseInt(timing.startTime.split(':')[0]), parseInt(timing.startTime.split(':')[1]), 0);
+                startDateTime.setDate(today.getDate() + daysUntilTarget);
+                startDateTime.setHours(parseInt(timing.startTime.split(':')[0]), parseInt(timing.startTime.split(':')[1]), 0, 0);
 
                 const endDateTime = new Date(today);
-                endDateTime.setHours(parseInt(timing.endTime.split(':')[0]), parseInt(timing.endTime.split(':')[1]), 0);
+                endDateTime.setDate(today.getDate() + daysUntilTarget);
+                endDateTime.setHours(parseInt(timing.endTime.split(':')[0]), parseInt(timing.endTime.split(':')[1]), 0, 0);
 
                 await db.insert(scheduleItems).values({
                     scheduleId,
@@ -1798,6 +1811,84 @@ app.patch('/events/:id/mark-enrolled', protect, async (c) => {
         return successResponse(c, event);
     } catch (error: any) {
         return errorResponse(c, error.message || 'Failed to mark event as enrolled', 500);
+    }
+});
+
+/**
+ * POST /fix-schedule-dates
+ * One-time fix to correct startDateTime/endDateTime for existing class schedule items
+ * This fixes items created with the old buggy code that didn't align dates with dayOfWeek
+ */
+app.post('/fix-schedule-dates', protect, async (c) => {
+    try {
+        const user = c.get('user');
+
+        // Get all class-type recurring schedule items for the user
+        const classItems = await db
+            .select()
+            .from(scheduleItems)
+            .where(and(
+                eq(scheduleItems.userId, user.id),
+                eq(scheduleItems.type, 'class'),
+                eq(scheduleItems.isRecurring, true)
+            ));
+
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        let itemsFixed = 0;
+        let itemsSkipped = 0;
+
+        for (const item of classItems) {
+            // Skip if no dayOfWeek specified
+            if (!item.dayOfWeek) {
+                itemsSkipped++;
+                continue;
+            }
+
+            // Get current day index from startDateTime
+            const currentDayIndex = item.startDateTime.getDay();
+            const targetDayIndex = daysOfWeek.indexOf(item.dayOfWeek);
+
+            // If already correct, skip
+            if (currentDayIndex === targetDayIndex) {
+                itemsSkipped++;
+                continue;
+            }
+
+            // Calculate days to adjust (forward only, to next occurrence)
+            let daysToAdjust = targetDayIndex - currentDayIndex;
+            if (daysToAdjust < 0) {
+                daysToAdjust += 7;
+            }
+
+            // Create new dates with correct day
+            const newStartDateTime = new Date(item.startDateTime);
+            newStartDateTime.setDate(newStartDateTime.getDate() + daysToAdjust);
+
+            const newEndDateTime = new Date(item.endDateTime);
+            newEndDateTime.setDate(newEndDateTime.getDate() + daysToAdjust);
+
+            // Update the item
+            await db
+                .update(scheduleItems)
+                .set({
+                    startDateTime: newStartDateTime,
+                    endDateTime: newEndDateTime,
+                    updatedAt: new Date(),
+                })
+                .where(eq(scheduleItems.id, item.id));
+
+            itemsFixed++;
+        }
+
+        return successResponse(c, {
+            message: 'Schedule dates fixed successfully',
+            itemsFixed,
+            itemsSkipped,
+            totalProcessed: classItems.length,
+        });
+    } catch (error: any) {
+        console.error('[FixScheduleDates] Error:', error);
+        return errorResponse(c, error.message || 'Failed to fix schedule dates', 500);
     }
 });
 
