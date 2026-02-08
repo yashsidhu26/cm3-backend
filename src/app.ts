@@ -77,7 +77,7 @@ async function loadModules() {
 
         if (routeFile) {
           const routePath = resolve(modulePath, routeFile);
-          
+
           try {
             // Dynamic import of the route module (absolute path for bundle compatibility)
             const module = await import(routePath);
@@ -162,9 +162,12 @@ console.log(`
 ╚══════════════════════════════════════════╝
 `);
 
+import { websocket } from './core/utils/websocket';
+
 export default {
   port: PORT,
   fetch: app.fetch,
+  websocket,
 };
 
 console.log(`🔥 Server running on http://localhost:${PORT}`);
