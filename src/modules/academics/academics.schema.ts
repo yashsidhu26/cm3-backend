@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, timestamp, text, boolean, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, timestamp, text, boolean, pgEnum, integer } from 'drizzle-orm/pg-core';
 import { user } from '../auth/auth.schema';
 import { relations } from 'drizzle-orm';
 
@@ -15,15 +15,32 @@ export const semesterEnum = pgEnum('semester', ['fall', 'spring', 'summer']);
 
 /**
  * Courses table
- * Stores course information synced from Moodle
+ * Stores course information synced from Moodle and BITS course catalog
  */
 export const courses = pgTable('courses', {
   id: uuid('id').primaryKey().defaultRandom(),
+
+  // Moodle integration
   moodleCourseId: varchar('moodle_course_id', { length: 100 }).unique(),
-  code: varchar('code', { length: 50 }).notNull(),
+
+  // BITS course catalog integration (from all_courses.json)
+  staticId: varchar('static_id', { length: 100 }).unique(), // UUID from all_courses.json
+
+  // Core course info
+  code: varchar('code', { length: 50 }).notNull(), // e.g., "BIO F101"
   name: varchar('name', { length: 255 }).notNull(),
   professorName: varchar('professor_name', { length: 255 }),
   description: text('description'),
+
+  // Academic details
+  units: integer('units'), // Credit units
+  courseType: varchar('course_type', { length: 50 }), // e.g., "OPEL", "CDC", "Elective"
+  nickname: varchar('nickname', { length: 255 }), // Optional nickname
+
+  // Course materials
+  handoutLink: text('handout_link'), // PDF link from handouts.json
+
+  // Metadata
   semester: semesterEnum('semester'),
   year: varchar('year', { length: 10 }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -68,6 +85,53 @@ export const resources = pgTable('resources', {
 });
 
 /**
+ * Course Sections table
+ * Stores section details (lecture, tutorial, lab) with instructors and rooms
+ */
+export const courseSections = pgTable('course_sections', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  courseId: uuid('course_id')
+    .notNull()
+    .references(() => courses.id, { onDelete: 'cascade' }),
+  sectionType: varchar('section_type', { length: 50 }).notNull(), // Lecture, Tutorial, Lab
+  sectionNumber: integer('section_number').notNull(),
+  instructors: text('instructors').array(), // Array of instructor names
+  roomNumber: varchar('room_number', { length: 50 }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/**
+ * Class Schedule table
+ * Stores individual class timings for each section
+ */
+export const classSchedule = pgTable('class_schedule', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  sectionId: uuid('section_id')
+    .notNull()
+    .references(() => courseSections.id, { onDelete: 'cascade' }),
+  dayOfWeek: varchar('day_of_week', { length: 20 }).notNull(), // Monday, Tuesday, etc.
+  startTime: varchar('start_time', { length: 10 }).notNull(), // HH:MM format
+  endTime: varchar('end_time', { length: 10 }).notNull(), // HH:MM format
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/**
+ * User Section Registration table
+ * Tracks which sections each user is registered for
+ */
+export const userSectionRegistrations = pgTable('user_section_registrations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  sectionId: uuid('section_id')
+    .notNull()
+    .references(() => courseSections.id, { onDelete: 'cascade' }),
+  registeredAt: timestamp('registered_at').notNull().defaultNow(),
+});
+
+/**
  * Relations for Drizzle ORM
  * Enables type-safe relational queries
  */
@@ -76,6 +140,7 @@ export const resources = pgTable('resources', {
 export const coursesRelations = relations(courses, ({ many }) => ({
   enrollments: many(enrollments),
   resources: many(resources),
+  sections: many(courseSections),
 }));
 
 // Enrollment relations
@@ -98,6 +163,36 @@ export const resourcesRelations = relations(resources, ({ one }) => ({
   }),
 }));
 
+// Course Section relations
+export const courseSectionsRelations = relations(courseSections, ({ one, many }) => ({
+  course: one(courses, {
+    fields: [courseSections.courseId],
+    references: [courses.id],
+  }),
+  schedule: many(classSchedule),
+  registrations: many(userSectionRegistrations),
+}));
+
+// Class Schedule relations
+export const classScheduleRelations = relations(classSchedule, ({ one }) => ({
+  section: one(courseSections, {
+    fields: [classSchedule.sectionId],
+    references: [courseSections.id],
+  }),
+}));
+
+// User Section Registration relations
+export const userSectionRegistrationsRelations = relations(userSectionRegistrations, ({ one }) => ({
+  user: one(user, {
+    fields: [userSectionRegistrations.userId],
+    references: [user.id],
+  }),
+  section: one(courseSections, {
+    fields: [userSectionRegistrations.sectionId],
+    references: [courseSections.id],
+  }),
+}));
+
 /**
  * Type exports for TypeScript type safety
  */
@@ -109,3 +204,12 @@ export type NewEnrollment = typeof enrollments.$inferInsert;
 
 export type Resource = typeof resources.$inferSelect;
 export type NewResource = typeof resources.$inferInsert;
+
+export type CourseSection = typeof courseSections.$inferSelect;
+export type NewCourseSection = typeof courseSections.$inferInsert;
+
+export type ClassSchedule = typeof classSchedule.$inferSelect;
+export type NewClassSchedule = typeof classSchedule.$inferInsert;
+
+export type UserSectionRegistration = typeof userSectionRegistrations.$inferSelect;
+export type NewUserSectionRegistration = typeof userSectionRegistrations.$inferInsert;

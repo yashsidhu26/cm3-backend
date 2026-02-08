@@ -14,6 +14,19 @@ export interface MoodleAuthResponse {
   userId: string;
 }
 
+export interface MoodleSiteInfo {
+  sitename: string;
+  username: string;
+  firstname: string;
+  lastname: string;
+  fullname: string;
+  lang: string;
+  userid: number;
+  siteurl: string;
+  userpictureurl: string;
+  useremail?: string;
+}
+
 export interface MoodleCourse {
   id: string;
   shortname: string; // Course code (e.g., "CS F111")
@@ -55,7 +68,7 @@ export class MoodleClient {
 
   constructor(baseUrl?: string) {
     // Use environment variable or default to BITS Pilani Moodle
-    this.baseUrl = baseUrl || process.env.MOODLE_BASE_URL || 'https://cms.bits-pilani.ac.in';
+    this.baseUrl = baseUrl || process.env.MOODLE_BASE_URL || 'https://nalanda.bits-pilani.ac.in';
   }
 
   /**
@@ -65,11 +78,6 @@ export class MoodleClient {
    * @param password - Moodle password
    * @returns Authentication token and user ID
    * 
-   * NOTE: This is a placeholder implementation.
-   * In production, you'll need to:
-   * 1. Use the actual Moodle web service endpoint (e.g., /login/token.php)
-   * 2. Handle proper error codes from Moodle
-   * 3. Implement token refresh logic
    */
   async authenticate(username: string, password: string): Promise<MoodleAuthResponse> {
     try {
@@ -153,23 +161,18 @@ export class MoodleClient {
    * @param token - Moodle authentication token
    * @returns List of enrolled courses
    * 
-   * NOTE: This is a placeholder implementation.
-   * In production, you'll need to:
-   * 1. Use core_enrol_get_users_courses web service function
-   * 2. Parse actual Moodle response structure
-   * 3. Handle pagination if user has many courses
    */
-  async fetchCourses(token: string): Promise<MoodleCourse[]> {
+  async fetchCourses(token: string, userId: string): Promise<MoodleCourse[]> {
     try {
-      console.log('[Moodle] Fetching courses');
+      console.log(`[Moodle] Fetching courses for user: ${userId}`);
 
-      // Placeholder: Replace with actual Moodle API call
       const response = await fetch(
         `${this.baseUrl}/webservice/rest/server.php?` +
         new URLSearchParams({
           wstoken: token,
           wsfunction: 'core_enrol_get_users_courses',
           moodlewsrestformat: 'json',
+          userid: userId,
         }),
         {
           method: 'GET',
@@ -185,7 +188,7 @@ export class MoodleClient {
         );
       }
 
-      const data = await response.json();
+      const data = await response.json() as any;
 
       // Check for Moodle API errors
       if (data.exception) {
@@ -196,34 +199,16 @@ export class MoodleClient {
         );
       }
 
-      // Mock courses for development
-      // TODO: Remove this when implementing actual Moodle integration
-      const mockCourses: MoodleCourse[] = [
-        {
-          id: 'moodle_101',
-          shortname: 'CS F111',
-          fullname: 'Computer Programming',
-          summary: 'Introduction to programming using Python',
-          teachers: ['Dr. John Doe'],
-        },
-        {
-          id: 'moodle_102',
-          shortname: 'MATH F112',
-          fullname: 'Mathematics II',
-          summary: 'Calculus and Linear Algebra',
-          teachers: ['Dr. Jane Smith'],
-        },
-        {
-          id: 'moodle_103',
-          shortname: 'PHY F111',
-          fullname: 'Mechanics',
-          summary: 'Classical mechanics and thermodynamics',
-          teachers: ['Dr. Robert Brown'],
-        },
-      ];
+      // Parse real Moodle response: array of course objects
+      const courses: MoodleCourse[] = (Array.isArray(data) ? data : []).map((course: any) => ({
+        id: String(course.id),
+        shortname: course.shortname || '',
+        fullname: course.fullname || '',
+        summary: course.summary ? course.summary.replace(/<[^>]*>/g, '').trim() : undefined,
+      }));
 
-      console.log(`[Moodle] Fetched ${mockCourses.length} courses`);
-      return mockCourses;
+      console.log(`[Moodle] Fetched ${courses.length} courses`);
+      return courses;
 
     } catch (error: any) {
       if (error instanceof MoodleError) {
@@ -253,8 +238,6 @@ export class MoodleClient {
    * @param courseId - Moodle course ID
    * @returns List of course resources
    * 
-   * NOTE: This is a placeholder implementation.
-   * In production, use core_course_get_contents web service function
    */
   async fetchCourseResources(token: string, courseId: string): Promise<MoodleResource[]> {
     try {
@@ -282,7 +265,7 @@ export class MoodleClient {
         );
       }
 
-      const data = await response.json();
+      const data = await response.json() as any;
 
       if (data.exception) {
         throw new MoodleError(
@@ -292,27 +275,42 @@ export class MoodleClient {
         );
       }
 
-      // Mock resources for development
-      const mockResources: MoodleResource[] = [
-        {
-          id: `res_${courseId}_1`,
-          name: 'Lecture 1 - Introduction.pdf',
-          type: 'pdf',
-          url: `${this.baseUrl}/mod/resource/view.php?id=12345`,
-          filesize: 2048576, // 2MB
-          uploadedby: 'Dr. John Doe',
-        },
-        {
-          id: `res_${courseId}_2`,
-          name: 'Week 2 Slides.pptx',
-          type: 'slide',
-          url: `${this.baseUrl}/mod/resource/view.php?id=12346`,
-          filesize: 5242880, // 5MB
-        },
-      ];
+      // Parse real Moodle response: array of sections, each with modules[], each module with contents[]
+      const resources: MoodleResource[] = [];
+      const sections = Array.isArray(data) ? data : [];
 
-      console.log(`[Moodle] Fetched ${mockResources.length} resources`);
-      return mockResources;
+      for (const section of sections) {
+        const modules = Array.isArray(section.modules) ? section.modules : [];
+        for (const mod of modules) {
+          const contents = Array.isArray(mod.contents) ? mod.contents : [];
+          if (contents.length > 0) {
+            // Module has file contents — create a resource per content file
+            for (const content of contents) {
+              const fileurl = content.fileurl
+                ? `${content.fileurl}${content.fileurl.includes('?') ? '&' : '?'}token=${token}`
+                : '';
+              resources.push({
+                id: String(mod.id),
+                name: content.filename || mod.name || 'Unnamed',
+                type: this.mapResourceType(mod.modname, content.mimetype),
+                url: fileurl,
+                filesize: content.filesize || undefined,
+              });
+            }
+          } else if (mod.url) {
+            // Module without file contents (e.g., assignment, URL, forum)
+            resources.push({
+              id: String(mod.id),
+              name: mod.name || 'Unnamed',
+              type: this.mapResourceType(mod.modname),
+              url: mod.url,
+            });
+          }
+        }
+      }
+
+      console.log(`[Moodle] Fetched ${resources.length} resources`);
+      return resources;
 
     } catch (error: any) {
       if (error instanceof MoodleError) {
@@ -328,9 +326,26 @@ export class MoodleClient {
   }
 
   /**
+   * Map Moodle module name and mimetype to our resource type enum
+   */
+  private mapResourceType(modname?: string, mimetype?: string): MoodleResource['type'] {
+    if (mimetype) {
+      if (mimetype === 'application/pdf') return 'pdf';
+      if (mimetype.includes('presentation') || mimetype.includes('powerpoint')) return 'slide';
+      if (mimetype.startsWith('video/')) return 'video';
+    }
+    if (modname) {
+      if (modname === 'assign') return 'assignment';
+      if (modname === 'url') return 'link';
+      if (modname === 'resource' || modname === 'folder') return 'other';
+    }
+    return 'other';
+  }
+
+  /**
    * Get site info to retrieve user ID
    */
-  async getSiteInfo(token: string): Promise<any> {
+  async getSiteInfo(token: string): Promise<MoodleSiteInfo> {
     const response = await fetch(
       `${this.baseUrl}/webservice/rest/server.php?` +
       new URLSearchParams({
@@ -348,12 +363,12 @@ export class MoodleClient {
       throw new MoodleError('Failed to get site info', 'SITE_INFO_FAILED', response.status);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
     if (data.exception) {
       throw new MoodleError(data.message, 'MOODLE_API_ERROR', 400);
     }
 
-    return data;
+    return data as MoodleSiteInfo;
   }
 
   /**

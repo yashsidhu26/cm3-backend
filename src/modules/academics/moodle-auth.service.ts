@@ -131,6 +131,16 @@ export async function getAuthStatus(userId: string): Promise<{
 }
 
 /**
+ * Get Moodle user ID for a local user
+ */
+export async function getMoodleUserId(userId: string): Promise<string | null> {
+    const record = await db.query.moodleToken.findFirst({
+        where: eq(moodleToken.userId, userId),
+    });
+    return record?.moodleUserId || null;
+}
+
+/**
  * Logout from Moodle integration (delete token)
  * Does NOT affect actual Moodle session, just removes our access
  */

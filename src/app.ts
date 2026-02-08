@@ -5,8 +5,19 @@ import { prettyJSON } from 'hono/pretty-json';
 import { ZodError } from 'zod';
 import { errorResponse } from './core/utils/response';
 import { injectUser } from './core/auth/middleware';
-import { readdirSync, statSync } from 'fs';
-import { join, resolve } from 'path';
+import { initializeDebugLogger } from './core/utils/debug-logger';
+
+// Import all module routes statically
+import academicsRoutes from './modules/academics/academics.routes';
+import paymentsRoutes from './modules/payments/payments.routes';
+import authRoutes from './modules/auth/auth.routes';
+import aiIntegrationRoutes from './modules/ai-integration/ai-integration.routes';
+import socialRoutes from './modules/social/social.routes';
+import gmailAuthRoutes from './modules/gmail-auth/gmail-auth.routes';
+import studentProfileRoutes from './modules/student-profile/student-profile.routes';
+
+// Initialize debug logger before anything else
+initializeDebugLogger();
 
 /**
  * Super App API - Main Entry Point
@@ -54,57 +65,28 @@ app.get('/health', (c) => {
 });
 
 /**
- * Dynamic Module Loading
- * Scans src/modules directory and auto-mounts any *.routes.ts files
- * This eliminates manual registration of new modules
+ * Mount all modules statically
+ * Using static imports for reliability and better tree-shaking
  */
-async function loadModules() {
-  // Use cwd so bundled app (e.g. dist/app.js) still finds src/modules
-  const modulesPath = join(process.cwd(), 'src', 'modules');
-  const modules: string[] = [];
+const modules = [
+  { name: 'academics', path: '/api/academics', routes: academicsRoutes },
+  { name: 'payments', path: '/api/payments', routes: paymentsRoutes },
+  { name: 'auth', path: '/api/auth', routes: authRoutes },
+  { name: 'ai-integration', path: '/api/ai-integration', routes: aiIntegrationRoutes },
+  { name: 'social', path: '/api/social', routes: socialRoutes },
+  { name: 'gmail-auth', path: '/auth', routes: gmailAuthRoutes },
+  { name: 'student-profile', path: '/api/student-profile', routes: studentProfileRoutes },
+];
 
-  try {
-    const modulesDirs = readdirSync(modulesPath);
+console.log('\n🔄 Mounting modules...\n');
 
-    for (const dir of modulesDirs) {
-      const modulePath = join(modulesPath, dir);
-      const stat = statSync(modulePath);
-
-      if (stat.isDirectory()) {
-        // Look for *.routes.ts file in the module directory
-        const files = readdirSync(modulePath);
-        const routeFile = files.find((f) => f.endsWith('.routes.ts'));
-
-        if (routeFile) {
-          const routePath = resolve(modulePath, routeFile);
-
-          try {
-            // Dynamic import of the route module (absolute path for bundle compatibility)
-            const module = await import(routePath);
-            const routeHandler = module.default;
-
-            if (routeHandler) {
-              // Mount the module with /api/[module-name] prefix (gmail-auth mounts at /auth)
-              const mountPath = dir === 'gmail-auth' ? '/auth' : `/api/${dir}`;
-              app.route(mountPath, routeHandler);
-              modules.push(dir);
-              console.log(`✓ Loaded module: ${dir} -> ${mountPath}`);
-            }
-          } catch (error) {
-            console.error(`✗ Failed to load module ${dir}:`, error);
-          }
-        }
-      }
-    }
-
-    console.log(`\n🚀 Loaded ${modules.length} module(s): ${modules.join(', ')}\n`);
-  } catch (error) {
-    console.error('Error loading modules:', error);
-  }
+for (const module of modules) {
+  app.route(module.path, module.routes);
+  console.log(`✓ ${module.name} -> ${module.path}`);
 }
 
-// Load all modules
-await loadModules();
+console.log(`\n🚀 Loaded ${modules.length} module(s)\n`);
+
 
 /**
  * Global Error Handler
