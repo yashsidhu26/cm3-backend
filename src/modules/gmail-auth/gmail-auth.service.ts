@@ -71,8 +71,13 @@ function getOAuth2Client() {
   const clientId = process.env.GMAIL_CLIENT_ID;
   const clientSecret = process.env.GMAIL_CLIENT_SECRET;
 
-  // Auto-derive redirect URI from BASE_URL, or allow override
-  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+  // Auto-derive redirect URI from BASE_URL (required), or allow override
+  const baseUrl = process.env.BASE_URL;
+
+  if (!baseUrl) {
+    throw new Error('BASE_URL environment variable is required for Gmail OAuth');
+  }
+
   const redirectUri = process.env.GMAIL_REDIRECT_URI || `${baseUrl}/auth/callback`;
 
   if (!clientId || !clientSecret) {
