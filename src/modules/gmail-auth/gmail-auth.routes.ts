@@ -31,7 +31,7 @@ const getAuthUrlHandler = (c: any) => {
       {
         success: false,
         error: {
-          message: e?.message || 'Missing Gmail OAuth env (GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REDIRECT_URI)',
+          message: e?.message || 'Missing Gmail OAuth env (GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET)',
           code: 'OAUTH_CONFIG_ERROR'
         }
       },

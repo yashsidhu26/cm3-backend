@@ -70,12 +70,16 @@ function decryptToken(encryptedToken: string): string {
 function getOAuth2Client() {
   const clientId = process.env.GMAIL_CLIENT_ID;
   const clientSecret = process.env.GMAIL_CLIENT_SECRET;
-  const redirectUri = process.env.GMAIL_REDIRECT_URI;
 
-  if (!clientId || !clientSecret || !redirectUri) {
-    throw new Error('Missing GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, or GMAIL_REDIRECT_URI');
+  // Auto-derive redirect URI from BASE_URL, or allow override
+  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+  const redirectUri = process.env.GMAIL_REDIRECT_URI || `${baseUrl}/auth/callback`;
+
+  if (!clientId || !clientSecret) {
+    throw new Error('Missing GMAIL_CLIENT_ID or GMAIL_CLIENT_SECRET');
   }
 
+  console.log(`[Gmail OAuth] Using redirect URI: ${redirectUri}`);
   return new google.auth.OAuth2(clientId, clientSecret, redirectUri);
 }
 

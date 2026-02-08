@@ -572,7 +572,7 @@ IMPORTANT INSTRUCTIONS:
             for (const evaluation of extracted.evaluations) {
                 try {
                     // Only process exams, tests, and quizzes (exclude reports, presentations, projects)
-                    if (!['exam', 'quiz'].includes(evaluation.type)) {
+                    if (!['exam', 'test', 'quiz'].includes(evaluation.type)) {
                         console.log(`[GmailSync] Skipping non-exam evaluation: ${evaluation.title} (type: ${evaluation.type})`);
                         continue;
                     }
@@ -823,7 +823,7 @@ IMPORTANT INSTRUCTIONS:
             for (const evaluation of extracted.evaluations) {
                 try {
                     // Only process exams, tests, and quizzes (exclude reports, presentations, projects)
-                    if (!['exam', 'quiz'].includes(evaluation.type)) {
+                    if (!['exam', 'test', 'quiz'].includes(evaluation.type)) {
                         console.log(`[GmailSync] Skipping non-exam evaluation: ${evaluation.title} (type: ${evaluation.type})`);
                         continue;
                     }
