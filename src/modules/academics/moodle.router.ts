@@ -11,6 +11,7 @@ import { db } from '../../core/database/client';
 import { user as userTable, session as sessionTable } from '../auth/auth.schema';
 import { eq } from 'drizzle-orm';
 import { successResponse, errorResponse } from '../../core/utils/response';
+import { setSignedCookie } from 'hono/cookie';
 import { createHmac, randomBytes } from 'crypto';
 
 const app = new Hono();
@@ -126,12 +127,17 @@ app.post('/sign-in', async (c) => {
         });
 
         // Sign the token with HMAC-SHA256 (same as Better Auth)
+        // Sign the token with HMAC-SHA256 (same as Better Auth)
         const secret = process.env.BETTER_AUTH_SECRET || 'super-secret-key-change-in-production';
-        const signature = createHmac('sha256', secret).update(sessionToken).digest('base64');
-        const signedToken = `${sessionToken}.${signature}`;
 
-        // 7. Set session cookie (matches Better Auth's cookie format)
-        c.header('set-cookie', `super-app.session_token=${encodeURIComponent(signedToken)}; Path=/; HttpOnly; SameSite=None; Secure; Max-Age=${7 * 24 * 60 * 60}`);
+        // Use Hono's setSignedCookie to ensure compatibility with how Better Auth (via Hono context) verifies it
+        await setSignedCookie(c, 'super-app.session_token', sessionToken, secret, {
+            path: '/',
+            secure: true, // Required for SameSite=None
+            httpOnly: true,
+            sameSite: 'None',
+            maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
+        });
 
         return successResponse(c, {
             message: 'Signed in via Moodle successfully',
