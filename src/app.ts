@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { serveStatic } from 'hono/bun';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { prettyJSON } from 'hono/pretty-json';
@@ -49,14 +50,8 @@ app.use('*', prettyJSON());
 app.use('*', injectUser);
 
 // Health check endpoint
-app.get('/', (c) => {
-  return c.json({
-    message: 'Super App API - BHD Stack',
-    version: '1.0.0',
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-  });
-});
+// Serve static files from 'site' directory
+app.use('/*', serveStatic({ root: './site' }));
 
 app.get('/health', (c) => {
   return c.json({
