@@ -1,34 +1,32 @@
-import { Context, Next } from 'hono';
-import { auth, type AuthUser } from './auth';
+import { type Context, type Next } from 'hono';
+import { getSignedCookie } from 'hono/cookie';
+import { SessionService } from './session';
 import { errorResponse } from '../utils/response';
+import { auth, type AuthUser } from './auth';
 
-/**
- * Authentication Middleware for Hono
- * Provides route protection and role-based access control
- */
-
-// Extend Hono context with user
+// Extend Hono context with user logic (keeping previous augmentation)
 declare module 'hono' {
   interface ContextVariableMap {
-    user: AuthUser | null;
+    user: AuthUser | null; // Keep AuthUser type for compatibility or update to schema type
     session: any;
   }
 }
 
-/**
- * Inject User Middleware
- * Automatically attaches user to context if authenticated
- * Should be applied globally or to protected route groups
- */
+// Inject User Middleware
 export async function injectUser(c: Context, next: Next) {
   try {
-    const session = await auth.api.getSession({
-      headers: c.req.raw.headers,
-    });
+    const secret = process.env.BETTER_AUTH_SECRET || 'super-secret-key-change-in-production';
+    const token = await getSignedCookie(c, secret, 'super-app.session_token');
 
-    if (session?.user) {
-      c.set('user', session.user as AuthUser);
-      c.set('session', session.session);
+    if (token) {
+      const sessionData = await SessionService.validateSession(token);
+      if (sessionData) {
+        c.set('user', sessionData.user);
+        c.set('session', sessionData.session);
+      } else {
+        c.set('user', null);
+        c.set('session', null);
+      }
     } else {
       c.set('user', null);
       c.set('session', null);
@@ -101,7 +99,7 @@ export function authorize(allowedRoles: string | string[]) {
 
     // Check if user has required role
     const userRole = (user as any).role || 'student';
-    
+
     if (!roles.includes(userRole)) {
       return errorResponse(
         c,
@@ -143,7 +141,7 @@ export async function requireAdmin(c: Context, next: Next) {
   }
 
   const userRole = (user as any).role || 'student';
-  
+
   if (userRole !== 'admin') {
     return errorResponse(
       c,
