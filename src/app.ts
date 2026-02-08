@@ -15,6 +15,7 @@ import aiIntegrationRoutes from './modules/ai-integration/ai-integration.routes'
 import socialRoutes from './modules/social/social.routes';
 import gmailAuthRoutes from './modules/gmail-auth/gmail-auth.routes';
 import studentProfileRoutes from './modules/student-profile/student-profile.routes';
+import brainRoutes from './modules/brain/brain.routes';
 
 // Initialize debug logger before anything else
 initializeDebugLogger();
@@ -76,6 +77,7 @@ const modules = [
   { name: 'social', path: '/api/social', routes: socialRoutes },
   { name: 'gmail-auth', path: '/auth', routes: gmailAuthRoutes },
   { name: 'student-profile', path: '/api/student-profile', routes: studentProfileRoutes },
+  { name: 'brain', path: '/api/brain', routes: brainRoutes },
 ];
 
 console.log('\n🔄 Mounting modules...\n');

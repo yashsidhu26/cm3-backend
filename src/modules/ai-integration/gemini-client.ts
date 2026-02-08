@@ -183,6 +183,33 @@ ${JSON.stringify(context, null, 2)}
   getModelForQuery(format: ResponseFormat, query: string): string {
     return this.selectModel(format, query);
   }
+
+  /**
+   * Generate text embeddings using Gemini
+   */
+  async embedText(text: string): Promise<number[]> {
+    try {
+      // Use text-embedding-004 for high-quality embeddings
+      const model = this.vertexAI.getGenerativeModel({ model: 'text-embedding-004' });
+      const result = await model.embedContent({
+        content: { parts: [{ text }] },
+      });
+      const embedding = result.embeddings?.[0]?.values;
+
+      if (!embedding || embedding.length === 0) {
+        throw new GeminiError('Empty embedding from Gemini', 'EMPTY_EMBEDDING', 500);
+      }
+
+      return embedding;
+    } catch (error: any) {
+      console.error('[Gemini] Embedding failed:', error);
+      throw new GeminiError(
+        `Gemini embedding failed: ${error.message}`,
+        'EMBEDDING_FAILED',
+        500
+      );
+    }
+  }
 }
 
 export const geminiClient = new GeminiClient();
