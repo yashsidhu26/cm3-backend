@@ -7,6 +7,8 @@ drizzle
 bun.lockb
 documentation/
 keys.json
+cookies_local_test.txt
+cookies_samesite_test.txt
 
 # Debug logs
 debug/

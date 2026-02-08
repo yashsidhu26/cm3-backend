@@ -131,7 +131,7 @@ app.post('/sign-in', async (c) => {
         const signedToken = `${sessionToken}.${signature}`;
 
         // 7. Set session cookie (matches Better Auth's cookie format)
-        c.header('set-cookie', `super-app.session_token=${encodeURIComponent(signedToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`);
+        c.header('set-cookie', `super-app.session_token=${encodeURIComponent(signedToken)}; Path=/; HttpOnly; SameSite=None; Secure; Max-Age=${7 * 24 * 60 * 60}`);
 
         return successResponse(c, {
             message: 'Signed in via Moodle successfully',
