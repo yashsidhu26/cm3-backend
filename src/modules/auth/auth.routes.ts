@@ -1,36 +1,39 @@
 import { Hono } from 'hono';
-import { auth } from '../../core/auth/auth';
+import { SessionService, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from '../../core/auth/session';
+import { getSignedCookie, deleteCookie, setSignedCookie } from 'hono/cookie';
 import { protect, requireAdmin, optionalAuth } from '../../core/auth/middleware';
 import { successResponse, errorResponse } from '../../core/utils/response';
 import { db } from '../../core/database/client';
 import { user } from './auth.schema';
 import { eq } from 'drizzle-orm';
+import { auth } from '../../core/auth/auth'; // Still needed if we use auth.api internally for now
+
 
 /**
  * Auth Module Routes
- * Handles all authentication endpoints via Better Auth
+ * Handles all authentication endpoints via custom session logic
  */
 
 const authRoutes = new Hono();
 
 /**
  * CUSTOM ENDPOINTS - Must be defined BEFORE wildcard handler
- * These take precedence over Better Auth's default endpoints
  */
 
 /**
  * Custom endpoint: Get current session
  * GET /session
- * Better Auth doesn't expose this as a handler endpoint, so we implement it
  */
 authRoutes.get('/session', async (c) => {
   try {
-    const session = await auth.api.getSession({
-      headers: c.req.raw.headers,
-    });
+    const secret = process.env.BETTER_AUTH_SECRET || 'super-secret-key-change-in-production';
+    const token = await getSignedCookie(c, secret, SESSION_COOKIE_NAME);
 
-    if (session) {
-      return c.json(session);
+    if (token) {
+      const sessionData = await SessionService.validateSession(token);
+      if (sessionData) {
+        return c.json(sessionData);
+      }
     }
 
     return c.json({ user: null, session: null });
@@ -41,20 +44,119 @@ authRoutes.get('/session', async (c) => {
 });
 
 /**
+ * Custom endpoint: Sign up with email
+ * POST /sign-up/email
+ */
+authRoutes.post('/sign-up/email', async (c) => {
+  try {
+    const body = await c.req.json();
+
+    // Use Better Auth to create user (it handles password hashing, validation, etc.)
+    const response = await auth.api.signUpEmail({
+      body,
+    });
+
+    if (!response || !response.user) {
+      return errorResponse(c, 'Failed to create account', 400);
+    }
+
+    // Create our reliable session
+    const { token: sessionToken } = await SessionService.createSession(
+      response.user.id,
+      c.req.header('user-agent'),
+      c.req.header('x-forwarded-for')
+    );
+
+    // Set our signed cookie
+    const secret = process.env.BETTER_AUTH_SECRET || 'super-secret-key-change-in-production';
+    await setSignedCookie(c, SESSION_COOKIE_NAME, sessionToken, secret, {
+      path: '/',
+      secure: true,
+      httpOnly: true,
+      sameSite: 'None',
+      maxAge: SESSION_MAX_AGE,
+    });
+
+    return successResponse(c, {
+      user: response.user,
+      message: 'Account created and signed in successfully',
+    }, 201);
+  } catch (error: any) {
+    console.error('[Sign Up] Error:', error);
+    return errorResponse(c, error.message || 'Registration failed', 400);
+  }
+});
+
+/**
+ * Custom endpoint: Sign in with email
+ * POST /sign-in/email
+ */
+authRoutes.post('/sign-in/email', async (c) => {
+  try {
+    const { email, password } = await c.req.json();
+
+    // Use Better Auth to verify credentials (don't set cookie yet)
+    const response = await auth.api.signInEmail({
+      body: {
+        email,
+        password,
+      },
+    });
+
+    if (!response || !response.user) {
+      return errorResponse(c, 'Invalid email or password', 401);
+    }
+
+    // Create our reliable session
+    const { token: sessionToken } = await SessionService.createSession(
+      response.user.id,
+      c.req.header('user-agent'),
+      c.req.header('x-forwarded-for')
+    );
+
+    // Set our signed cookie
+    const secret = process.env.BETTER_AUTH_SECRET || 'super-secret-key-change-in-production';
+    await setSignedCookie(c, SESSION_COOKIE_NAME, sessionToken, secret, {
+      path: '/',
+      secure: true,
+      httpOnly: true,
+      sameSite: 'None',
+      maxAge: SESSION_MAX_AGE,
+    });
+
+    return successResponse(c, {
+      user: response.user,
+      message: 'Signed in successfully',
+    });
+  } catch (error: any) {
+    console.error('[Sign In] Error:', error);
+    return errorResponse(c, error.message || 'Authentication failed', 401);
+  }
+});
+/**
  * Custom endpoint: Sign out
  * POST /sign-out
- * Properly handles session cleanup
  */
 authRoutes.post('/sign-out', async (c) => {
   try {
-    const result = await auth.api.signOut({
-      headers: c.req.raw.headers,
+    const secret = process.env.BETTER_AUTH_SECRET || 'super-secret-key-change-in-production';
+    const token = await getSignedCookie(c, secret, SESSION_COOKIE_NAME);
+
+    if (token) {
+      await SessionService.invalidateSession(token);
+    }
+
+    deleteCookie(c, SESSION_COOKIE_NAME, {
+      path: '/',
+      secure: true,
+      httpOnly: true,
+      sameSite: 'None',
     });
 
-    return c.json({ success: true, message: 'Signed out successfully' });
+    return successResponse(c, { message: 'Signed out successfully' });
   } catch (error: any) {
     console.error('[Sign Out] Error:', error);
-    return c.json({ success: false, error: error.message }, 500);
+    return errorResponse(c, error.message || 'Logout failed', 500);
   }
 });
 
@@ -65,14 +167,14 @@ authRoutes.post('/sign-out', async (c) => {
  */
 authRoutes.get('/profile', protect, async (c) => {
   const currentUser = c.get('user');
-  
+
   if (!currentUser) {
     return errorResponse(c, 'User not found', 404);
   }
 
   // Fetch full user details from database
   const userData = await db.select().from(user).where(eq(user.id, currentUser.id));
-  
+
   if (!userData[0]) {
     return errorResponse(c, 'User not found', 404);
   }
@@ -97,7 +199,7 @@ authRoutes.get('/profile', protect, async (c) => {
  */
 authRoutes.patch('/profile', protect, async (c) => {
   const currentUser = c.get('user');
-  
+
   if (!currentUser) {
     return errorResponse(c, 'User not found', 404);
   }

@@ -16,10 +16,10 @@ import * as schema from '../../modules/auth/auth.schema';
 export const auth = betterAuth({
   // Base URL - Required for Better Auth to work properly
   baseURL: process.env.BASE_URL || 'http://localhost:3000',
-  
+
   // Secret key for signing tokens
   secret: process.env.BETTER_AUTH_SECRET || 'super-secret-key-change-in-production',
-  
+
   // Database adapter
   database: drizzleAdapter(db, {
     provider: 'pg',
@@ -30,7 +30,7 @@ export const auth = betterAuth({
       verification: schema.verification,
     },
   }),
-  
+
 
   // Email and password authentication
   emailAndPassword: {
@@ -56,7 +56,11 @@ export const auth = betterAuth({
     crossSubDomainCookies: {
       enabled: false,
     },
-    useSecureCookies: process.env.NODE_ENV === 'production',
+    useSecureCookies: true, // Force Secure for SameSite=None
+    defaultCookieAttributes: {
+      sameSite: 'none',
+      secure: true,
+    },
     database: {
       // Let database generate UUIDs (using defaultRandom() in schema)
       generateId: () => undefined as any,
@@ -65,10 +69,10 @@ export const auth = betterAuth({
 
   // CORS and trusted origins
   trustedOrigins: [
+    process.env.FRONTEND_URL,
     'http://localhost:3000', // Frontend dev
     'http://localhost:5173', // Vite default
-    process.env.FRONTEND_URL || '',
-  ].filter(Boolean),
+  ].filter((url): url is string => !!url),
 
   // Custom user fields
   user: {

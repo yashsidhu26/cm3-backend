@@ -31,7 +31,7 @@ const getAuthUrlHandler = (c: any) => {
       {
         success: false,
         error: {
-          message: e?.message || 'Missing Gmail OAuth env (GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REDIRECT_URI)',
+          message: e?.message || 'Missing Gmail OAuth env (GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET)',
           code: 'OAUTH_CONFIG_ERROR'
         }
       },
@@ -53,8 +53,13 @@ const callbackHandler = async (c: any) => {
   const code = c.req.query('code');
   const user = c.get('user');
 
-  // Get frontend URL from env or default
-  const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+  // Get frontend URL from env (required)
+  const FRONTEND_URL = process.env.FRONTEND_URL;
+
+  if (!FRONTEND_URL) {
+    console.error('[Gmail Auth] FRONTEND_URL not set in environment variables');
+    return c.json({ success: false, error: 'Server configuration error' }, 500);
+  }
 
   if (!code) {
     // Redirect to frontend with error

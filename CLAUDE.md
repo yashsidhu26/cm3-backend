@@ -50,7 +50,7 @@ Drizzle ORM with PostgreSQL. Each module defines its own tables; all are re-expo
 
 ## Key env vars
 
-`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BASE_URL`, `FRONTEND_URL`, `MOODLE_BASE_URL`, `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REDIRECT_URI`, `ENCRYPTION_KEY` (min 32 chars).
+`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BASE_URL`, `FRONTEND_URL`, `MOODLE_BASE_URL`, `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REDIRECT_URI (optional)`, `ENCRYPTION_KEY` (min 32 chars).
 
 **AI Integration**: `GROQ_API_KEY`, `GCP_PROJECT_ID`, `GCP_LOCATION` (uses Google Cloud Vertex AI with $300 free credits, requires `gcloud auth application-default login` or service account key).
 

@@ -11,7 +11,9 @@ import { db } from '../../core/database/client';
 import { user as userTable, session as sessionTable } from '../auth/auth.schema';
 import { eq } from 'drizzle-orm';
 import { successResponse, errorResponse } from '../../core/utils/response';
+import { setSignedCookie } from 'hono/cookie';
 import { createHmac, randomBytes } from 'crypto';
+import { SessionService } from '../../core/auth/session';
 
 const app = new Hono();
 
@@ -113,25 +115,22 @@ app.post('/sign-in', async (c) => {
             console.log('[Moodle Sign-in] Skipping sections sync (STUDYDECK_JWT_TOKEN not set)');
         }
 
-        // 6. Create a Better Auth session directly
-        const sessionToken = randomBytes(24).toString('base64url'); // Match Better Auth token format
-        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+        // 6. Create a session using our custom SessionService
+        const { token: sessionToken } = await SessionService.createSession(
+            localUser.id,
+            c.req.header('user-agent'),
+            c.req.header('x-forwarded-for')
+        );
 
-        await db.insert(sessionTable).values({
-            userId: localUser.id,
-            token: sessionToken,
-            expiresAt,
-            ipAddress: c.req.header('x-forwarded-for') || null,
-            userAgent: c.req.header('user-agent') || null,
-        });
-
-        // Sign the token with HMAC-SHA256 (same as Better Auth)
+        // 7. Set signed session cookie
         const secret = process.env.BETTER_AUTH_SECRET || 'super-secret-key-change-in-production';
-        const signature = createHmac('sha256', secret).update(sessionToken).digest('base64');
-        const signedToken = `${sessionToken}.${signature}`;
-
-        // 7. Set session cookie (matches Better Auth's cookie format)
-        c.header('set-cookie', `super-app.session_token=${encodeURIComponent(signedToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`);
+        await setSignedCookie(c, 'super-app.session_token', sessionToken, secret, {
+            path: '/',
+            secure: true,
+            httpOnly: true,
+            sameSite: 'None',
+            maxAge: 7 * 24 * 60 * 60, // 7 days
+        });
 
         return successResponse(c, {
             message: 'Signed in via Moodle successfully',
