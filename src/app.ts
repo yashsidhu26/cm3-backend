@@ -9,12 +9,14 @@ import { initializeDebugLogger } from './core/utils/debug-logger';
 
 // Import all module routes statically
 import academicsRoutes from './modules/academics/academics.routes';
+import sectionsRoutes from './modules/academics/sections.routes';
 import paymentsRoutes from './modules/payments/payments.routes';
 import authRoutes from './modules/auth/auth.routes';
 import aiIntegrationRoutes from './modules/ai-integration/ai-integration.routes';
 import socialRoutes from './modules/social/social.routes';
 import gmailAuthRoutes from './modules/gmail-auth/gmail-auth.routes';
 import studentProfileRoutes from './modules/student-profile/student-profile.routes';
+import skillsInterestsRoutes from './modules/skills-interests/skills-interests.routes';
 import brainRoutes from './modules/brain/brain.routes';
 
 // Initialize debug logger before anything else
@@ -71,13 +73,16 @@ app.get('/health', (c) => {
  */
 const modules = [
   { name: 'academics', path: '/api/academics', routes: academicsRoutes },
+  { name: 'sections', path: '/api/sections', routes: sectionsRoutes },
   { name: 'payments', path: '/api/payments', routes: paymentsRoutes },
   { name: 'auth', path: '/api/auth', routes: authRoutes },
   { name: 'ai-integration', path: '/api/ai-integration', routes: aiIntegrationRoutes },
   { name: 'social', path: '/api/social', routes: socialRoutes },
   { name: 'gmail-auth', path: '/auth', routes: gmailAuthRoutes },
   { name: 'student-profile', path: '/api/student-profile', routes: studentProfileRoutes },
+  { name: 'skills-interests', path: '/api/skills-interests', routes: skillsInterestsRoutes },
   { name: 'brain', path: '/api/brain', routes: brainRoutes },
+
 ];
 
 console.log('\n🔄 Mounting modules...\n');

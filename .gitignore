@@ -6,6 +6,7 @@ drizzle
 .DS_Store
 bun.lockb
 documentation/
+keys.json
 
 # Debug logs
 debug/

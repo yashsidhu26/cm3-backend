@@ -6,6 +6,7 @@
 import { academicsService } from '../../../modules/academics/academics.service';
 import { sectionsService } from '../../../modules/academics/sections.service';
 import { studentProfileService } from '../../../modules/student-profile/student-profile.service';
+import { skillsInterestsService } from '../../../modules/skills-interests/skills-interests.service';
 import { db } from '../../../core/database/client';
 import { eq, desc } from 'drizzle-orm';
 import type { ToolExecutionResult } from './types';
@@ -32,8 +33,34 @@ const toolHandlers: Record<string, ToolHandler> = {
     return await academicsService.getUserCoursesWithFullDetails(userId);
   },
 
-  get_course_resources: async (args, _userId) => {
-    return await academicsService.getCourseResources(args.courseId);
+  get_course_resources: async (args, userId) => {
+    // Get resources from DB
+    const resources = await academicsService.getCourseResources(args.courseId);
+
+    // Get user's Moodle token to append to URLs
+    try {
+      const { getMoodleToken } = await import('../../academics/moodle-auth.service');
+      const moodleToken = await getMoodleToken(userId);
+
+      if (moodleToken) {
+        // Append token to file URLs that don't already have it
+        return resources.map((resource) => {
+          if (resource.fileUrl && !resource.fileUrl.includes('token=')) {
+            const separator = resource.fileUrl.includes('?') ? '&' : '?';
+            return {
+              ...resource,
+              fileUrl: `${resource.fileUrl}${separator}token=${moodleToken}`,
+            };
+          }
+          return resource;
+        });
+      }
+    } catch (error) {
+      console.warn('[get_course_resources] Could not get Moodle token:', error);
+    }
+
+    // Return resources as-is if token unavailable
+    return resources;
   },
 
   get_course_by_code: async (args, _userId) => {
@@ -188,7 +215,8 @@ const toolHandlers: Record<string, ToolHandler> = {
 
       // Initialize Vertex AI
       const projectId = process.env.GCP_PROJECT_ID;
-      const location = process.env.GCP_LOCATION || 'us-central1';
+      const location = 'global';
+      const apiEndpoint = 'aiplatform.googleapis.com';
 
       if (!projectId) {
         return {
@@ -197,24 +225,28 @@ const toolHandlers: Record<string, ToolHandler> = {
         };
       }
 
-      const vertexAI = new VertexAI({ project: projectId, location });
+      const vertexAI = new VertexAI({ project: projectId, location, apiEndpoint });
 
       console.log(`[analyze_course_handout] Analyzing with Vertex AI...`);
 
-      // Use gemini-1.5-pro for PDF analysis (better multimodal capabilities)
+      // Use gemini-2.5-flash-lite for PDF analysis (better multimodal capabilities)
       const model = vertexAI.getGenerativeModel({
-        model: 'gemini-1.5-pro-002',
+        model: 'gemini-2.5-flash-lite',
       });
 
-      const result = await model.generateContent([
-        {
-          inlineData: {
-            mimeType: 'application/pdf',
-            data: base64Data,
-          },
-        },
-        {
-          text: `Analyze this course handout and provide a comprehensive summary. Include:
+      const result = await model.generateContent({
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                inlineData: {
+                  mimeType: 'application/pdf',
+                  data: base64Data,
+                },
+              },
+              {
+                text: `Analyze this course handout and provide a comprehensive summary. Include:
 1. Course overview and objectives
 2. Topics covered
 3. Grading scheme (if mentioned)
@@ -223,8 +255,11 @@ const toolHandlers: Record<string, ToolHandler> = {
 6. Any other important information
 
 Be thorough but concise.`,
-        },
-      ]);
+              },
+            ],
+          },
+        ],
+      });
 
       const analysisText = result.response.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
@@ -253,6 +288,293 @@ Be thorough but concise.`,
       };
     }
   },
+
+  // === PDF ANALYSIS - GENERIC ===
+  analyze_pdf_document: async (args, userId) => {
+    try {
+      const { VertexAI } = await import('@google-cloud/vertexai');
+
+      const pdfUrl = args.pdfUrl;
+      const documentName = args.documentName || 'Document';
+
+      console.log(`[analyze_pdf_document] Analyzing: ${documentName}`);
+      console.log(`[analyze_pdf_document] URL: ${pdfUrl}`);
+
+      // Download PDF
+      const response = await fetch(pdfUrl);
+
+      if (!response.ok) {
+        return {
+          error: 'Failed to download PDF',
+          message: `HTTP ${response.status}: ${response.statusText}`,
+        };
+      }
+
+      const buffer = await response.arrayBuffer();
+      const base64Data = Buffer.from(buffer).toString('base64');
+
+      console.log(`[analyze_pdf_document] Downloaded ${buffer.byteLength} bytes`);
+
+      // Initialize Vertex AI
+      const projectId = process.env.GCP_PROJECT_ID;
+      const location = 'global';
+      const apiEndpoint = 'aiplatform.googleapis.com';
+
+      if (!projectId) {
+        return {
+          error: 'GCP_PROJECT_ID not configured',
+          message: 'Google Cloud project ID is required for PDF analysis',
+        };
+      }
+
+      const vertexAI = new VertexAI({ project: projectId, location, apiEndpoint });
+
+      console.log(`[analyze_pdf_document] Analyzing with Vertex AI...`);
+
+      // Use gemini-2.5-flash-lite for PDF analysis
+      const model = vertexAI.getGenerativeModel({
+        model: 'gemini-2.5-flash-lite',
+      });
+
+      const result = await model.generateContent({
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                inlineData: {
+                  mimeType: 'application/pdf',
+                  data: base64Data,
+                },
+              },
+              {
+                text: `Analyze this document: "${documentName}"
+
+Provide a comprehensive summary including:
+1. Main topics covered
+2. Key concepts and definitions
+3. Important points or takeaways
+4. Any examples or case studies mentioned
+5. Diagrams or figures (describe them)
+
+Be thorough and specific. Format in a clear, organized way.`,
+              },
+            ],
+          },
+        ],
+      });
+
+      const analysisText = result.response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+      if (!analysisText) {
+        return {
+          error: 'Empty analysis response',
+          message: 'Gemini returned an empty analysis',
+        };
+      }
+
+      console.log(`[analyze_pdf_document] Analysis complete`);
+
+      return {
+        documentName,
+        pdfUrl,
+        analysis: analysisText,
+        summary: `Successfully analyzed "${documentName}"`,
+      };
+    } catch (error: any) {
+      console.error('[analyze_pdf_document] Error:', error);
+      return {
+        error: 'Failed to analyze PDF',
+        message: error.message || 'Unknown error',
+      };
+    }
+  },
+
+  // === STUDYDECK TOOLS ===
+  search_studydeck_resources: async (args, userId) => {
+    try {
+      const { studydeckService } = await import('../../studydeck/studydeck.service');
+
+      // Get user's StudyDeck token
+      const jwtToken = await studydeckService.getUserToken(userId);
+
+      if (!jwtToken) {
+        return {
+          error: 'StudyDeck not connected',
+          message:
+            'You need to connect your StudyDeck account first to access lecture slides and study materials.',
+        };
+      }
+
+      const courseCode = args.courseCode;
+      const resourceType = args.resourceType || 'all';
+
+      console.log(
+        `[search_studydeck_resources] Searching for ${resourceType} in ${courseCode}`
+      );
+
+      const results = await studydeckService.searchResources(
+        courseCode,
+        resourceType as any,
+        jwtToken,
+        20
+      );
+
+      if (results.folders.length === 0 && results.documents.length === 0) {
+        return {
+          courseCode,
+          resourceType,
+          message: `No ${resourceType} resources found for ${courseCode} on StudyDeck.`,
+          folders: [],
+          documents: [],
+        };
+      }
+
+      console.log(
+        `[search_studydeck_resources] Found ${results.folders.length} folders, ${results.documents.length} documents`
+      );
+
+      return {
+        courseCode,
+        resourceType,
+        folders: results.folders,
+        documents: results.documents,
+        summary: `Found ${results.folders.length} folders with ${results.documents.length} documents`,
+      };
+    } catch (error: any) {
+      console.error('[search_studydeck_resources] Error:', error);
+      return {
+        error: 'Failed to search StudyDeck',
+        message: error.message || 'Unknown error occurred while searching StudyDeck',
+      };
+    }
+  },
+
+  get_studydeck_folder_documents: async (args, userId) => {
+    try {
+      const { studydeckService } = await import('../../studydeck/studydeck.service');
+
+      // Get user's StudyDeck token
+      const jwtToken = await studydeckService.getUserToken(userId);
+
+      if (!jwtToken) {
+        return {
+          error: 'StudyDeck not connected',
+          message: 'You need to connect your StudyDeck account first.',
+        };
+      }
+
+      const folderStaticId = args.folderStaticId;
+
+      console.log(`[get_studydeck_folder_documents] Fetching documents from folder ${folderStaticId}`);
+
+      const documents = await studydeckService.getFolderDocuments(folderStaticId, jwtToken);
+
+      console.log(`[get_studydeck_folder_documents] Found ${documents.length} documents`);
+
+      return {
+        folderStaticId,
+        documents,
+        count: documents.length,
+      };
+    } catch (error: any) {
+      console.error('[get_studydeck_folder_documents] Error:', error);
+      return {
+        error: 'Failed to get folder documents',
+        message: error.message || 'Unknown error',
+      };
+    }
+  },
+
+  // === SKILLS & INTERESTS ===
+  get_all_skills: async (args, _userId) => {
+    return await skillsInterestsService.getAllSkills({
+      category: args.category,
+      difficulty: args.difficulty,
+      search: args.search,
+    });
+  },
+
+  get_user_skills: async (args, userId) => {
+    return await skillsInterestsService.getUserSkills(userId, args.status);
+  },
+
+  get_user_skill_stats: async (_args, userId) => {
+    return await skillsInterestsService.getUserStats(userId);
+  },
+
+  get_skill_recommendations: async (_args, userId) => {
+    return await skillsInterestsService.getRecommendations(userId);
+  },
+
+  get_related_skills: async (args, _userId) => {
+    return await skillsInterestsService.getRelatedSkills(args.skillId);
+  },
+
+  get_skill_resources: async (args, _userId) => {
+    return await skillsInterestsService.getSkillResources(args.skillId);
+  },
+
+  add_skill_to_user: async (args, userId) => {
+    return await skillsInterestsService.addSkillToUser(
+      userId,
+      args.skillInterestId,
+      args.status || 'interested'
+    );
+  },
+
+  update_user_skill: async (args, userId) => {
+    return await skillsInterestsService.updateUserSkill(userId, args.skillInterestId, {
+      status: args.status,
+      progress: args.progress,
+      notes: args.notes,
+    });
+  },
+
+  remove_user_skill: async (args, userId) => {
+    await skillsInterestsService.removeSkillFromUser(userId, args.skillInterestId);
+    return { message: 'Skill removed from user successfully' };
+  },
+
+  create_skill: async (args, _userId) => {
+    return await skillsInterestsService.createSkill(args);
+  },
+
+  update_skill: async (args, _userId) => {
+    const { skillId, ...data } = args;
+    return await skillsInterestsService.updateSkill(skillId, data);
+  },
+
+  add_skill_relationship: async (args, _userId) => {
+    return await skillsInterestsService.addSkillRelationship({
+      fromSkillId: args.fromSkillId,
+      toSkillId: args.toSkillId,
+      relationshipType: args.relationshipType,
+      description: args.description,
+    });
+  },
+
+  delete_skill_relationship: async (args, _userId) => {
+    await skillsInterestsService.deleteSkillRelationship(args.fromSkillId, args.toSkillId);
+    return { message: 'Relationship deleted successfully' };
+  },
+
+  add_skill_resource: async (args, userId) => {
+    return await skillsInterestsService.addResource({
+      ...args,
+      userId,
+    });
+  },
+
+  update_skill_resource: async (args, _userId) => {
+    const { resourceId, ...data } = args;
+    return await skillsInterestsService.updateResource(resourceId, data);
+  },
+
+  delete_skill_resource: async (args, _userId) => {
+    await skillsInterestsService.deleteResource(args.resourceId);
+    return { message: 'Resource deleted successfully' };
+  },
 };
 
 /**
@@ -277,8 +599,8 @@ export async function executeToolCall(
   }
 
   try {
-    // Longer timeout for PDF analysis (30s), normal timeout for others (10s)
-    const timeout = name === 'analyze_course_handout' ? 30000 : 10000;
+    // Generous timeouts: PDF analysis (60s), normal tools (30s)
+    const timeout = name === 'analyze_course_handout' ? 60000 : 30000;
 
     const result = await Promise.race([
       handler(args, userId),

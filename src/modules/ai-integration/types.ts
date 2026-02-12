@@ -20,13 +20,7 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
-export interface GroqAnalysis {
-  complexity: QueryComplexity;
-  neededContext: ContextType[];
-  responseFormat: ResponseFormat;
-  directAnswer?: string;
-  reasoning?: string;
-}
+// Removed: GroqAnalysis (no longer using Groq)
 
 export interface StudentContext {
   profile?: any;
@@ -50,7 +44,7 @@ export interface AIResponseMetadata {
 
 export interface AIResponse {
   response: string;
-  source: 'groq' | 'gemini' | 'gemini-agent';
+  source: 'gemini-agent';
   complexity: QueryComplexity;
   contextUsed: ContextType[];
   toolsUsed?: string[];
@@ -59,7 +53,6 @@ export interface AIResponse {
 }
 
 export interface UsageStats {
-  groqRequests: number;
   geminiRequests: number;
   totalTokensUsed: number;
   date: Date;

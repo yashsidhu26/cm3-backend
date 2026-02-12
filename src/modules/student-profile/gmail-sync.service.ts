@@ -1,8 +1,10 @@
 import { google } from 'googleapis';
 import { db } from '../../core/database/client';
-import { studentAssignments, studentEvaluations, syncState } from './student-profile.schema';
+import { studentAssignments, studentEvaluations, syncState, campusEvents } from './student-profile.schema';
 import { getAuthenticatedClient } from '../gmail-auth/gmail-auth.service';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, inArray } from 'drizzle-orm';
+import { academicsService } from '../academics/academics.service';
+import { sectionsService } from '../academics/sections.service';
 
 /**
  * Gmail Sync Service
@@ -31,11 +33,29 @@ interface ExtractedEvaluation {
     emailId?: string;
 }
 
+interface ExtractedEvent {
+    title: string;
+    type: 'competition' | 'recruitment' | 'workshop' | 'seminar' | 'hackathon' | 'conference' | 'cultural' | 'sports' | 'other';
+    description?: string;
+    organizer?: string;
+    date: string; // ISO string
+    endDate?: string; // ISO string
+    registrationDeadline?: string; // ISO string
+    location?: string;
+    websiteUrl?: string;
+    registrationUrl?: string;
+    prizePool?: string;
+    eligibility?: string;
+    emailId?: string;
+}
+
 interface SyncResult {
     success: boolean;
     emailsAnalyzed: number;
+    emailsSkipped: number;
     assignmentsCreated: number;
     evaluationsCreated: number;
+    eventsCreated: number;
     errors: string[];
 }
 
@@ -125,15 +145,83 @@ export class GmailSyncService {
     }
 
     /**
+     * Filter out already-processed emails to save AI tokens
+     */
+    private async filterUnprocessedEmails(emails: any[], userId: string): Promise<any[]> {
+        if (emails.length === 0) return [];
+
+        const emailIds = emails.map(e => e.id).filter(Boolean);
+        if (emailIds.length === 0) return emails;
+
+        // Check which emails are already processed (exist in assignments, evaluations, or events)
+        const [existingAssignments, existingEvaluations, existingEvents] = await Promise.all([
+            db.select({ sourceId: studentAssignments.sourceId })
+                .from(studentAssignments)
+                .where(and(
+                    eq(studentAssignments.userId, userId),
+                    eq(studentAssignments.sourceType, 'gmail'),
+                    inArray(studentAssignments.sourceId, emailIds)
+                )),
+            db.select({ sourceId: studentEvaluations.sourceId })
+                .from(studentEvaluations)
+                .where(and(
+                    eq(studentEvaluations.userId, userId),
+                    eq(studentEvaluations.sourceType, 'gmail'),
+                    inArray(studentEvaluations.sourceId, emailIds)
+                )),
+            db.select({ sourceId: campusEvents.sourceId })
+                .from(campusEvents)
+                .where(and(
+                    eq(campusEvents.userId, userId),
+                    eq(campusEvents.sourceType, 'gmail'),
+                    inArray(campusEvents.sourceId, emailIds)
+                )),
+        ]);
+
+        const processedEmailIds = new Set([
+            ...existingAssignments.map(a => a.sourceId),
+            ...existingEvaluations.map(e => e.sourceId),
+            ...existingEvents.map(e => e.sourceId),
+        ]);
+
+        const unprocessedEmails = emails.filter(e => !processedEmailIds.has(e.id));
+
+        console.log(`[GmailSync] Filtered: ${emails.length} total, ${processedEmailIds.size} already processed, ${unprocessedEmails.length} to analyze`);
+
+        return unprocessedEmails;
+    }
+
+    /**
      * Analyze emails with AI and extract structured data
      */
-    private async analyzeEmailsWithAI(emails: any[]): Promise<{
+    private async analyzeEmailsWithAI(emails: any[], userId: string): Promise<{
         assignments: ExtractedAssignment[];
         evaluations: ExtractedEvaluation[];
+        events: ExtractedEvent[];
     }> {
         if (emails.length === 0) {
-            return { assignments: [], evaluations: [] };
+            return { assignments: [], evaluations: [], events: [] };
         }
+
+        // Fetch user's enrolled courses for context
+        const enrolledCourses = await academicsService.getUserCourses(userId);
+        const coursesContext = enrolledCourses.map(ec => ({
+            id: ec.course.id,
+            code: ec.course.code,
+            name: ec.course.name,
+            professor: ec.course.professorName,
+        }));
+
+        // Fetch user's sections for additional context
+        const userSchedule = await sectionsService.getUserSchedule(userId);
+        const sectionsContext = userSchedule.map(s => ({
+            courseCode: s.courseCode,
+            sectionType: s.sectionType,
+            sectionNumber: s.sectionNumber,
+            instructors: s.instructors,
+        }));
+
+        console.log(`[GmailSync] User has ${coursesContext.length} enrolled courses`);
 
         // Prepare email text for AI analysis
         const emailText = emails.map((e, i) => {
@@ -146,21 +234,35 @@ export class GmailSyncService {
             throw new Error('GROQ_API_KEY not configured');
         }
 
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+
         const systemPrompt = `You are an AI assistant that analyzes Gmail emails and extracts assignments and evaluations.
 
+**USER'S ENROLLED COURSES:**
+${JSON.stringify(coursesContext, null, 2)}
+
+**USER'S REGISTERED SECTIONS:**
+${JSON.stringify(sectionsContext, null, 2)}
+
 IMPORTANT INSTRUCTIONS:
-1. Extract ONLY assignments and evaluations from the emails
-2. Look for emails from professors, TAs, course management systems (Moodle, Canvas, etc.)
-3. For assignments: Look for keywords like "assignment", "homework", "lab", "problem set", "due", "submit"
-4. For evaluations: Look for keywords like "quiz", "exam", "test", "midterm", "final", "evaluation"
-5. Ignore promotional emails, newsletters, social notifications
-6. Determine priority based on:
+1. Extract assignments, evaluations, and campus events from the emails
+2. **For Assignments/Evaluations**: Look for emails from professors, TAs, course management systems (Moodle, Canvas, etc.)
+   - Assignments: "assignment", "homework", "lab", "problem set", "due", "submit"
+   - Evaluations: "quiz", "exam", "test", "midterm", "final", "evaluation"
+3. **For Campus Events**: Look for emails about competitions, recruitments, workshops, hackathons, seminars, conferences
+   - Keywords: "competition", "hackathon", "recruitment", "workshop", "seminar", "register now", "participation", "event"
+   - Extract: organizer, dates, registration deadlines, prize pools, eligibility, registration URLs
+4. Ignore promotional emails, newsletters, social notifications
+5. **CRITICAL: ONLY extract items with dates AFTER today (${today}). Ignore past items.**
+6. **CRITICAL: For evaluations, ONLY extract exams/tests/quizzes. Other types can be assignments.**
+7. **CRITICAL: Match course codes from emails to the enrolled courses above. Use EXACT codes from the list.**
+8. Determine priority for assignments based on:
    - high: Due within 24 hours, or marked as "urgent"
    - medium: Due within 7 days
    - low: Due after 7 days
-7. Extract course codes (e.g., "CS F111", "MATH F112") from subject or body
-8. Extract due dates/exam dates - be precise with date/time
-9. Return ONLY valid JSON, no markdown, no explanations
+9. For events, classify type: competition, recruitment, workshop, seminar, hackathon, conference, cultural, sports, other
+10. Extract all dates/deadlines - be precise with date/time in ISO format
+11. Return ONLY valid JSON, no markdown, no explanations
 
 Return format:
 {
@@ -187,11 +289,29 @@ Return format:
       "description": "Topics: Matrix operations",
       "emailId": "def456"
     }
+  ],
+  "events": [
+    {
+      "title": "Smart India Hackathon 2026",
+      "type": "hackathon",
+      "description": "36-hour national level hackathon",
+      "organizer": "MHRD, Govt. of India",
+      "date": "2026-03-15T09:00:00.000Z",
+      "endDate": "2026-03-17T18:00:00.000Z",
+      "registrationDeadline": "2026-02-28T23:59:00.000Z",
+      "location": "BITS Pilani Campus",
+      "websiteUrl": "https://sih.gov.in",
+      "registrationUrl": "https://sih.gov.in/register",
+      "prizePool": "Rs 1 Crore",
+      "eligibility": "Students from all years",
+      "emailId": "ghi789"
+    }
   ]
 }
 
-If no assignments or evaluations found, return empty arrays.
-Type must be one of: quiz, exam, report, presentation, project`;
+If nothing found, return empty arrays.
+Evaluation type: quiz, exam, report, presentation, project
+Event type: competition, recruitment, workshop, seminar, hackathon, conference, cultural, sports, other`;
 
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
@@ -205,11 +325,11 @@ Type must be one of: quiz, exam, report, presentation, project`;
                     { role: 'system', content: systemPrompt },
                     {
                         role: 'user',
-                        content: `Analyze these Gmail emails and extract assignments and evaluations:\n\n${emailText}`
+                        content: `Analyze these Gmail emails and extract assignments, evaluations, and campus events:\n\n${emailText}`
                     }
                 ],
                 temperature: 0.1,
-                max_tokens: 2000,
+                max_tokens: 3000,
                 response_format: { type: 'json_object' },
             }),
         });
@@ -226,10 +346,11 @@ Type must be one of: quiz, exam, report, presentation, project`;
             return {
                 assignments: parsed.assignments || [],
                 evaluations: parsed.evaluations || [],
+                events: parsed.events || [],
             };
         } catch (error) {
             console.error('[GmailSync] Failed to parse AI response:', content);
-            return { assignments: [], evaluations: [] };
+            return { assignments: [], evaluations: [], events: [] };
         }
     }
 
@@ -290,8 +411,10 @@ Type must be one of: quiz, exam, report, presentation, project`;
         const result: SyncResult = {
             success: true,
             emailsAnalyzed: 0,
+            emailsSkipped: 0,
             assignmentsCreated: 0,
             evaluationsCreated: 0,
+            eventsCreated: 0,
             errors: [],
         };
 
@@ -302,24 +425,43 @@ Type must be one of: quiz, exam, report, presentation, project`;
 
             // Fetch emails
             console.log('[GmailSync] Fetching emails...');
-            const emails = await this.fetchEmails(userId, state.lastEmailTimestamp);
-            result.emailsAnalyzed = emails.length;
+            const allEmails = await this.fetchEmails(userId, state.lastEmailTimestamp);
 
-            if (emails.length === 0) {
+            if (allEmails.length === 0) {
                 console.log('[GmailSync] No new emails found');
                 return result;
             }
 
-            console.log(`[GmailSync] Analyzing ${emails.length} emails with AI...`);
+            // Filter out already-processed emails to save AI tokens
+            const emails = await this.filterUnprocessedEmails(allEmails, userId);
+            result.emailsAnalyzed = emails.length;
+            result.emailsSkipped = allEmails.length - emails.length;
 
-            // Analyze with AI
-            const extracted = await this.analyzeEmailsWithAI(emails);
+            if (emails.length === 0) {
+                console.log('[GmailSync] All emails already processed');
+                return result;
+            }
 
-            console.log(`[GmailSync] AI extracted: ${extracted.assignments.length} assignments, ${extracted.evaluations.length} evaluations`);
+            console.log(`[GmailSync] Analyzing ${emails.length} new emails with AI...`);
 
-            // Create assignments
+            // Analyze with AI (pass userId for course context)
+            const extracted = await this.analyzeEmailsWithAI(emails, userId);
+
+            console.log(`[GmailSync] AI extracted: ${extracted.assignments.length} assignments, ${extracted.evaluations.length} evaluations, ${extracted.events.length} events`);
+
+            // Create assignments (only future ones)
+            const now = new Date();
+            const enrolledCourses = await academicsService.getUserCourses(userId);
+
             for (const assignment of extracted.assignments) {
                 try {
+                    // Validate due date is in the future
+                    const dueDate = new Date(assignment.dueDate);
+                    if (dueDate <= now) {
+                        console.log(`[GmailSync] Skipping past assignment: ${assignment.title} (due: ${assignment.dueDate})`);
+                        continue;
+                    }
+
                     // Check if already exists (by source_id)
                     const existing = await db.select()
                         .from(studentAssignments)
@@ -337,8 +479,21 @@ Type must be one of: quiz, exam, report, presentation, project`;
                         continue;
                     }
 
+                    // Match courseCode to get courseId
+                    const matchedCourse = enrolledCourses.find(
+                        ec => ec.course.code?.toLowerCase() === assignment.courseCode?.toLowerCase()
+                    );
+                    const courseId = matchedCourse?.course.id || null;
+
+                    if (courseId) {
+                        console.log(`[GmailSync] Matched assignment to course: ${assignment.courseCode} -> ${courseId}`);
+                    } else {
+                        console.log(`[GmailSync] Could not match course code: ${assignment.courseCode}`);
+                    }
+
                     await db.insert(studentAssignments).values({
                         userId,
+                        courseId,
                         courseCode: assignment.courseCode,
                         courseName: assignment.courseName,
                         title: assignment.title,
@@ -358,9 +513,22 @@ Type must be one of: quiz, exam, report, presentation, project`;
                 }
             }
 
-            // Create evaluations
+            // Create evaluations (only future exams/tests/quizzes)
             for (const evaluation of extracted.evaluations) {
                 try {
+                    // Only process exams, tests, and quizzes (exclude reports, presentations, projects)
+                    if (!['exam', 'quiz'].includes(evaluation.type)) {
+                        console.log(`[GmailSync] Skipping non-exam evaluation: ${evaluation.title} (type: ${evaluation.type})`);
+                        continue;
+                    }
+
+                    // Validate date is in the future
+                    const evalDate = new Date(evaluation.date);
+                    if (evalDate <= now) {
+                        console.log(`[GmailSync] Skipping past evaluation: ${evaluation.title} (date: ${evaluation.date})`);
+                        continue;
+                    }
+
                     // Check if already exists
                     const existing = await db.select()
                         .from(studentEvaluations)
@@ -378,8 +546,21 @@ Type must be one of: quiz, exam, report, presentation, project`;
                         continue;
                     }
 
+                    // Match courseCode to get courseId
+                    const matchedCourse = enrolledCourses.find(
+                        ec => ec.course.code?.toLowerCase() === evaluation.courseCode?.toLowerCase()
+                    );
+                    const courseId = matchedCourse?.course.id || null;
+
+                    if (courseId) {
+                        console.log(`[GmailSync] Matched evaluation to course: ${evaluation.courseCode} -> ${courseId}`);
+                    } else {
+                        console.log(`[GmailSync] Could not match course code: ${evaluation.courseCode}`);
+                    }
+
                     await db.insert(studentEvaluations).values({
                         userId,
+                        courseId,
                         courseCode: evaluation.courseCode,
                         courseName: evaluation.courseName,
                         title: evaluation.title,
@@ -400,19 +581,323 @@ Type must be one of: quiz, exam, report, presentation, project`;
                 }
             }
 
+            // Create campus events (only future ones)
+            for (const event of extracted.events) {
+                try {
+                    // Validate date is in the future
+                    const eventDate = new Date(event.date);
+                    if (eventDate <= now) {
+                        console.log(`[GmailSync] Skipping past event: ${event.title} (date: ${event.date})`);
+                        continue;
+                    }
+
+                    // Check if already exists
+                    const existing = await db.select()
+                        .from(campusEvents)
+                        .where(
+                            and(
+                                eq(campusEvents.userId, userId),
+                                eq(campusEvents.sourceType, 'gmail'),
+                                eq(campusEvents.sourceId, event.emailId || '')
+                            )
+                        )
+                        .limit(1);
+
+                    if (existing.length > 0) {
+                        console.log(`[GmailSync] Event already exists: ${event.title}`);
+                        continue;
+                    }
+
+                    await db.insert(campusEvents).values({
+                        userId,
+                        title: event.title,
+                        type: event.type,
+                        description: event.description || null,
+                        organizer: event.organizer || null,
+                        date: new Date(event.date),
+                        endDate: event.endDate ? new Date(event.endDate) : null,
+                        registrationDeadline: event.registrationDeadline ? new Date(event.registrationDeadline) : null,
+                        location: event.location || null,
+                        websiteUrl: event.websiteUrl || null,
+                        registrationUrl: event.registrationUrl || null,
+                        prizePool: event.prizePool || null,
+                        eligibility: event.eligibility || null,
+                        sourceType: 'gmail',
+                        sourceId: event.emailId,
+                    });
+
+                    result.eventsCreated++;
+                    console.log(`[GmailSync] Created event: ${event.title}`);
+                } catch (error: any) {
+                    result.errors.push(`Failed to create event "${event.title}": ${error.message}`);
+                    console.error('[GmailSync] Error creating event:', error);
+                }
+            }
+
             // Update sync state with the most recent email timestamp
-            if (emails.length > 0) {
-                const latestEmailTimestamp = Math.max(...emails.map(e => parseInt(e.internalDate || '0'))).toString();
+            if (allEmails.length > 0) {
+                const latestEmailTimestamp = Math.max(...allEmails.map(e => parseInt(e.internalDate || '0'))).toString();
                 await this.updateSyncState(userId, latestEmailTimestamp);
                 console.log(`[GmailSync] Updated sync state: ${latestEmailTimestamp}`);
             }
 
-            console.log(`[GmailSync] Sync complete: ${result.assignmentsCreated} assignments, ${result.evaluationsCreated} evaluations created`);
+            console.log(`[GmailSync] Sync complete: ${result.assignmentsCreated} assignments, ${result.evaluationsCreated} evaluations, ${result.eventsCreated} events created`);
 
         } catch (error: any) {
             result.success = false;
             result.errors.push(`Sync failed: ${error.message}`);
             console.error('[GmailSync] Sync error:', error);
+        }
+
+        return result;
+    }
+
+    /**
+     * Force full sync from Gmail (ignores last sync timestamp)
+     * Reprocesses last 90 days of emails
+     */
+    async forceSyncFromGmail(userId: string): Promise<SyncResult> {
+        const result: SyncResult = {
+            success: true,
+            emailsAnalyzed: 0,
+            emailsSkipped: 0,
+            assignmentsCreated: 0,
+            evaluationsCreated: 0,
+            eventsCreated: 0,
+            errors: [],
+        };
+
+        try {
+            console.log('[GmailSync] Starting FORCE SYNC (ignoring last sync timestamp)');
+
+            // Fetch emails from last 90 days, ignoring last sync timestamp
+            const ninetyDaysAgo = Math.floor(Date.now() / 1000) - (90 * 24 * 60 * 60);
+            console.log('[GmailSync] Fetching emails from last 90 days...');
+
+            const allEmails = await this.fetchEmails(userId, ninetyDaysAgo.toString());
+
+            if (allEmails.length === 0) {
+                console.log('[GmailSync] No emails found in last 90 days');
+                return result;
+            }
+
+            console.log(`[GmailSync] Fetched ${allEmails.length} emails from last 90 days`);
+
+            // Filter out already-processed emails to save AI tokens
+            const emails = await this.filterUnprocessedEmails(allEmails, userId);
+            result.emailsAnalyzed = emails.length;
+            result.emailsSkipped = allEmails.length - emails.length;
+
+            if (emails.length === 0) {
+                console.log('[GmailSync] All emails already processed');
+                return result;
+            }
+
+            console.log(`[GmailSync] Analyzing ${emails.length} new emails with AI...`);
+
+            // Analyze with AI (pass userId for course context)
+            const extracted = await this.analyzeEmailsWithAI(emails, userId);
+
+            console.log(`[GmailSync] AI extracted: ${extracted.assignments.length} assignments, ${extracted.evaluations.length} evaluations, ${extracted.events.length} events`);
+
+            // Create assignments (only future ones)
+            const now = new Date();
+            const enrolledCourses = await academicsService.getUserCourses(userId);
+
+            for (const assignment of extracted.assignments) {
+                try {
+                    // Validate due date is in the future
+                    const dueDate = new Date(assignment.dueDate);
+                    if (dueDate <= now) {
+                        console.log(`[GmailSync] Skipping past assignment: ${assignment.title} (due: ${assignment.dueDate})`);
+                        continue;
+                    }
+
+                    // Check if already exists (by source_id)
+                    const existing = await db.select()
+                        .from(studentAssignments)
+                        .where(
+                            and(
+                                eq(studentAssignments.userId, userId),
+                                eq(studentAssignments.sourceType, 'gmail'),
+                                eq(studentAssignments.sourceId, assignment.emailId || '')
+                            )
+                        )
+                        .limit(1);
+
+                    if (existing.length > 0) {
+                        console.log(`[GmailSync] Assignment already exists: ${assignment.title}`);
+                        continue;
+                    }
+
+                    // Match courseCode to get courseId
+                    const matchedCourse = enrolledCourses.find(
+                        ec => ec.course.code?.toLowerCase() === assignment.courseCode?.toLowerCase()
+                    );
+                    const courseId = matchedCourse?.course.id || null;
+
+                    if (courseId) {
+                        console.log(`[GmailSync] Matched assignment to course: ${assignment.courseCode} -> ${courseId}`);
+                    } else {
+                        console.log(`[GmailSync] Could not match course code: ${assignment.courseCode}`);
+                    }
+
+                    await db.insert(studentAssignments).values({
+                        userId,
+                        courseId,
+                        courseCode: assignment.courseCode,
+                        courseName: assignment.courseName,
+                        title: assignment.title,
+                        description: assignment.description,
+                        dueDate: new Date(assignment.dueDate),
+                        priority: assignment.priority,
+                        status: 'not_started',
+                        sourceType: 'gmail',
+                        sourceId: assignment.emailId,
+                    });
+
+                    result.assignmentsCreated++;
+                    console.log(`[GmailSync] Created assignment: ${assignment.title}`);
+                } catch (error: any) {
+                    result.errors.push(`Failed to create assignment "${assignment.title}": ${error.message}`);
+                    console.error('[GmailSync] Error creating assignment:', error);
+                }
+            }
+
+            // Create evaluations (only future exams/tests/quizzes)
+            for (const evaluation of extracted.evaluations) {
+                try {
+                    // Only process exams, tests, and quizzes (exclude reports, presentations, projects)
+                    if (!['exam', 'quiz'].includes(evaluation.type)) {
+                        console.log(`[GmailSync] Skipping non-exam evaluation: ${evaluation.title} (type: ${evaluation.type})`);
+                        continue;
+                    }
+
+                    // Validate date is in the future
+                    const evalDate = new Date(evaluation.date);
+                    if (evalDate <= now) {
+                        console.log(`[GmailSync] Skipping past evaluation: ${evaluation.title} (date: ${evaluation.date})`);
+                        continue;
+                    }
+
+                    // Check if already exists
+                    const existing = await db.select()
+                        .from(studentEvaluations)
+                        .where(
+                            and(
+                                eq(studentEvaluations.userId, userId),
+                                eq(studentEvaluations.sourceType, 'gmail'),
+                                eq(studentEvaluations.sourceId, evaluation.emailId || '')
+                            )
+                        )
+                        .limit(1);
+
+                    if (existing.length > 0) {
+                        console.log(`[GmailSync] Evaluation already exists: ${evaluation.title}`);
+                        continue;
+                    }
+
+                    // Match courseCode to get courseId
+                    const matchedCourse = enrolledCourses.find(
+                        ec => ec.course.code?.toLowerCase() === evaluation.courseCode?.toLowerCase()
+                    );
+                    const courseId = matchedCourse?.course.id || null;
+
+                    if (courseId) {
+                        console.log(`[GmailSync] Matched evaluation to course: ${evaluation.courseCode} -> ${courseId}`);
+                    } else {
+                        console.log(`[GmailSync] Could not match course code: ${evaluation.courseCode}`);
+                    }
+
+                    await db.insert(studentEvaluations).values({
+                        userId,
+                        courseId,
+                        courseCode: evaluation.courseCode,
+                        courseName: evaluation.courseName,
+                        title: evaluation.title,
+                        type: evaluation.type,
+                        date: new Date(evaluation.date),
+                        duration: evaluation.duration || null,
+                        location: evaluation.location || null,
+                        description: evaluation.description || null,
+                        sourceType: 'gmail',
+                        sourceId: evaluation.emailId,
+                    });
+
+                    result.evaluationsCreated++;
+                    console.log(`[GmailSync] Created evaluation: ${evaluation.title}`);
+                } catch (error: any) {
+                    result.errors.push(`Failed to create evaluation "${evaluation.title}": ${error.message}`);
+                    console.error('[GmailSync] Error creating evaluation:', error);
+                }
+            }
+
+            // Create campus events (only future ones)
+            for (const event of extracted.events) {
+                try {
+                    // Validate date is in the future
+                    const eventDate = new Date(event.date);
+                    if (eventDate <= now) {
+                        console.log(`[GmailSync] Skipping past event: ${event.title} (date: ${event.date})`);
+                        continue;
+                    }
+
+                    // Check if already exists
+                    const existing = await db.select()
+                        .from(campusEvents)
+                        .where(
+                            and(
+                                eq(campusEvents.userId, userId),
+                                eq(campusEvents.sourceType, 'gmail'),
+                                eq(campusEvents.sourceId, event.emailId || '')
+                            )
+                        )
+                        .limit(1);
+
+                    if (existing.length > 0) {
+                        console.log(`[GmailSync] Event already exists: ${event.title}`);
+                        continue;
+                    }
+
+                    await db.insert(campusEvents).values({
+                        userId,
+                        title: event.title,
+                        type: event.type,
+                        description: event.description || null,
+                        organizer: event.organizer || null,
+                        date: new Date(event.date),
+                        endDate: event.endDate ? new Date(event.endDate) : null,
+                        registrationDeadline: event.registrationDeadline ? new Date(event.registrationDeadline) : null,
+                        location: event.location || null,
+                        websiteUrl: event.websiteUrl || null,
+                        registrationUrl: event.registrationUrl || null,
+                        prizePool: event.prizePool || null,
+                        eligibility: event.eligibility || null,
+                        sourceType: 'gmail',
+                        sourceId: event.emailId,
+                    });
+
+                    result.eventsCreated++;
+                    console.log(`[GmailSync] Created event: ${event.title}`);
+                } catch (error: any) {
+                    result.errors.push(`Failed to create event "${event.title}": ${error.message}`);
+                    console.error('[GmailSync] Error creating event:', error);
+                }
+            }
+
+            // Update sync state with current timestamp (last 90 days)
+            if (allEmails.length > 0) {
+                const latestEmailTimestamp = Math.max(...allEmails.map(e => parseInt(e.internalDate || '0'))).toString();
+                await this.updateSyncState(userId, latestEmailTimestamp);
+                console.log(`[GmailSync] Updated sync state: ${latestEmailTimestamp}`);
+            }
+
+            console.log(`[GmailSync] Force sync complete: ${result.assignmentsCreated} assignments, ${result.evaluationsCreated} evaluations, ${result.eventsCreated} events created`);
+
+        } catch (error: any) {
+            result.success = false;
+            result.errors.push(`Force sync failed: ${error.message}`);
+            console.error('[GmailSync] Force sync error:', error);
         }
 
         return result;

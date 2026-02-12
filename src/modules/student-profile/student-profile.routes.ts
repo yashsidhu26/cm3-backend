@@ -5,10 +5,10 @@ import { studentProfileService } from './student-profile.service';
 import { moodleSyncService } from './moodle-sync.service';
 import { gmailSyncService } from './gmail-sync.service';
 import { db } from '../../core/database/client';
-import { activityLogs, studentAssignments, studentEvaluations, syncState } from './student-profile.schema';
+import { activityLogs, studentAssignments, studentEvaluations, syncState, campusEvents, schedules, scheduleItems } from './student-profile.schema';
 import { protect } from '../../core/auth/middleware';
 import { successResponse, errorResponse } from '../../core/utils/response';
-import { eq, and, gte, desc } from 'drizzle-orm';
+import { eq, and, gte, desc, or } from 'drizzle-orm';
 
 // Background sync tracking
 const runningSyncs = new Map<string, Promise<any>>();
@@ -549,6 +549,40 @@ app.delete('/assignments/:id', protect, async (c) => {
     }
 });
 
+/**
+ * PATCH /assignments/:id/mark-done
+ * Mark an assignment as completed (authenticated)
+ */
+app.patch('/assignments/:id/mark-done', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const id = c.req.param('id');
+
+        const [assignment] = await db
+            .update(studentAssignments)
+            .set({
+                status: 'submitted',
+                updatedAt: new Date(),
+            })
+            .where(and(
+                eq(studentAssignments.id, id),
+                eq(studentAssignments.userId, user.id)
+            ))
+            .returning();
+
+        if (!assignment) {
+            return errorResponse(c, 'Assignment not found', 404);
+        }
+
+        return successResponse(c, {
+            message: 'Assignment marked as done',
+            assignment,
+        });
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to mark assignment as done', 500);
+    }
+});
+
 // ============================================
 // EVALUATIONS ENDPOINTS
 // ============================================
@@ -704,6 +738,55 @@ app.delete('/evaluations/:id', protect, async (c) => {
 });
 
 // ============================================
+// CAMPUS EVENTS ENDPOINTS
+// ============================================
+
+/**
+ * GET /events/upcoming
+ * Get upcoming campus events (authenticated)
+ */
+app.get('/events/upcoming', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const now = new Date();
+
+        const events = await db
+            .select()
+            .from(campusEvents)
+            .where(and(
+                eq(campusEvents.userId, user.id),
+                gte(campusEvents.date, now)
+            ))
+            .orderBy(campusEvents.date)
+            .limit(50);
+
+        return successResponse(c, events);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to fetch upcoming events', 500);
+    }
+});
+
+/**
+ * GET /events
+ * Get all campus events (authenticated)
+ */
+app.get('/events', protect, async (c) => {
+    try {
+        const user = c.get('user');
+
+        const events = await db
+            .select()
+            .from(campusEvents)
+            .where(eq(campusEvents.userId, user.id))
+            .orderBy(desc(campusEvents.date));
+
+        return successResponse(c, events);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to fetch events', 500);
+    }
+});
+
+// ============================================
 // MOODLE AUTO-SYNC ENDPOINTS
 // ============================================
 
@@ -772,6 +855,40 @@ app.post('/sync-gmail', protect, async (c) => {
 });
 
 /**
+ * POST /force-sync-gmail
+ * Force full resync from Gmail (ignores last sync timestamp, reprocesses last 90 days)
+ * Use this when you want to resync all emails or fix sync issues
+ */
+app.post('/force-sync-gmail', protect, async (c) => {
+    try {
+        const user = c.get('user');
+
+        console.log(`[GmailSync] Starting FORCE sync for user: ${user.id}`);
+
+        const result = await gmailSyncService.forceSyncFromGmail(user.id);
+
+        if (!result.success) {
+            return errorResponse(c, `Force sync failed: ${result.errors.join(', ')}`, 500);
+        }
+
+        return successResponse(c, {
+            message: 'Gmail force sync completed successfully',
+            result: {
+                emailsAnalyzed: result.emailsAnalyzed,
+                emailsSkipped: result.emailsSkipped,
+                assignmentsCreated: result.assignmentsCreated,
+                evaluationsCreated: result.evaluationsCreated,
+                eventsCreated: result.eventsCreated,
+                errors: result.errors,
+            },
+        });
+    } catch (error: any) {
+        console.error('[GmailSync] Force sync endpoint error:', error);
+        return errorResponse(c, error.message || 'Gmail force sync failed', 500);
+    }
+});
+
+/**
  * POST /sync
  * Unified sync endpoint - syncs from both Moodle and Gmail
  * Runs both syncs in parallel for efficiency
@@ -831,6 +948,706 @@ app.post('/sync', protect, async (c) => {
     } catch (error: any) {
         console.error('[UnifiedSync] Endpoint error:', error);
         return errorResponse(c, error.message || 'Sync failed', 500);
+    }
+});
+
+// ============================================
+// SCHEDULES / TIMETABLES ENDPOINTS
+// ============================================
+
+const scheduleCreateSchema = z.object({
+    name: z.string().max(255),
+    description: z.string().optional(),
+    isActive: z.boolean().optional().default(false),
+    semester: z.enum(['fall', 'spring', 'summer']).optional(),
+    year: z.string().max(10).optional(),
+});
+
+const scheduleUpdateSchema = scheduleCreateSchema.partial();
+
+const scheduleItemCreateSchema = z.object({
+    scheduleId: z.string().uuid(),
+    title: z.string().max(255),
+    description: z.string().optional(),
+    type: z.enum(['class', 'assignment', 'evaluation', 'event', 'custom']),
+    linkedEntityId: z.string().uuid().optional(),
+    linkedEntityType: z.enum(['section', 'assignment', 'evaluation', 'event']).optional(),
+    startDateTime: z.string().datetime(),
+    endDateTime: z.string().datetime(),
+    isRecurring: z.boolean().optional().default(false),
+    recurrencePattern: z.enum(['daily', 'weekly', 'biweekly', 'monthly', 'none']).optional().default('none'),
+    recurrenceEndDate: z.string().datetime().optional(),
+    dayOfWeek: z.string().max(20).optional(),
+    location: z.string().max(255).optional(),
+    color: z.string().max(7).optional(),
+});
+
+const scheduleItemUpdateSchema = scheduleItemCreateSchema.partial().omit({ scheduleId: true });
+
+/**
+ * GET /schedules
+ * Get all schedules for user
+ */
+app.get('/schedules', protect, async (c) => {
+    try {
+        const user = c.get('user');
+
+        const userSchedules = await db
+            .select()
+            .from(schedules)
+            .where(eq(schedules.userId, user.id))
+            .orderBy(desc(schedules.isActive), desc(schedules.createdAt));
+
+        return successResponse(c, userSchedules);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to fetch schedules', 500);
+    }
+});
+
+/**
+ * GET /schedules/:id
+ * Get schedule with all items
+ */
+app.get('/schedules/:id', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const id = c.req.param('id');
+
+        const [schedule] = await db
+            .select()
+            .from(schedules)
+            .where(and(eq(schedules.id, id), eq(schedules.userId, user.id)))
+            .limit(1);
+
+        if (!schedule) {
+            return errorResponse(c, 'Schedule not found', 404);
+        }
+
+        const items = await db
+            .select()
+            .from(scheduleItems)
+            .where(eq(scheduleItems.scheduleId, id))
+            .orderBy(scheduleItems.startDateTime);
+
+        return successResponse(c, { ...schedule, items });
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to fetch schedule', 500);
+    }
+});
+
+/**
+ * POST /schedules
+ * Create new schedule
+ */
+app.post('/schedules', protect, zValidator('json', scheduleCreateSchema), async (c) => {
+    try {
+        const user = c.get('user');
+        const data = c.req.valid('json');
+
+        // If setting as active, deactivate all others
+        if (data.isActive) {
+            await db
+                .update(schedules)
+                .set({ isActive: false })
+                .where(eq(schedules.userId, user.id));
+        }
+
+        const [schedule] = await db
+            .insert(schedules)
+            .values({
+                ...data,
+                userId: user.id,
+            })
+            .returning();
+
+        return successResponse(c, schedule);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to create schedule', 500);
+    }
+});
+
+/**
+ * PUT /schedules/:id
+ * Update schedule
+ */
+app.put('/schedules/:id', protect, zValidator('json', scheduleUpdateSchema), async (c) => {
+    try {
+        const user = c.get('user');
+        const id = c.req.param('id');
+        const data = c.req.valid('json');
+
+        // If setting as active, deactivate all others
+        if (data.isActive) {
+            await db
+                .update(schedules)
+                .set({ isActive: false })
+                .where(eq(schedules.userId, user.id));
+        }
+
+        const [schedule] = await db
+            .update(schedules)
+            .set({ ...data, updatedAt: new Date() })
+            .where(and(eq(schedules.id, id), eq(schedules.userId, user.id)))
+            .returning();
+
+        if (!schedule) {
+            return errorResponse(c, 'Schedule not found', 404);
+        }
+
+        return successResponse(c, schedule);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to update schedule', 500);
+    }
+});
+
+/**
+ * DELETE /schedules/:id
+ * Delete schedule (cascades to items)
+ */
+app.delete('/schedules/:id', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const id = c.req.param('id');
+
+        const [deleted] = await db
+            .delete(schedules)
+            .where(and(eq(schedules.id, id), eq(schedules.userId, user.id)))
+            .returning();
+
+        if (!deleted) {
+            return errorResponse(c, 'Schedule not found', 404);
+        }
+
+        return successResponse(c, { message: 'Schedule deleted successfully' });
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to delete schedule', 500);
+    }
+});
+
+/**
+ * POST /schedules/:id/set-active
+ * Set schedule as active (deactivates others)
+ */
+app.post('/schedules/:id/set-active', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const id = c.req.param('id');
+
+        // Deactivate all
+        await db
+            .update(schedules)
+            .set({ isActive: false })
+            .where(eq(schedules.userId, user.id));
+
+        // Activate this one
+        const [schedule] = await db
+            .update(schedules)
+            .set({ isActive: true, updatedAt: new Date() })
+            .where(and(eq(schedules.id, id), eq(schedules.userId, user.id)))
+            .returning();
+
+        if (!schedule) {
+            return errorResponse(c, 'Schedule not found', 404);
+        }
+
+        return successResponse(c, schedule);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to set active schedule', 500);
+    }
+});
+
+// ============================================
+// SCHEDULE ITEMS ENDPOINTS
+// ============================================
+
+/**
+ * GET /schedules/:scheduleId/items
+ * Get all items for a schedule
+ */
+app.get('/schedules/:scheduleId/items', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const scheduleId = c.req.param('scheduleId');
+
+        // Verify schedule belongs to user
+        const [schedule] = await db
+            .select()
+            .from(schedules)
+            .where(and(eq(schedules.id, scheduleId), eq(schedules.userId, user.id)))
+            .limit(1);
+
+        if (!schedule) {
+            return errorResponse(c, 'Schedule not found', 404);
+        }
+
+        const items = await db
+            .select()
+            .from(scheduleItems)
+            .where(eq(scheduleItems.scheduleId, scheduleId))
+            .orderBy(scheduleItems.startDateTime);
+
+        return successResponse(c, items);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to fetch schedule items', 500);
+    }
+});
+
+/**
+ * POST /schedule-items
+ * Create schedule item
+ */
+app.post('/schedule-items', protect, zValidator('json', scheduleItemCreateSchema), async (c) => {
+    try {
+        const user = c.get('user');
+        const data = c.req.valid('json');
+
+        // Verify schedule belongs to user
+        const [schedule] = await db
+            .select()
+            .from(schedules)
+            .where(and(eq(schedules.id, data.scheduleId), eq(schedules.userId, user.id)))
+            .limit(1);
+
+        if (!schedule) {
+            return errorResponse(c, 'Schedule not found', 404);
+        }
+
+        const [item] = await db
+            .insert(scheduleItems)
+            .values({
+                ...data,
+                userId: user.id,
+                startDateTime: new Date(data.startDateTime),
+                endDateTime: new Date(data.endDateTime),
+                recurrenceEndDate: data.recurrenceEndDate ? new Date(data.recurrenceEndDate) : null,
+            })
+            .returning();
+
+        return successResponse(c, item);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to create schedule item', 500);
+    }
+});
+
+/**
+ * PUT /schedule-items/:id
+ * Update schedule item
+ */
+app.put('/schedule-items/:id', protect, zValidator('json', scheduleItemUpdateSchema), async (c) => {
+    try {
+        const user = c.get('user');
+        const id = c.req.param('id');
+        const data = c.req.valid('json');
+
+        const updateData: any = { ...data, updatedAt: new Date() };
+        if (data.startDateTime) updateData.startDateTime = new Date(data.startDateTime);
+        if (data.endDateTime) updateData.endDateTime = new Date(data.endDateTime);
+        if (data.recurrenceEndDate) updateData.recurrenceEndDate = new Date(data.recurrenceEndDate);
+
+        const [item] = await db
+            .update(scheduleItems)
+            .set(updateData)
+            .where(and(eq(scheduleItems.id, id), eq(scheduleItems.userId, user.id)))
+            .returning();
+
+        if (!item) {
+            return errorResponse(c, 'Schedule item not found', 404);
+        }
+
+        return successResponse(c, item);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to update schedule item', 500);
+    }
+});
+
+/**
+ * DELETE /schedule-items/:id
+ * Delete schedule item
+ */
+app.delete('/schedule-items/:id', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const id = c.req.param('id');
+
+        const [deleted] = await db
+            .delete(scheduleItems)
+            .where(and(eq(scheduleItems.id, id), eq(scheduleItems.userId, user.id)))
+            .returning();
+
+        if (!deleted) {
+            return errorResponse(c, 'Schedule item not found', 404);
+        }
+
+        return successResponse(c, { message: 'Schedule item deleted successfully' });
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to delete schedule item', 500);
+    }
+});
+
+/**
+ * POST /schedules/:id/generate-from-sections
+ * Generate schedule items from user's registered sections
+ */
+app.post('/schedules/:id/generate-from-sections', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const scheduleId = c.req.param('id');
+
+        // Verify schedule belongs to user
+        const [schedule] = await db
+            .select()
+            .from(schedules)
+            .where(and(eq(schedules.id, scheduleId), eq(schedules.userId, user.id)))
+            .limit(1);
+
+        if (!schedule) {
+            return errorResponse(c, 'Schedule not found', 404);
+        }
+
+        // Get user's registered sections
+        const { sectionsService } = await import('../academics/sections.service');
+        const registrations = await sectionsService.getUserRegistrations(user.id);
+
+        let itemsCreated = 0;
+
+        // Create schedule items for each class timing
+        for (const registration of registrations) {
+            for (const timing of registration.schedule) {
+                // Check if item already exists (by linkedEntityId)
+                const existing = await db
+                    .select()
+                    .from(scheduleItems)
+                    .where(
+                        and(
+                            eq(scheduleItems.scheduleId, scheduleId),
+                            eq(scheduleItems.linkedEntityId, registration.sectionId),
+                            eq(scheduleItems.dayOfWeek, timing.dayOfWeek)
+                        )
+                    )
+                    .limit(1);
+
+                if (existing.length > 0) continue;
+
+                // Create schedule item
+                const today = new Date();
+                const startDateTime = new Date(today);
+                startDateTime.setHours(parseInt(timing.startTime.split(':')[0]), parseInt(timing.startTime.split(':')[1]), 0);
+
+                const endDateTime = new Date(today);
+                endDateTime.setHours(parseInt(timing.endTime.split(':')[0]), parseInt(timing.endTime.split(':')[1]), 0);
+
+                await db.insert(scheduleItems).values({
+                    scheduleId,
+                    userId: user.id,
+                    title: `${registration.courseCode} - ${registration.sectionType}`,
+                    description: `${registration.courseName} (${registration.sectionType} ${registration.sectionNumber})`,
+                    type: 'class',
+                    linkedEntityId: registration.sectionId,
+                    linkedEntityType: 'section',
+                    startDateTime,
+                    endDateTime,
+                    isRecurring: true,
+                    recurrencePattern: 'weekly',
+                    dayOfWeek: timing.dayOfWeek,
+                    location: registration.roomNumber || undefined,
+                });
+
+                itemsCreated++;
+            }
+        }
+
+        return successResponse(c, {
+            message: `Generated ${itemsCreated} schedule items from registered sections`,
+            itemsCreated,
+        });
+    } catch (error: any) {
+        console.error('Failed to generate schedule from sections:', error);
+        return errorResponse(c, error.message || 'Failed to generate schedule', 500);
+    }
+});
+
+/**
+ * POST /schedules/:id/add-assignments
+ * Add upcoming assignments to schedule
+ */
+app.post('/schedules/:id/add-assignments', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const scheduleId = c.req.param('id');
+
+        // Verify schedule
+        const [schedule] = await db
+            .select()
+            .from(schedules)
+            .where(and(eq(schedules.id, scheduleId), eq(schedules.userId, user.id)))
+            .limit(1);
+
+        if (!schedule) {
+            return errorResponse(c, 'Schedule not found', 404);
+        }
+
+        // Get upcoming assignments
+        const now = new Date();
+        const assignments = await db
+            .select()
+            .from(studentAssignments)
+            .where(and(
+                eq(studentAssignments.userId, user.id),
+                gte(studentAssignments.dueDate, now)
+            ))
+            .orderBy(studentAssignments.dueDate)
+            .limit(50);
+
+        let itemsCreated = 0;
+
+        for (const assignment of assignments) {
+            // Check if already added
+            const existing = await db
+                .select()
+                .from(scheduleItems)
+                .where(
+                    and(
+                        eq(scheduleItems.scheduleId, scheduleId),
+                        eq(scheduleItems.linkedEntityId, assignment.id)
+                    )
+                )
+                .limit(1);
+
+            if (existing.length > 0) continue;
+
+            // Add to schedule
+            await db.insert(scheduleItems).values({
+                scheduleId,
+                userId: user.id,
+                title: assignment.title,
+                description: `${assignment.courseCode} - ${assignment.description || ''}`,
+                type: 'assignment',
+                linkedEntityId: assignment.id,
+                linkedEntityType: 'assignment',
+                startDateTime: assignment.dueDate,
+                endDateTime: assignment.dueDate,
+                isRecurring: false,
+                recurrencePattern: 'none',
+                color: '#FF6B6B',
+            });
+
+            itemsCreated++;
+        }
+
+        return successResponse(c, {
+            message: `Added ${itemsCreated} assignments to schedule`,
+            itemsCreated,
+        });
+    } catch (error: any) {
+        console.error('Failed to add assignments to schedule:', error);
+        return errorResponse(c, error.message || 'Failed to add assignments', 500);
+    }
+});
+
+/**
+ * POST /schedules/:id/add-evaluations
+ * Add upcoming evaluations to schedule
+ */
+app.post('/schedules/:id/add-evaluations', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const scheduleId = c.req.param('id');
+
+        const [schedule] = await db
+            .select()
+            .from(schedules)
+            .where(and(eq(schedules.id, scheduleId), eq(schedules.userId, user.id)))
+            .limit(1);
+
+        if (!schedule) {
+            return errorResponse(c, 'Schedule not found', 404);
+        }
+
+        const now = new Date();
+        const evaluations = await db
+            .select()
+            .from(studentEvaluations)
+            .where(and(
+                eq(studentEvaluations.userId, user.id),
+                gte(studentEvaluations.date, now)
+            ))
+            .orderBy(studentEvaluations.date)
+            .limit(50);
+
+        let itemsCreated = 0;
+
+        for (const evaluation of evaluations) {
+            const existing = await db
+                .select()
+                .from(scheduleItems)
+                .where(
+                    and(
+                        eq(scheduleItems.scheduleId, scheduleId),
+                        eq(scheduleItems.linkedEntityId, evaluation.id)
+                    )
+                )
+                .limit(1);
+
+            if (existing.length > 0) continue;
+
+            const endDateTime = evaluation.duration
+                ? new Date(evaluation.date.getTime() + parseInt(evaluation.duration) * 60000)
+                : new Date(evaluation.date.getTime() + 120 * 60000); // Default 2 hours
+
+            await db.insert(scheduleItems).values({
+                scheduleId,
+                userId: user.id,
+                title: `${evaluation.type.toUpperCase()}: ${evaluation.title}`,
+                description: `${evaluation.courseCode} - ${evaluation.description || ''}`,
+                type: 'evaluation',
+                linkedEntityId: evaluation.id,
+                linkedEntityType: 'evaluation',
+                startDateTime: evaluation.date,
+                endDateTime,
+                isRecurring: false,
+                recurrencePattern: 'none',
+                location: evaluation.location || undefined,
+                color: '#4ECDC4',
+            });
+
+            itemsCreated++;
+        }
+
+        return successResponse(c, {
+            message: `Added ${itemsCreated} evaluations to schedule`,
+            itemsCreated,
+        });
+    } catch (error: any) {
+        console.error('Failed to add evaluations to schedule:', error);
+        return errorResponse(c, error.message || 'Failed to add evaluations', 500);
+    }
+});
+
+/**
+ * POST /schedules/:id/add-events
+ * Add enrolled/interested campus events to schedule
+ */
+app.post('/schedules/:id/add-events', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const scheduleId = c.req.param('id');
+
+        const [schedule] = await db
+            .select()
+            .from(schedules)
+            .where(and(eq(schedules.id, scheduleId), eq(schedules.userId, user.id)))
+            .limit(1);
+
+        if (!schedule) {
+            return errorResponse(c, 'Schedule not found', 404);
+        }
+
+        const now = new Date();
+        const events = await db
+            .select()
+            .from(campusEvents)
+            .where(and(
+                eq(campusEvents.userId, user.id),
+                gte(campusEvents.date, now),
+                or(eq(campusEvents.isEnrolled, true), eq(campusEvents.isInterested, true))
+            ))
+            .orderBy(campusEvents.date)
+            .limit(50);
+
+        let itemsCreated = 0;
+
+        for (const event of events) {
+            const existing = await db
+                .select()
+                .from(scheduleItems)
+                .where(
+                    and(
+                        eq(scheduleItems.scheduleId, scheduleId),
+                        eq(scheduleItems.linkedEntityId, event.id)
+                    )
+                )
+                .limit(1);
+
+            if (existing.length > 0) continue;
+
+            const endDateTime = event.endDate || new Date(event.date.getTime() + 180 * 60000); // Default 3 hours
+
+            await db.insert(scheduleItems).values({
+                scheduleId,
+                userId: user.id,
+                title: event.title,
+                description: `${event.type} - ${event.organizer || ''}`,
+                type: 'event',
+                linkedEntityId: event.id,
+                linkedEntityType: 'event',
+                startDateTime: event.date,
+                endDateTime,
+                isRecurring: false,
+                recurrencePattern: 'none',
+                location: event.location || undefined,
+                color: '#FFEAA7',
+            });
+
+            itemsCreated++;
+        }
+
+        return successResponse(c, {
+            message: `Added ${itemsCreated} events to schedule`,
+            itemsCreated,
+        });
+    } catch (error: any) {
+        console.error('Failed to add events to schedule:', error);
+        return errorResponse(c, error.message || 'Failed to add events', 500);
+    }
+});
+
+/**
+ * PATCH /events/:id/mark-interested
+ * Mark event as interested
+ */
+app.patch('/events/:id/mark-interested', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const id = c.req.param('id');
+
+        const [event] = await db
+            .update(campusEvents)
+            .set({ isInterested: true, updatedAt: new Date() })
+            .where(and(eq(campusEvents.id, id), eq(campusEvents.userId, user.id)))
+            .returning();
+
+        if (!event) {
+            return errorResponse(c, 'Event not found', 404);
+        }
+
+        return successResponse(c, event);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to mark event as interested', 500);
+    }
+});
+
+/**
+ * PATCH /events/:id/mark-enrolled
+ * Mark event as enrolled
+ */
+app.patch('/events/:id/mark-enrolled', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const id = c.req.param('id');
+
+        const [event] = await db
+            .update(campusEvents)
+            .set({ isEnrolled: true, updatedAt: new Date() })
+            .where(and(eq(campusEvents.id, id), eq(campusEvents.userId, user.id)))
+            .returning();
+
+        if (!event) {
+            return errorResponse(c, 'Event not found', 404);
+        }
+
+        return successResponse(c, event);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to mark event as enrolled', 500);
     }
 });
 

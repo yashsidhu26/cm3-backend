@@ -1,9 +1,6 @@
 import { eq, desc, and } from 'drizzle-orm';
 import { db } from '../../core/database/client';
-import type { ChatMessage, AIResponse, ContextType, ResponseFormat } from './types';
-import { groqClient } from './groq-client';
-import { geminiClient } from './gemini-client';
-import { contextFetcherService } from './context-fetcher.service';
+import type { ChatMessage, ResponseFormat } from './types';
 import { aiConversations, aiUsageStats } from './ai-integration.schema';
 import { runAgentLoop } from './agent/agent-loop';
 import type { AgentAIResponse } from './agent/types';
@@ -24,158 +21,28 @@ export class AIIntegrationService {
 
   /**
    * Main orchestration method for processing user queries
-   * Now supports three modes: agent, fast, auto
-   * - agent: Always use agent loop
-   * - fast: Use Groq-first (backward compatible)
-   * - auto (default): Groq quick check, route to agent if needed
+   * All queries now routed to Gemini agent with smart model selection
    */
   async processQuery(
     userId: string,
     query: string,
     conversationHistory?: ChatMessage[],
-    mode: 'agent' | 'fast' | 'auto' = 'auto',
     format?: ResponseFormat
-  ): Promise<AIResponse | AgentAIResponse> {
-    const startTime = Date.now();
-
+  ): Promise<AgentAIResponse> {
     try {
-      // Mode: agent - Always use agent loop
-      if (mode === 'agent') {
-        const result = await this.processAgentQuery(userId, query, conversationHistory || [], format);
-        // Track Gemini usage (agent uses Gemini)
-        await this.trackUsage(userId, 'gemini', 0);
-        return result;
-      }
-
-      // Mode: fast - Use Groq-first (backward compatible)
-      if (mode === 'fast') {
-        return await this.processFastQuery(userId, query, conversationHistory || []);
-      }
-
-      // Mode: auto (default) - Smart routing
-      // Quick Groq analysis to decide routing
-      console.log('[AI] Auto mode: Analyzing query with Groq...');
-      const analysis = await groqClient.analyzeQuery(query, conversationHistory);
-      console.log('[AI] Analysis result:', analysis);
-
-      // Track Groq usage
-      await this.trackUsage(userId, 'groq', 0);
-
-      // If simple with direct answer, return Groq's fast answer
-      if (analysis.complexity === 'simple' && analysis.directAnswer) {
-        console.log('[AI] Auto mode: Simple query with direct answer, using Groq');
-        return {
-          response: analysis.directAnswer,
-          source: 'groq',
-          complexity: 'simple',
-          contextUsed: analysis.neededContext,
-          metadata: {
-            processingTimeMs: Date.now() - startTime,
-            model: 'llama-3.3-70b-versatile',
-            contextTypesUsed: analysis.neededContext,
-          },
-        };
-      }
-
-      // For anything else (simple without answer OR complex), route to agent
-      console.log('[AI] Auto mode: Routing to agent loop');
+      console.log('[AI] Processing query with Gemini agent...');
       const result = await this.processAgentQuery(userId, query, conversationHistory || [], format);
-      await this.trackUsage(userId, 'gemini', 0);
-      return result;
 
+      // Track Gemini usage
+      await this.trackUsage(userId, 'gemini', 0);
+
+      return result;
     } catch (error: any) {
       console.error('[AI] Error processing query:', error);
       throw error;
     }
   }
 
-  /**
-   * Fast query processing (Groq-first, backward compatible)
-   */
-  private async processFastQuery(
-    userId: string,
-    query: string,
-    conversationHistory: ChatMessage[]
-  ): Promise<AIResponse> {
-    const startTime = Date.now();
-
-    // Step 1: Groq analyzes the query
-    console.log('[AI] Fast mode: Analyzing query with Groq...');
-    const analysis = await groqClient.analyzeQuery(query, conversationHistory);
-    console.log('[AI] Analysis result:', analysis);
-
-    // Track Groq usage
-    await this.trackUsage(userId, 'groq', 0);
-
-    // Step 2: If simple and has direct answer, return Groq's response
-    if (analysis.complexity === 'simple' && analysis.directAnswer) {
-      console.log('[AI] Simple query, returning Groq answer');
-      return {
-        response: analysis.directAnswer,
-        source: 'groq',
-        complexity: 'simple',
-        contextUsed: analysis.neededContext,
-        metadata: {
-          processingTimeMs: Date.now() - startTime,
-          model: 'llama-3.3-70b-versatile',
-          contextTypesUsed: analysis.neededContext,
-        },
-      };
-    }
-
-    // Step 3: For simple queries without direct answer, fetch minimal context
-    if (analysis.complexity === 'simple') {
-      console.log('[AI] Simple query, fetching context and using Groq...');
-      const context = await contextFetcherService.fetchContext(
-        userId,
-        analysis.neededContext
-      );
-
-      const response = await groqClient.generateSimpleResponse(query, context);
-
-      return {
-        response,
-        source: 'groq',
-        complexity: 'simple',
-        contextUsed: analysis.neededContext,
-        metadata: {
-          processingTimeMs: Date.now() - startTime,
-          model: 'llama-3.3-70b-versatile',
-          contextTypesUsed: analysis.neededContext,
-        },
-      };
-    }
-
-    // Step 4: Complex query - fetch full context and send to Gemini
-    console.log('[AI] Complex query, fetching context for Gemini...');
-    const context = await contextFetcherService.fetchContext(
-      userId,
-      analysis.neededContext
-    );
-
-    console.log('[AI] Generating response with Gemini...');
-    const modelUsed = geminiClient.getModelForQuery(analysis.responseFormat, query);
-    const response = await geminiClient.generateResponse(
-      query,
-      context,
-      analysis.responseFormat
-    );
-
-    // Track Gemini usage
-    await this.trackUsage(userId, 'gemini', 0);
-
-    return {
-      response,
-      source: 'gemini',
-      complexity: 'complex',
-      contextUsed: analysis.neededContext,
-      metadata: {
-        processingTimeMs: Date.now() - startTime,
-        model: modelUsed,
-        contextTypesUsed: analysis.neededContext,
-      },
-    };
-  }
 
   /**
    * Save a conversation message to the database
