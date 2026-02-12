@@ -184,4 +184,100 @@ router.get('/nodes/:id/explore', async (c) => {
     }
 });
 
+/**
+ * POST /sync/skills-interests
+ * Sync skills and interests from skills-interests module
+ */
+router.post('/sync/skills-interests', async (c) => {
+    const userId = c.get('user')?.id;
+    if (!userId) return c.json({ error: 'Unauthorized' }, 401);
+
+    try {
+        const result = await brainService.syncSkillsAndInterests(userId);
+        return c.json(result);
+    } catch (error: any) {
+        return c.json({ error: error.message }, 500);
+    }
+});
+
+/**
+ * POST /sync/courses
+ * Sync academic courses from academics module
+ */
+router.post('/sync/courses', async (c) => {
+    const userId = c.get('user')?.id;
+    if (!userId) return c.json({ error: 'Unauthorized' }, 401);
+
+    try {
+        const result = await brainService.syncCourses(userId);
+        return c.json(result);
+    } catch (error: any) {
+        return c.json({ error: error.message }, 500);
+    }
+});
+
+/**
+ * POST /sync/experiences
+ * Sync experiences from student-profile module
+ */
+router.post('/sync/experiences', async (c) => {
+    const userId = c.get('user')?.id;
+    if (!userId) return c.json({ error: 'Unauthorized' }, 401);
+
+    try {
+        const result = await brainService.syncExperiences(userId);
+        return c.json(result);
+    } catch (error: any) {
+        return c.json({ error: error.message }, 500);
+    }
+});
+
+/**
+ * POST /sync/events
+ * Sync campus events from student-profile module
+ */
+router.post('/sync/events', async (c) => {
+    const userId = c.get('user')?.id;
+    if (!userId) return c.json({ error: 'Unauthorized' }, 401);
+
+    try {
+        const result = await brainService.syncCampusEvents(userId);
+        return c.json(result);
+    } catch (error: any) {
+        return c.json({ error: error.message }, 500);
+    }
+});
+
+/**
+ * POST /sync/all
+ * Sync all module data at once
+ */
+router.post('/sync/all', async (c) => {
+    const userId = c.get('user')?.id;
+    if (!userId) return c.json({ error: 'Unauthorized' }, 401);
+
+    try {
+        const result = await brainService.syncAll(userId);
+        return c.json(result);
+    } catch (error: any) {
+        return c.json({ error: error.message }, 500);
+    }
+});
+
+/**
+ * POST /sync/connections
+ * Detect and create cross-module connections
+ */
+router.post('/sync/connections', async (c) => {
+    const userId = c.get('user')?.id;
+    if (!userId) return c.json({ error: 'Unauthorized' }, 401);
+
+    try {
+        const result = await brainService.detectCrossModuleConnections(userId);
+        return c.json(result);
+    } catch (error: any) {
+        return c.json({ error: error.message }, 500);
+    }
+});
+
 export default router;

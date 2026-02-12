@@ -4,6 +4,9 @@ import { brainNodes, brainLinks, brainSources, type BrainNode, type BrainLink, t
 import { aiIntegrationService } from '../ai-integration/ai-integration.service';
 import { studentProfileService } from '../student-profile/student-profile.service';
 import { vectorDbService } from './vector-db.service';
+import { skillsInterestsService } from '../skills-interests/skills-interests.service';
+import { academicsService } from '../academics/academics.service';
+import { studentAcademics, studentExperiences, campusEvents } from '../student-profile/student-profile.schema';
 
 export class BrainService {
     /**
@@ -271,6 +274,407 @@ export class BrainService {
                 notification: `You just saved something about '${topMatch.source.node.name}.' Did you know you have a related resource about '${topMatch.source.title}'? They are ${percentage}% related.`
             }
         };
+    }
+
+    /**
+     * Sync Skills and Interests from skills-interests module
+     */
+    async syncSkillsAndInterests(userId: string) {
+        const userSkills = await skillsInterestsService.getUserSkills(userId);
+
+        let nodesCreated = 0;
+        let sourcesCreated = 0;
+        const nodeIds: string[] = [];
+
+        for (const userSkill of userSkills) {
+            // Check if node already exists
+            const existing = await db.query.brainNodes.findFirst({
+                where: and(
+                    eq(brainNodes.userId, userId),
+                    eq(brainNodes.metadata, { sourceModule: 'skills-interests', sourceEntityId: userSkill.id } as any)
+                )
+            });
+
+            if (existing) {
+                nodeIds.push(existing.id);
+                continue;
+            }
+
+            // Determine node type based on status
+            let nodeType: 'core' | 'niche' | 'suggestion' = 'niche';
+            if (userSkill.status === 'learning' || userSkill.status === 'completed') {
+                nodeType = 'core';
+            }
+
+            // Create brain node
+            const node = await this.addNode({
+                userId,
+                name: userSkill.skillInterest.name,
+                type: nodeType,
+                val: userSkill.progress ? Math.max(10, Math.floor(userSkill.progress / 5)) : 10,
+                metadata: {
+                    summary: userSkill.skillInterest.description || undefined,
+                    sourceModule: 'skills-interests',
+                    sourceEntityId: userSkill.id,
+                }
+            });
+
+            nodesCreated++;
+            nodeIds.push(node.id);
+
+            // Fetch and attach resources
+            const resources = await skillsInterestsService.getSkillResources(userSkill.skillInterestId);
+
+            for (const resource of resources) {
+                await this.connectSource({
+                    nodeId: node.id,
+                    type: this.mapResourceType(resource.type),
+                    title: resource.title,
+                    url: resource.url || undefined,
+                    metadata: {
+                        description: resource.description || undefined,
+                        sourceModule: 'skills-interests',
+                        sourceEntityId: resource.id,
+                    }
+                });
+                sourcesCreated++;
+            }
+        }
+
+        return { nodesCreated, sourcesCreated, nodeIds };
+    }
+
+    /**
+     * Sync Courses from academics module
+     */
+    async syncCourses(userId: string) {
+        const userCourses = await academicsService.getUserCoursesWithFullDetails(userId);
+
+        let nodesCreated = 0;
+        let sourcesCreated = 0;
+        const nodeIds: string[] = [];
+
+        for (const enrollment of userCourses) {
+            const course = enrollment as any; // The method returns courses directly with enrollment nested
+
+            // Check if node already exists
+            const existing = await db.query.brainNodes.findFirst({
+                where: and(
+                    eq(brainNodes.userId, userId),
+                    eq(brainNodes.metadata, { sourceModule: 'academics', sourceEntityId: course.id } as any)
+                )
+            });
+
+            if (existing) {
+                nodeIds.push(existing.id);
+                continue;
+            }
+
+            // Create brain node for course
+            const node = await this.addNode({
+                userId,
+                name: `${course.code}: ${course.name}`,
+                type: 'core',
+                val: 15,
+                metadata: {
+                    summary: course.description || `${course.name} taught by ${course.professorName || 'TBA'}`,
+                    sourceModule: 'academics',
+                    sourceEntityId: course.id,
+                }
+            });
+
+            nodesCreated++;
+            nodeIds.push(node.id);
+
+            // Fetch and attach course resources
+            const resources = await academicsService.getCourseResources(course.id);
+
+            for (const resource of resources) {
+                await this.connectSource({
+                    nodeId: node.id,
+                    type: resource.type === 'pdf' ? 'drive' : resource.type === 'video' ? 'youtube' : 'link',
+                    title: resource.title,
+                    url: resource.url,
+                    metadata: {
+                        description: `Course material: ${resource.type}`,
+                        sourceModule: 'academics',
+                        sourceEntityId: resource.id,
+                    }
+                });
+                sourcesCreated++;
+            }
+        }
+
+        return { nodesCreated, sourcesCreated, nodeIds };
+    }
+
+    /**
+     * Sync Experiences from student-profile module
+     */
+    async syncExperiences(userId: string) {
+        const experiences = await db.query.studentExperiences.findMany({
+            where: eq(studentExperiences.userId, userId)
+        });
+
+        let nodesCreated = 0;
+        let linksCreated = 0;
+        const nodeIds: string[] = [];
+
+        for (const experience of experiences) {
+            // Check if node already exists
+            const existing = await db.query.brainNodes.findFirst({
+                where: and(
+                    eq(brainNodes.userId, userId),
+                    eq(brainNodes.metadata, { sourceModule: 'student-profile', sourceEntityId: experience.id } as any)
+                )
+            });
+
+            if (existing) {
+                nodeIds.push(existing.id);
+                continue;
+            }
+
+            // Create brain node for experience
+            const node = await this.addNode({
+                userId,
+                name: experience.title,
+                type: 'niche',
+                val: 12,
+                metadata: {
+                    summary: `${experience.role || 'Experience'} at ${experience.organization || 'Organization'}: ${experience.description || ''}`,
+                    sourceModule: 'student-profile',
+                    sourceEntityId: experience.id,
+                }
+            });
+
+            nodesCreated++;
+            nodeIds.push(node.id);
+
+            // Create links to skill nodes if skills were used
+            if (experience.skillsUsed && experience.skillsUsed.length > 0) {
+                const skillNodes = await db.query.brainNodes.findMany({
+                    where: and(
+                        eq(brainNodes.userId, userId),
+                        eq(brainNodes.metadata, { sourceModule: 'skills-interests' } as any)
+                    )
+                });
+
+                for (const skillName of experience.skillsUsed) {
+                    const matchingSkillNode = skillNodes.find(sn =>
+                        sn.name.toLowerCase().includes(skillName.toLowerCase())
+                    );
+
+                    if (matchingSkillNode) {
+                        await this.addLink({
+                            userId,
+                            sourceId: node.id,
+                            targetId: matchingSkillNode.id,
+                            dashed: false,
+                        });
+                        linksCreated++;
+                    }
+                }
+            }
+        }
+
+        return { nodesCreated, linksCreated, nodeIds };
+    }
+
+    /**
+     * Sync Campus Events from student-profile module
+     */
+    async syncCampusEvents(userId: string) {
+        const events = await db.query.campusEvents.findMany({
+            where: and(
+                eq(campusEvents.userId, userId),
+                eq(campusEvents.isInterested, true)
+            )
+        });
+
+        let nodesCreated = 0;
+        const nodeIds: string[] = [];
+
+        for (const event of events) {
+            // Check if node already exists
+            const existing = await db.query.brainNodes.findFirst({
+                where: and(
+                    eq(brainNodes.userId, userId),
+                    eq(brainNodes.metadata, { sourceModule: 'student-profile', sourceEntityId: event.id } as any)
+                )
+            });
+
+            if (existing) {
+                nodeIds.push(existing.id);
+                continue;
+            }
+
+            // Create suggestion node for event
+            const node = await this.addNode({
+                userId,
+                name: event.title,
+                type: 'suggestion',
+                val: 8,
+                metadata: {
+                    summary: `${event.type} event: ${event.description || 'Campus event'}`,
+                    sourceModule: 'student-profile',
+                    sourceEntityId: event.id,
+                }
+            });
+
+            nodesCreated++;
+            nodeIds.push(node.id);
+        }
+
+        return { nodesCreated, nodeIds };
+    }
+
+    /**
+     * Sync all module data at once
+     */
+    async syncAll(userId: string) {
+        const results = {
+            skills: await this.syncSkillsAndInterests(userId),
+            courses: await this.syncCourses(userId),
+            experiences: await this.syncExperiences(userId),
+            events: await this.syncCampusEvents(userId),
+        };
+
+        // Detect cross-module connections
+        const connections = await this.detectCrossModuleConnections(userId);
+
+        return {
+            ...results,
+            connections,
+            totalNodesCreated:
+                results.skills.nodesCreated +
+                results.courses.nodesCreated +
+                results.experiences.nodesCreated +
+                results.events.nodesCreated,
+            totalSourcesCreated:
+                results.skills.sourcesCreated +
+                results.courses.sourcesCreated,
+        };
+    }
+
+    /**
+     * Detect and create cross-module connections
+     */
+    async detectCrossModuleConnections(userId: string) {
+        let linksCreated = 0;
+
+        // Get all user nodes
+        const allNodes = await db.query.brainNodes.findMany({
+            where: eq(brainNodes.userId, userId)
+        });
+
+        // Get user's academic data for skill matching
+        const academicData = await db.query.studentAcademics.findFirst({
+            where: eq(studentAcademics.userId, userId)
+        });
+
+        if (!academicData) return { linksCreated };
+
+        // Match courses to skills based on course description/name
+        const courseNodes = allNodes.filter(n => n.metadata?.sourceModule === 'academics');
+        const skillNodes = allNodes.filter(n => n.metadata?.sourceModule === 'skills-interests');
+
+        for (const course of courseNodes) {
+            for (const skill of skillNodes) {
+                // Simple keyword matching
+                const courseName = course.name.toLowerCase();
+                const skillName = skill.name.toLowerCase();
+
+                if (courseName.includes(skillName) || skillName.includes(courseName)) {
+                    // Check if link already exists
+                    const existingLink = await db.query.brainLinks.findFirst({
+                        where: and(
+                            eq(brainLinks.userId, userId),
+                            eq(brainLinks.sourceId, course.id),
+                            eq(brainLinks.targetId, skill.id)
+                        )
+                    });
+
+                    if (!existingLink) {
+                        await this.addLink({
+                            userId,
+                            sourceId: course.id,
+                            targetId: skill.id,
+                            dashed: false,
+                        });
+                        linksCreated++;
+                    }
+                }
+            }
+        }
+
+        // Match interests to courses
+        if (academicData.interests) {
+            for (const interest of academicData.interests) {
+                const interestLower = interest.toLowerCase();
+
+                for (const course of courseNodes) {
+                    const courseName = course.name.toLowerCase();
+
+                    if (courseName.includes(interestLower)) {
+                        // Find or create interest node
+                        let interestNode = allNodes.find(n =>
+                            n.name.toLowerCase() === interestLower &&
+                            n.metadata?.sourceModule !== 'academics'
+                        );
+
+                        if (!interestNode) {
+                            interestNode = await this.addNode({
+                                userId,
+                                name: interest,
+                                type: 'niche',
+                                val: 10,
+                                metadata: {
+                                    summary: 'User interest',
+                                }
+                            });
+                        }
+
+                        // Check if link already exists
+                        const existingLink = await db.query.brainLinks.findFirst({
+                            where: and(
+                                eq(brainLinks.userId, userId),
+                                eq(brainLinks.sourceId, interestNode.id),
+                                eq(brainLinks.targetId, course.id)
+                            )
+                        });
+
+                        if (!existingLink) {
+                            await this.addLink({
+                                userId,
+                                sourceId: interestNode.id,
+                                targetId: course.id,
+                                dashed: true,
+                            });
+                            linksCreated++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return { linksCreated };
+    }
+
+    /**
+     * Helper: Map resource type from skills-interests to brain source type
+     */
+    private mapResourceType(type: string): 'youtube' | 'drive' | 'pinterest' | 'goodreads' | 'link' {
+        const mapping: Record<string, 'youtube' | 'drive' | 'pinterest' | 'goodreads' | 'link'> = {
+            'video': 'youtube',
+            'course': 'link',
+            'book': 'goodreads',
+            'article': 'link',
+            'tutorial': 'youtube',
+            'documentation': 'link',
+            'project': 'link',
+            'other': 'link',
+        };
+        return mapping[type] || 'link';
     }
 }
 

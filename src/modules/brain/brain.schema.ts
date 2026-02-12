@@ -28,6 +28,8 @@ export const brainNodes = pgTable('brain_nodes', {
     metadata: jsonb('metadata').$type<{
         summary?: string;
         allied?: string[];
+        sourceModule?: 'skills-interests' | 'academics' | 'student-profile';
+        sourceEntityId?: string;
     }>(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -72,6 +74,8 @@ export const brainSources = pgTable('brain_sources', {
         icon?: string;
         summary?: string;
         questions?: string[];
+        sourceModule?: 'skills-interests' | 'academics' | 'student-profile';
+        sourceEntityId?: string;
     }>(),
     vector: jsonb('vector').$type<number[]>(), // AI-generated embedding
     createdAt: timestamp('created_at').notNull().defaultNow(),
