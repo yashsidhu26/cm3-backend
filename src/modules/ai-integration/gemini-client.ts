@@ -1,5 +1,7 @@
 import { VertexAI } from '@google-cloud/vertexai';
 import type { ChatMessage, StudentContext, ResponseFormat } from './types';
+import { promptCacheService } from './prompt-cache.service';
+import { classifyQuery, getEstimatedResponseTime } from './query-classifier';
 
 export class GeminiError extends Error {
   constructor(
@@ -13,44 +15,94 @@ export class GeminiError extends Error {
 }
 
 export class GeminiClient {
-  private defaultModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
-  private thinkingModel = process.env.GEMINI_MODEL_THINKING || 'gemini-2.5-flash-lite';
+  private defaultModel = process.env.GEMINI_MODEL || 'gemini-3-flash-preview';
+  private thinkingModel = process.env.GEMINI_MODEL_THINKING || 'gemini-3-flash-preview';
   private vertexAI: VertexAI;
+
+  // Cache model instances with systemInstruction for indefinite caching
+  // This makes the cache persist as long as the server is running (not just 1 hour)
+  private modelCache: Map<string, any> = new Map();
 
   constructor() {
     const projectId = process.env.GCP_PROJECT_ID;
-    const location = process.env.GCP_LOCATION || 'us-central1';
+    const location = process.env.GCP_LOCATION || 'global';
 
     if (!projectId) {
       throw new GeminiError('GCP_PROJECT_ID not configured', 'MISSING_PROJECT_ID', 500);
     }
 
-    this.vertexAI = new VertexAI({ project: projectId, location });
+    this.vertexAI = new VertexAI({
+      project: projectId,
+      location,
+      // Let SDK auto-configure apiEndpoint
+    });
+
+    // Log cache status on initialization
+    promptCacheService.logCacheUsage();
+    console.log('[GeminiClient] Indefinite caching enabled - model instances will be reused across all requests');
   }
 
   /**
-   * Determine which model to use based on task complexity
-   * Thinking model (gemini-3-flash) for: scheduling, conflict resolution, complex planning
-   * Default model (gemini-2.5-flash-lite) for: PDF analysis, quiz making, general queries
+   * Determine which model to use based on query complexity analysis
+   * Uses smart routing to optimize speed vs quality trade-off
    */
   private selectModel(format: ResponseFormat, query: string): string {
-    // Use thinking model for complex scheduling and conflict tasks
-    const needsThinking =
-      format === 'schedule' ||
-      query.toLowerCase().includes('schedule') ||
-      query.toLowerCase().includes('conflict') ||
-      query.toLowerCase().includes('plan my week') ||
-      query.toLowerCase().includes('manage my time');
+    const classification = classifyQuery(query, format);
+    const estimatedTime = getEstimatedResponseTime(classification.complexity);
 
-    return needsThinking ? this.thinkingModel : this.defaultModel;
+    console.log(
+      `[Gemini] Query classified as: ${classification.complexity} ` +
+      `(confidence: ${(classification.confidence * 100).toFixed(0)}%) ` +
+      `→ ${classification.recommendedModel} ` +
+      `(~${estimatedTime}ms)`
+    );
+
+    if (classification.reasons.length > 0) {
+      console.log(`[Gemini] Reasons: ${classification.reasons.join(', ')}`);
+    }
+
+    return classification.recommendedModel;
   }
 
-  private buildSystemPrompt(context: StudentContext, format: ResponseFormat): string {
+  /**
+   * Get or create a cached model instance with systemInstruction
+   * This enables indefinite caching - the model is created once and reused forever
+   * (until server restart), rather than Vertex AI's default 1-hour cache TTL
+   */
+  private getCachedModel(modelName: string) {
+    // Check if model already exists in cache
+    if (this.modelCache.has(modelName)) {
+      return this.modelCache.get(modelName);
+    }
+
+    // Create new model with systemInstruction for caching
+    const staticPrompt = promptCacheService.getStaticPrompt();
+    const model = this.vertexAI.getGenerativeModel({
+      model: modelName,
+      systemInstruction: {
+        role: 'system',
+        parts: [{ text: staticPrompt }],
+      },
+    });
+
+    // Cache the model instance indefinitely
+    this.modelCache.set(modelName, model);
+    console.log(`[GeminiClient] Cached new model instance: ${modelName} (will be reused across all requests)`);
+
+    return model;
+  }
+
+  /**
+   * Build dynamic context for the current request
+   * This is appended to the user query and changes per request (not cached)
+   */
+  private buildDynamicContext(context: StudentContext, format: ResponseFormat): string {
     const currentDate = new Date();
     const day = String(currentDate.getDate()).padStart(2, '0');
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const year = currentDate.getFullYear();
     const formattedDate = `${day}/${month}/${year}`; // DD/MM/YYYY
+    const dayOfWeek = currentDate.toLocaleDateString('en-US', { weekday: 'long' });
 
     let formatInstructions = '';
     switch (format) {
@@ -67,29 +119,12 @@ export class GeminiClient {
         formatInstructions = 'Provide a clear, conversational response.';
     }
 
-    return `You are an intelligent student assistant helping with academic planning, productivity, and course management for students in India.
-
-**Current Date**: ${formattedDate} (DD/MM/YYYY format)
-**DATE FORMAT REQUIREMENT**: ALWAYS use DD/MM/YYYY format (Indian standard). Example: 25/12/2024 means 25th December 2024.
-
-**Your Role**:
-- Analyze student data to provide personalized recommendations
-- Create study plans based on productivity patterns
-- Answer questions about courses, resources, and deadlines
-- Be encouraging, supportive, and actionable
-
-**Response Format**: ${formatInstructions}
+    return `**Current Context**:
+- Date: ${formattedDate} (${dayOfWeek})
+${formatInstructions ? `- Response Format: ${formatInstructions}` : ''}
 
 **Available Student Context**:
-${JSON.stringify(context, null, 2)}
-
-**Guidelines**:
-1. Use the student's actual data (courses, resources, activity patterns)
-2. Reference specific courses, deadlines, and resources when relevant
-3. Consider their productivity patterns and behavioral insights
-4. Be specific with dates, times, and actionable steps
-5. Keep responses focused and practical
-6. If data is missing, acknowledge it and work with what's available`;
+${JSON.stringify(context, null, 2)}`;
   }
 
   async generateResponse(
@@ -101,10 +136,16 @@ ${JSON.stringify(context, null, 2)}
       const selectedModel = this.selectModel(format, query);
       console.log(`[Gemini] Using model: ${selectedModel} for format: ${format}`);
 
-      const model = this.vertexAI.getGenerativeModel({ model: selectedModel });
-      const systemPrompt = this.buildSystemPrompt(context, format);
+      // Get cached model instance (indefinite caching - reused across all requests)
+      const model = this.getCachedModel(selectedModel);
 
-      const prompt = `${systemPrompt}\n\n**Student Query**: ${query}\n\nProvide your response:`;
+      // Build dynamic context (not cached, changes per request)
+      const dynamicContext = this.buildDynamicContext(context, format);
+
+      // Combine dynamic context with user query
+      const prompt = `${dynamicContext}\n\n**Student Query**: ${query}\n\nProvide your response:`;
+
+      console.log(`[Gemini] Indefinite caching: ✅ enabled (model instance reused)`);
 
       const result = await model.generateContent(prompt);
 
@@ -136,8 +177,11 @@ ${JSON.stringify(context, null, 2)}
       const selectedModel = this.selectModel('text', lastMessage.content);
       console.log(`[Gemini] Chat using model: ${selectedModel}`);
 
-      const model = this.vertexAI.getGenerativeModel({ model: selectedModel });
-      const systemPrompt = this.buildSystemPrompt(context, 'text');
+      // Get cached model instance (indefinite caching - reused across all requests)
+      const model = this.getCachedModel(selectedModel);
+
+      // Build dynamic context
+      const dynamicContext = this.buildDynamicContext(context, 'text');
 
       // Build chat history for Vertex AI
       const history = messages.slice(0, -1).map((msg) => ({
@@ -147,11 +191,13 @@ ${JSON.stringify(context, null, 2)}
 
       const chat = model.startChat({
         history: [
-          { role: 'user', parts: [{ text: systemPrompt }] },
+          { role: 'user', parts: [{ text: dynamicContext }] },
           { role: 'model', parts: [{ text: 'I understand. I will assist with student queries using the provided context.' }] },
           ...history,
         ],
       });
+
+      console.log(`[Gemini] Indefinite caching: ✅ enabled (model instance reused)`);
 
       const result = await chat.sendMessage(lastMessage.content);
       const text = result.response.candidates?.[0]?.content?.parts?.[0]?.text || '';
@@ -187,6 +233,104 @@ ${JSON.stringify(context, null, 2)}
    */
   getModelForQuery(format: ResponseFormat, query: string): string {
     return this.selectModel(format, query);
+  }
+
+  /**
+   * Stream response generation (for real-time feedback)
+   * Yields chunks of text as they're generated
+   */
+  async *streamResponse(
+    query: string,
+    context: StudentContext,
+    format: ResponseFormat = 'text'
+  ): AsyncGenerator<string, void, unknown> {
+    try {
+      const selectedModel = this.selectModel(format, query);
+      console.log(`[Gemini] Streaming with model: ${selectedModel}`);
+
+      // Get cached model instance
+      const model = this.getCachedModel(selectedModel);
+
+      // Build dynamic context
+      const dynamicContext = this.buildDynamicContext(context, format);
+      const prompt = `${dynamicContext}\n\n**Student Query**: ${query}\n\nProvide your response:`;
+
+      console.log(`[Gemini] Streaming started - indefinite caching enabled`);
+
+      // Stream content from Gemini
+      const streamResult = await model.generateContentStream(prompt);
+
+      for await (const chunk of streamResult.stream) {
+        const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        if (text) {
+          yield text;
+        }
+      }
+
+      console.log(`[Gemini] Streaming completed`);
+    } catch (error: any) {
+      if (error instanceof GeminiError) throw error;
+      throw new GeminiError(
+        `Gemini streaming failed: ${error.message}`,
+        'STREAMING_FAILED',
+        500
+      );
+    }
+  }
+
+  /**
+   * Stream chat response (for real-time feedback in chat)
+   */
+  async *streamChatResponse(
+    messages: ChatMessage[],
+    context: StudentContext
+  ): AsyncGenerator<string, void, unknown> {
+    try {
+      const lastMessage = messages[messages.length - 1];
+      const selectedModel = this.selectModel('text', lastMessage.content);
+      console.log(`[Gemini] Streaming chat with model: ${selectedModel}`);
+
+      // Get cached model instance
+      const model = this.getCachedModel(selectedModel);
+
+      // Build dynamic context
+      const dynamicContext = this.buildDynamicContext(context, 'text');
+
+      // Build chat history
+      const history = messages.slice(0, -1).map((msg) => ({
+        role: msg.role === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.content }],
+      }));
+
+      const chat = model.startChat({
+        history: [
+          { role: 'user', parts: [{ text: dynamicContext }] },
+          { role: 'model', parts: [{ text: 'I understand. I will assist with student queries using the provided context.' }] },
+          ...history,
+        ],
+      });
+
+      console.log(`[Gemini] Chat streaming started`);
+
+      // Stream chat response
+      const streamResult = await chat.sendMessageStream(lastMessage.content);
+
+      for await (const chunk of streamResult.stream) {
+        const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        if (text) {
+          yield text;
+        }
+      }
+
+      console.log(`[Gemini] Chat streaming completed`);
+    } catch (error: any) {
+      if (error instanceof GeminiError) throw error;
+      throw new GeminiError(
+        `Gemini chat streaming failed: ${error.message}`,
+        'CHAT_STREAMING_FAILED',
+        500
+      );
+    }
   }
 }
 

@@ -29,7 +29,7 @@ Total: 1-6 seconds
 
 ### 1. Model Inference Time (Biggest Impact)
 - **gemini-3-flash-preview**: 2-3 seconds
-- **gemini-2.5-flash-lite**: 500-800ms
+- **gemini-3-flash-preview-lite**: 500-800ms
 - Currently chosen based on format, not urgency
 
 ### 2. Sequential Tool Calls
@@ -91,7 +91,7 @@ function classifyQueryComplexity(query: string): 'simple' | 'medium' | 'complex'
 // Model Selection
 const modelMap = {
   simple: 'gemini-2.0-flash-exp',      // Fastest (300-500ms)
-  medium: 'gemini-2.5-flash-lite',     // Fast (500-800ms)
+  medium: 'gemini-3-flash-preview-lite',     // Fast (500-800ms)
   complex: 'gemini-3-flash-preview'    // Thorough (2-3s)
 };
 ```

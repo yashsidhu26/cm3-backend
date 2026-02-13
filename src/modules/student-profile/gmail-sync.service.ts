@@ -365,7 +365,7 @@ IMPORTANT INSTRUCTIONS:
         try {
             const vertexAI = new VertexAI({ project: projectId, location, apiEndpoint });
             const model = vertexAI.getGenerativeModel({
-                model: 'gemini-2.5-flash-lite',
+                model: 'gemini-3-flash-preview-lite',
             });
 
             const userPrompt = `Analyze these Gmail emails and extract assignments, evaluations, and campus events:\n\n${emailText}`;

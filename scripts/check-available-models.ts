@@ -7,7 +7,7 @@ import { VertexAI } from '@google-cloud/vertexai';
 
 async function checkAvailableModels() {
   const projectId = process.env.GCP_PROJECT_ID;
-  const location = process.env.GCP_LOCATION || 'us-central1';
+  const location = process.env.GCP_LOCATION || 'global';
 
   if (!projectId) {
     console.error('❌ GCP_PROJECT_ID not set in .env');
@@ -25,7 +25,7 @@ async function checkAvailableModels() {
     'gemini-1.5-pro',
     'gemini-1.5-flash',
     'gemini-2.0-flash-exp',
-    'gemini-2.5-flash-lite',
+    'gemini-3-flash-preview-lite',
     'gemini-3-flash-preview',
     'gemini-pro',
     'gemini-flash',

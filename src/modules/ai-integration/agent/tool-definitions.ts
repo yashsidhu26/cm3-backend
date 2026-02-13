@@ -43,6 +43,21 @@ export const toolDefinitions: FunctionDeclaration[] = [
     },
   },
   {
+    name: 'get_course_full_details',
+    description:
+      'Get minimal course details by course code with ALL Moodle resources in one payload. Returns { id, code, name, resources[] }. Use when the student asks for materials by course code to reduce round-trips.',
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        code: {
+          type: SchemaType.STRING,
+          description: 'The course code (e.g., CS F111)',
+        },
+      },
+      required: ['code'],
+    },
+  },
+  {
     name: 'get_course_by_code',
     description:
       "Look up a course by its course code (e.g., 'CS F111', 'BIO F101'). Use when the student mentions a course by code.",
@@ -206,6 +221,21 @@ export const toolDefinitions: FunctionDeclaration[] = [
     parameters: {
       type: SchemaType.OBJECT,
       properties: {},
+      required: [],
+    },
+  },
+  {
+    name: 'get_conversation_history',
+    description:
+      'Fetch recent chat history for context when prior conversation details are needed (default 5, max 20). Use this only when the current request depends on earlier messages.',
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        limit: {
+          type: SchemaType.NUMBER,
+          description: 'How many recent messages to fetch (default 5, max 20)',
+        },
+      },
       required: [],
     },
   },

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Streaming Test with Auth</title>
+  <style>
+    body {
+      font-family: 'Monaco', 'Courier New', monospace;
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+    }
+    h1 {
+      color: #4ec9b0;
+      border-bottom: 2px solid #4ec9b0;
+      padding-bottom: 10px;
+    }
+    .controls {
+      margin: 20px 0;
+      padding: 15px;
+      background: #252526;
+      border-radius: 5px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background: #3c3c3c;
+      border: 1px solid #555;
+      color: #d4d4d4;
+      font-family: inherit;
+      font-size: 14px;
+      border-radius: 3px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background: #0e639c;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    button:hover {
+      background: #1177bb;
+    }
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    #output {
+      border: 1px solid #555;
+      padding: 15px;
+      min-height: 300px;
+      background: #252526;
+      border-radius: 5px;
+      margin: 20px 0;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .chunk {
+      margin: 8px 0;
+      padding: 8px;
+      background: #2d2d30;
+      border-left: 3px solid #4ec9b0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .timestamp {
+      color: #858585;
+      font-size: 12px;
+      margin-right: 10px;
+    }
+    .status {
+      color: #4fc1ff;
+      font-style: italic;
+    }
+    .error {
+      color: #f48771;
+      background: #3c2020;
+      border-left-color: #f48771;
+    }
+    .complete {
+      color: #b5cea8;
+      background: #1e2e1e;
+      border-left-color: #b5cea8;
+    }
+    #analysis {
+      margin-top: 20px;
+      padding: 15px;
+      background: #252526;
+      border-radius: 5px;
+      border: 1px solid #555;
+    }
+    .metric {
+      margin: 8px 0;
+      padding: 5px 0;
+    }
+    .metric strong {
+      color: #4ec9b0;
+    }
+    .real-time {
+      color: #b5cea8;
+      font-weight: bold;
+    }
+    .buffered {
+      color: #f48771;
+      font-weight: bold;
+    }
+    .info {
+      background: #1e3a5f;
+      padding: 10px;
+      border-radius: 3px;
+      margin: 10px 0;
+      font-size: 13px;
+      border-left: 3px solid #4fc1ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Streaming Test with Authentication</h1>
+
+  <div class="info">
+    <strong>Note:</strong> This test connects to your actual API endpoint at <code>http://localhost:3000/api/ai-integration/chat-stream</code> using your session cookie.
+  </div>
+
+  <div class="controls">
+    <label for="query"><strong>Query:</strong></label>
+    <input type="text" id="query" placeholder="Enter your question..." value="What is a utopian society?">
+
+    <label for="backend"><strong>Backend URL:</strong></label>
+    <input type="text" id="backend" value="http://localhost:3000">
+
+    <div style="margin-top: 10px;">
+      <button onclick="startStreaming()" id="startBtn">Start Streaming Test</button>
+      <button onclick="clearOutput()">Clear Output</button>
+      <button onclick="testWithoutCookie()">Test Without Cookie (Should Fail)</button>
+    </div>
+  </div>
+
+  <h2>Output:</h2>
+  <div id="output"></div>
+
+  <h2>Analysis:</h2>
+  <div id="analysis"></div>
+
+  <script>
+    const SESSION_COOKIE = 'super-app.session_token=Sp93jLZSjmeEvbqW67XsqEm-w08-7MRlBPYNkpjjweI.WvNB2ldgA9T9QT6pygJ5lZ6oqXNVQSTqeZbrn%2B2f%2B4k%3D';
+
+    const output = document.getElementById('output');
+    const analysis = document.getElementById('analysis');
+    const startBtn = document.getElementById('startBtn');
+    const timestamps = [];
+    let startTime = 0;
+    let chunkCount = 0;
+
+    function clearOutput() {
+      output.innerHTML = '';
+      analysis.innerHTML = '';
+      timestamps.length = 0;
+      chunkCount = 0;
+    }
+
+    function addLog(message, className = '') {
+      const now = Date.now();
+      const elapsed = startTime ? now - startTime : 0;
+
+      const div = document.createElement('div');
+      div.className = `chunk ${className}`;
+      div.innerHTML = `
+        <span class="timestamp">[+${elapsed}ms]</span>
+        ${message}
+      `;
+      output.appendChild(div);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function analyzeStreaming() {
+      if (timestamps.length < 2) {
+        analysis.innerHTML = '<div class="metric">Not enough chunks to analyze.</div>';
+        return;
+      }
+
+      const intervals = [];
+      for (let i = 1; i < timestamps.length; i++) {
+        intervals.push(timestamps[i] - timestamps[i - 1]);
+      }
+
+      const minInterval = Math.min(...intervals);
+      const maxInterval = Math.max(...intervals);
+      const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+      const totalTime = timestamps[timestamps.length - 1] - timestamps[0];
+
+      const isRealTime = maxInterval > 50; // Chunks spread over >50ms
+
+      let html = '<h3>📊 Streaming Analysis</h3>';
+      html += `<div class="metric"><strong>Total Chunks:</strong> ${timestamps.length}</div>`;
+      html += `<div class="metric"><strong>Total Time:</strong> ${totalTime}ms</div>`;
+      html += `<div class="metric"><strong>Min Interval:</strong> ${minInterval}ms</div>`;
+      html += `<div class="metric"><strong>Max Interval:</strong> ${maxInterval}ms</div>`;
+      html += `<div class="metric"><strong>Avg Interval:</strong> ${avgInterval.toFixed(1)}ms</div>`;
+
+      html += '<div class="metric" style="margin-top: 15px; font-size: 16px;">';
+      if (isRealTime) {
+        html += '<span class="real-time">✅ REAL-TIME STREAMING CONFIRMED!</span><br>';
+        html += '<small>Chunks arrived incrementally over time.</small>';
+      } else {
+        html += '<span class="buffered">❌ BUFFERED / NOT REAL-TIME</span><br>';
+        html += '<small>All chunks arrived within ' + maxInterval + 'ms (likely buffered).</small>';
+      }
+      html += '</div>';
+
+      // Show first 5 intervals
+      html += '<div class="metric" style="margin-top: 10px;"><strong>Chunk Intervals:</strong><br>';
+      intervals.slice(0, 5).forEach((interval, i) => {
+        html += `<small>Chunk ${i + 1} → ${i + 2}: ${interval}ms</small><br>`;
+      });
+      if (intervals.length > 5) {
+        html += `<small>... and ${intervals.length - 5} more</small>`;
+      }
+      html += '</div>';
+
+      analysis.innerHTML = html;
+    }
+
+    async function startStreaming() {
+      clearOutput();
+      startTime = Date.now();
+      chunkCount = 0;
+      startBtn.disabled = true;
+
+      const query = document.getElementById('query').value;
+      const backend = document.getElementById('backend').value;
+
+      addLog('🔌 Connecting to stream...', 'status');
+
+      try {
+        const response = await fetch(`${backend}/api/ai-integration/chat-stream`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'text/event-stream',
+            'Cookie': SESSION_COOKIE,
+          },
+          body: JSON.stringify({ query, format: 'text' }),
+        });
+
+        if (!response.ok) {
+          addLog(`❌ HTTP ${response.status}: ${response.statusText}`, 'error');
+          const text = await response.text();
+          addLog(`Response: ${text.substring(0, 200)}`, 'error');
+          startBtn.disabled = false;
+          return;
+        }
+
+        addLog('✅ Stream connected, waiting for events...', 'status');
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          let currentEvent = null;
+
+          for (const line of lines) {
+            if (line.startsWith('event:')) {
+              currentEvent = line.substring(6).trim();
+            } else if (line.startsWith('data:')) {
+              const dataStr = line.substring(5).trim();
+
+              try {
+                const data = JSON.parse(dataStr);
+                const now = Date.now();
+
+                if (currentEvent === 'chunk') {
+                  chunkCount++;
+                  timestamps.push(now);
+                  const text = data.text || '';
+                  const preview = text.substring(0, 80).replace(/\n/g, '↵');
+                  addLog(`<strong>Chunk #${chunkCount}:</strong> "${preview}${text.length > 80 ? '...' : ''}" <small>(${text.length} chars)</small>`);
+                } else if (currentEvent === 'status') {
+                  addLog(`📝 ${data.message}`, 'status');
+                } else if (currentEvent === 'complete') {
+                  addLog('✅ Stream completed', 'complete');
+                  analyzeStreaming();
+                } else if (currentEvent === 'error') {
+                  addLog(`❌ Error: ${data.error}`, 'error');
+                }
+
+                currentEvent = null;
+              } catch (e) {
+                console.error('Failed to parse:', dataStr, e);
+              }
+            }
+          }
+        }
+
+      } catch (error) {
+        addLog(`❌ Fetch error: ${error.message}`, 'error');
+        console.error('Full error:', error);
+      } finally {
+        startBtn.disabled = false;
+      }
+    }
+
+    async function testWithoutCookie() {
+      clearOutput();
+      addLog('🔌 Testing without cookie (should get 401)...', 'status');
+
+      const backend = document.getElementById('backend').value;
+
+      try {
+        const response = await fetch(`${backend}/api/ai-integration/chat-stream`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'text/event-stream',
+          },
+          body: JSON.stringify({ query: 'test', format: 'text' }),
+        });
+
+        addLog(`Response: ${response.status} ${response.statusText}`, response.ok ? 'error' : 'complete');
+
+        if (!response.ok) {
+          const text = await response.text();
+          addLog(`✅ Correctly rejected: ${text.substring(0, 200)}`, 'complete');
+        } else {
+          addLog('❌ Should have been rejected but got 200 OK', 'error');
+        }
+      } catch (error) {
+        addLog(`Error: ${error.message}`, 'error');
+      }
+    }
+
+    // Auto-focus query input
+    document.getElementById('query').focus();
+  </script>
+</body>
+</html>

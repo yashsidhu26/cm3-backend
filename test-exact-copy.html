@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Exact Copy Route</title>
+  <style>
+    body {
+      font-family: monospace;
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+    }
+    h1 { color: #4ec9b0; }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background: #0e639c;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover { background: #1177bb; }
+    #output {
+      border: 1px solid #555;
+      padding: 15px;
+      min-height: 300px;
+      background: #252526;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .chunk {
+      margin: 5px 0;
+      padding: 5px;
+      background: #2d2d30;
+      border-left: 3px solid #4ec9b0;
+    }
+    .timestamp { color: #858585; font-size: 12px; }
+    .real-time { color: #b5cea8; font-weight: bold; }
+    .buffered { color: #f48771; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Test Exact Copy Route (/api/test/test-stream)</h1>
+  <p>This route contains the EXACT code from your working test-vertex-streaming.ts</p>
+
+  <button onclick="testExactCopy()">Test Exact Copy Route</button>
+  <button onclick="clearOutput()">Clear</button>
+
+  <div id="output"></div>
+  <div id="analysis"></div>
+
+  <script>
+    const output = document.getElementById('output');
+    const analysis = document.getElementById('analysis');
+    const timestamps = [];
+    let startTime = 0;
+
+    function clearOutput() {
+      output.innerHTML = '';
+      analysis.innerHTML = '';
+      timestamps.length = 0;
+    }
+
+    function addLog(msg) {
+      const now = Date.now();
+      const elapsed = startTime ? now - startTime : 0;
+      const div = document.createElement('div');
+      div.className = 'chunk';
+      div.innerHTML = `<span class="timestamp">[+${elapsed}ms]</span> ${msg}`;
+      output.appendChild(div);
+    }
+
+    async function testExactCopy() {
+      clearOutput();
+      startTime = Date.now();
+
+      addLog('🔌 Connecting to /api/test/test-stream...');
+
+      try {
+        const response = await fetch('http://localhost:3000/api/test/test-stream', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'text/event-stream',
+          },
+        });
+
+        if (!response.ok) {
+          addLog(`❌ HTTP ${response.status}`);
+          return;
+        }
+
+        addLog('✅ Connected');
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let chunkCount = 0;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\\n');
+          buffer = lines.pop() || '';
+
+          let currentEvent = null;
+
+          for (const line of lines) {
+            if (line.startsWith('event:')) {
+              currentEvent = line.substring(6).trim();
+            } else if (line.startsWith('data:')) {
+              const dataStr = line.substring(5).trim();
+
+              try {
+                const data = JSON.parse(dataStr);
+                const now = Date.now();
+
+                if (currentEvent === 'chunk') {
+                  chunkCount++;
+                  timestamps.push(now);
+                  const text = data.text || '';
+                  addLog(`<strong>Chunk #${chunkCount}:</strong> "${text.substring(0, 50)}..." (${text.length} chars)`);
+                } else if (currentEvent === 'complete') {
+                  addLog('✅ Complete');
+                  analyzeStreaming();
+                } else if (currentEvent === 'error') {
+                  addLog(`❌ Error: ${data.error}`);
+                }
+
+                currentEvent = null;
+              } catch (e) {
+                console.error('Parse error:', dataStr);
+              }
+            }
+          }
+        }
+
+      } catch (error) {
+        addLog(`❌ Error: ${error.message}`);
+      }
+    }
+
+    function analyzeStreaming() {
+      if (timestamps.length < 2) return;
+
+      const intervals = [];
+      for (let i = 1; i < timestamps.length; i++) {
+        intervals.push(timestamps[i] - timestamps[i - 1]);
+      }
+
+      const maxInterval = Math.max(...intervals);
+      const totalTime = timestamps[timestamps.length - 1] - timestamps[0];
+      const isRealTime = maxInterval > 50;
+
+      let html = `<h3>Analysis</h3>`;
+      html += `<p>Total chunks: ${timestamps.length}</p>`;
+      html += `<p>Total time: ${totalTime}ms</p>`;
+      html += `<p>Max interval: ${maxInterval}ms</p>`;
+      html += `<p class="${isRealTime ? 'real-time' : 'buffered'}">`;
+      html += isRealTime ? '✅ REAL-TIME STREAMING!' : '❌ BUFFERED';
+      html += `</p>`;
+
+      analysis.innerHTML = html;
+    }
+  </script>
+</body>
+</html>

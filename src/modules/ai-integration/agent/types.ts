@@ -4,15 +4,20 @@
 
 export interface ToolCallDetail {
   tool: string;
-  durationMs: number;
-  success: boolean;
+  name?: string; // Alias for tool for compatibility
+  durationMs?: number;
+  success?: boolean;
   error?: string;
+  args?: any;
+  result?: any;
 }
 
 export interface AgentAIResponse {
   response: string;
   source: 'gemini-agent';
-  complexity: 'agent';
+  source: 'gemini-agent';
+  complexity: 'agent' | 'general' | 'query';
+  toolsUsed: string[];
   toolsUsed: string[];
   iterations: number;
   metadata: {

@@ -1,9 +1,10 @@
 import { eq, desc, and } from 'drizzle-orm';
 import { db } from '../../core/database/client';
-import type { ChatMessage, ResponseFormat } from './types';
+import type { ChatMessage, ResponseFormat, StudentContext } from './types';
 import { aiConversations, aiUsageStats } from './ai-integration.schema';
 import { runAgentLoop } from './agent/agent-loop';
 import type { AgentAIResponse } from './agent/types';
+import { geminiClient } from './gemini-client';
 
 export class AIIntegrationService {
   /**
@@ -43,6 +44,37 @@ export class AIIntegrationService {
     }
   }
 
+  /**
+   * Stream query response in real-time with tool notifications
+   * Yields events: status, tool, chunk, complete, error
+   */
+  async *streamQuery(
+    userId: string,
+    query: string,
+    conversationHistory: ChatMessage[],
+    format?: ResponseFormat
+  ): AsyncGenerator<any, void, unknown> {
+    try {
+      console.log('[AI] Streaming query with V2 agent loop...');
+
+      // Use V2 streaming implementation (rewritten from official SDK examples)
+      const { runStreamingAgentLoopV2 } = await import('./agent/streaming-agent-loop-v2');
+
+      // Stream events from agent
+      for await (const event of runStreamingAgentLoopV2(userId, query, conversationHistory, format)) {
+        yield event;
+      }
+
+      // Track usage
+      await this.trackUsage(userId, 'gemini', 0);
+    } catch (error: any) {
+      console.error('[AI] Error streaming query:', error);
+      yield {
+        type: 'error',
+        data: { error: error.message || 'Streaming failed' },
+      };
+    }
+  }
 
   /**
    * Save a conversation message to the database

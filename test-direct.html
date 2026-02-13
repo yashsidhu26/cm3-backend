@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Direct Test</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #d4d4d4; }
+    button { padding: 10px 20px; background: #0e639c; color: white; border: none; cursor: pointer; }
+    #output { margin-top: 20px; padding: 10px; border: 1px solid #555; background: #252526; min-height: 200px; }
+    .chunk { margin: 5px 0; padding: 5px; background: #2d2d30; border-left: 3px solid #4ec9b0; }
+  </style>
+</head>
+<body>
+  <h1>🎯 Direct Route Test (Mounted BEFORE All Middleware)</h1>
+  <p>Endpoint: <code>/direct-test-stream</code></p>
+  <button onclick="test()">Test Direct Stream</button>
+  <div id="output"></div>
+
+  <script>
+    const timestamps = [];
+    async function test() {
+      const output = document.getElementById('output');
+      output.innerHTML = '<p>Connecting...</p>';
+      const startTime = Date.now();
+
+      const response = await fetch('http://localhost:3000/direct-test-stream', {
+        method: 'POST'
+      });
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\\n');
+        buffer = lines.pop() || '';
+
+        let currentEvent = null;
+        for (const line of lines) {
+          if (line.startsWith('event:')) currentEvent = line.substring(6).trim();
+          else if (line.startsWith('data:')) {
+            const data = JSON.parse(line.substring(5).trim());
+            const now = Date.now();
+
+            if (currentEvent === 'chunk') {
+              timestamps.push(now);
+              const elapsed = now - startTime;
+              output.innerHTML += \`<div class="chunk">[+\${elapsed}ms] Chunk #\${data.chunkIndex}: \${data.text.substring(0, 40)}...</div>\`;
+            } else if (currentEvent === 'complete') {
+              const intervals = timestamps.slice(1).map((t, i) => t - timestamps[i]);
+              const maxInterval = Math.max(...intervals);
+              const result = maxInterval > 50 ? '✅ REAL-TIME' : '❌ BUFFERED';
+              output.innerHTML += \`<div style="margin-top:20px; font-weight:bold; color: \${maxInterval > 50 ? '#b5cea8' : '#f48771'};">\${result} (max interval: \${maxInterval}ms)</div>\`;
+            }
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>

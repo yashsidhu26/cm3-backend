@@ -14,8 +14,8 @@ cp .env .env.backup
 echo "✅ Backed up .env to .env.backup"
 
 # Fix model names (remove "models/" prefix and update to correct Vertex AI names)
-sed -i '' 's|GEMINI_MODEL=models/gemini-2.5-flash|GEMINI_MODEL=gemini-2.5-flash-lite|g' .env
-sed -i '' 's|GEMINI_MODEL_THINKING=models/gemini-2.5-flash|GEMINI_MODEL_THINKING=gemini-2.5-flash-lite|g' .env
+sed -i '' 's|GEMINI_MODEL=models/gemini-3-flash-preview|GEMINI_MODEL=gemini-3-flash-preview-lite|g' .env
+sed -i '' 's|GEMINI_MODEL_THINKING=models/gemini-3-flash-preview|GEMINI_MODEL_THINKING=gemini-3-flash-preview-lite|g' .env
 
 # Also fix if they have other variants
 sed -i '' 's|GEMINI_MODEL=models/|GEMINI_MODEL=|g' .env

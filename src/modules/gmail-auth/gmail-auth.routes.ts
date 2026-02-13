@@ -156,6 +156,25 @@ gmailAuthRoutes.get('/email', protect, async (c) => {
   }
 });
 
+/**
+ * GET /auth/debug-env
+ * Debug endpoint to check environment variables (remove in production)
+ */
+gmailAuthRoutes.get('/debug-env', async (c) => {
+  const baseUrl = process.env.BASE_URL;
+  const frontendUrl = process.env.FRONTEND_URL;
+  const redirectUri = process.env.GMAIL_REDIRECT_URI || `${baseUrl}/auth/callback`;
+
+  return c.json({
+    BASE_URL: baseUrl || '(not set)',
+    FRONTEND_URL: frontendUrl || '(not set)',
+    GMAIL_REDIRECT_URI: process.env.GMAIL_REDIRECT_URI || '(auto-derived)',
+    computed_redirect_uri: redirectUri,
+    GMAIL_CLIENT_ID: process.env.GMAIL_CLIENT_ID ? '(set)' : '(not set)',
+    GMAIL_CLIENT_SECRET: process.env.GMAIL_CLIENT_SECRET ? '(set)' : '(not set)',
+  });
+});
+
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, '&amp;')

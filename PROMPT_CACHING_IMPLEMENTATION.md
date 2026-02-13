@@ -72,12 +72,12 @@ import { VertexAI } from '@google-cloud/vertexai';
 private async createCache(): Promise<string> {
   const vertexAI = new VertexAI({
     project: process.env.GCP_PROJECT_ID,
-    location: process.env.GCP_LOCATION || 'us-central1'
+    location: process.env.GCP_LOCATION || 'global'
   });
 
   // Create cached content
   const cache = await vertexAI.cachedContents.create({
-    model: 'gemini-2.5-flash-lite',
+    model: 'gemini-3-flash-preview-lite',
     systemInstruction: STATIC_SYSTEM_PROMPT,
     ttl: { seconds: 3600 }, // 1 hour
   });

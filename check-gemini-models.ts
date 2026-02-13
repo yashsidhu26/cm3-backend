@@ -23,7 +23,7 @@ async function listModels() {
       'gemini-1.5-pro',
       'gemini-2.0-flash',
       'gemini-2.0-flash-exp',
-      'gemini-2.5-flash-lite',
+      'gemini-3-flash-preview-lite',
       'gemini-3-flash',
       'gemini-exp-1206',
       'gemini-1.5-flash-latest',

@@ -17,6 +17,10 @@ export const aiConversations = pgTable('ai_conversations', {
   metadata: jsonb('metadata').$type<{
     complexity?: string;
     contextUsed?: string[];
+    // Agent-specific fields
+    toolsUsed?: string[];
+    iterations?: number;
+    totalToolCalls?: number;
   }>(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });

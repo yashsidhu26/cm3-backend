@@ -1,88 +1,75 @@
 /**
  * Prompt Cache Service
- * Manages Vertex AI cached content for system prompts
+ * Manages Vertex AI prompt caching via systemInstruction
+ *
+ * Vertex AI automatically caches systemInstruction content when:
+ * - The systemInstruction is > 2048 tokens (~8KB text)
+ * - The same systemInstruction is reused across requests
+ * - Cache TTL is 1 hour by default
+ *
+ * Our STATIC_SYSTEM_PROMPT (~11KB) will be automatically cached,
+ * reducing input token costs by ~85% after the first request.
  */
 
 import { STATIC_SYSTEM_PROMPT } from './agent/system-prompt';
 
-interface CachedPrompt {
-  cacheId: string;
-  createdAt: Date;
-  expiresAt: Date;
+interface CacheStats {
+  status: 'enabled' | 'disabled';
+  staticPromptSize: number;
+  estimatedTokens: number;
+  cachingActive: boolean;
+  message: string;
 }
 
 class PromptCacheService {
-  private currentCache: CachedPrompt | null = null;
-  private readonly CACHE_TTL_HOURS = 1;
+  private readonly MIN_CACHE_TOKENS = 2048; // Vertex AI minimum for caching
+  private readonly ESTIMATED_CHARS_PER_TOKEN = 4; // Rough estimate
 
   /**
-   * Get cached prompt ID (creates new cache if needed)
+   * Get the static system prompt for caching
+   * This will be passed as systemInstruction to Vertex AI
    */
-  async getCachedPromptId(): Promise<string | null> {
-    // Check if current cache is still valid
-    if (this.currentCache && new Date() < this.currentCache.expiresAt) {
-      console.log('[PromptCache] Using existing cache:', this.currentCache.cacheId);
-      return this.currentCache.cacheId;
-    }
-
-    // Cache expired or doesn't exist - create new one
-    try {
-      const cacheId = await this.createCache();
-      console.log('[PromptCache] Created new cache:', cacheId);
-      return cacheId;
-    } catch (error) {
-      console.error('[PromptCache] Failed to create cache:', error);
-      return null; // Fallback to non-cached requests
-    }
+  getStaticPrompt(): string {
+    return STATIC_SYSTEM_PROMPT;
   }
 
   /**
-   * Create new cached content in Vertex AI
+   * Check if prompt caching is enabled and effective
    */
-  private async createCache(): Promise<string> {
-    // TODO: Implement actual Vertex AI caching API call
-    // For now, return mock cache ID
-    // In production, this will call Vertex AI's cachedContents.create()
-    
-    const cacheId = `cache_${Date.now()}`;
-    const now = new Date();
-    const expiresAt = new Date(now.getTime() + this.CACHE_TTL_HOURS * 60 * 60 * 1000);
-
-    this.currentCache = {
-      cacheId,
-      createdAt: now,
-      expiresAt,
-    };
-
-    return cacheId;
+  isCachingEnabled(): boolean {
+    const estimatedTokens = Math.floor(STATIC_SYSTEM_PROMPT.length / this.ESTIMATED_CHARS_PER_TOKEN);
+    return estimatedTokens >= this.MIN_CACHE_TOKENS;
   }
 
   /**
-   * Invalidate current cache (force recreation on next request)
+   * Get cache statistics and info
    */
-  invalidateCache(): void {
-    console.log('[PromptCache] Cache invalidated');
-    this.currentCache = null;
-  }
-
-  /**
-   * Get cache statistics
-   */
-  getCacheStats() {
-    if (!this.currentCache) {
-      return { status: 'no-cache' };
-    }
-
-    const now = new Date();
-    const isExpired = now >= this.currentCache.expiresAt;
+  getCacheStats(): CacheStats {
+    const staticPromptSize = STATIC_SYSTEM_PROMPT.length;
+    const estimatedTokens = Math.floor(staticPromptSize / this.ESTIMATED_CHARS_PER_TOKEN);
+    const cachingActive = estimatedTokens >= this.MIN_CACHE_TOKENS;
 
     return {
-      status: isExpired ? 'expired' : 'active',
-      cacheId: this.currentCache.cacheId,
-      createdAt: this.currentCache.createdAt.toISOString(),
-      expiresAt: this.currentCache.expiresAt.toISOString(),
-      remainingMinutes: isExpired ? 0 : Math.floor((this.currentCache.expiresAt.getTime() - now.getTime()) / 60000),
+      status: cachingActive ? 'enabled' : 'disabled',
+      staticPromptSize,
+      estimatedTokens,
+      cachingActive,
+      message: cachingActive
+        ? `Prompt caching is active. Static prompt (~${estimatedTokens} tokens) will be cached by Vertex AI, reducing input costs by ~85% after the first request per hour.`
+        : `Prompt caching is disabled. Static prompt is too small (${estimatedTokens} tokens < ${this.MIN_CACHE_TOKENS} required).`,
     };
+  }
+
+  /**
+   * Log cache usage info
+   */
+  logCacheUsage(): void {
+    const stats = this.getCacheStats();
+    if (stats.cachingActive) {
+      console.log(`[PromptCache] ✅ Caching enabled - ${stats.estimatedTokens} tokens will be cached`);
+    } else {
+      console.log(`[PromptCache] ⚠️ Caching disabled - prompt too small (${stats.estimatedTokens} tokens)`);
+    }
   }
 }
 

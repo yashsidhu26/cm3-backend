@@ -208,6 +208,12 @@ curl -X POST http://localhost:3000/api/ai-integration/chat \
   -H "Content-Type: application/json" \
   -H "Cookie: super-app.session_token=YOUR_TOKEN" \
   -d '{"query": "What courses am I enrolled in?"}'
+
+# Streaming (direct to isolated server)
+curl -X POST http://localhost:4444/stream \
+  -H "Content-Type: application/json" \
+  -H "Cookie: super-app.session_token=YOUR_TOKEN" \
+  -d '{"query": "What courses am I enrolled in?"}'
 ```
 
 ## Performance

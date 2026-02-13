@@ -10,6 +10,7 @@ import { skillsInterestsService } from '../../../modules/skills-interests/skills
 import { db } from '../../../core/database/client';
 import { eq, desc } from 'drizzle-orm';
 import type { ToolExecutionResult } from './types';
+import { aiConversations } from '../ai-integration.schema';
 
 // Import schemas for DB queries
 import {
@@ -26,7 +27,20 @@ type ToolHandler = (args: Record<string, any>, userId: string) => Promise<any>;
 const toolHandlers: Record<string, ToolHandler> = {
   // === ACADEMICS ===
   get_enrolled_courses: async (_args, userId) => {
-    return await academicsService.getUserCoursesWithResources(userId);
+    const courses = await academicsService.getUserCoursesWithResources(userId);
+    return courses.map((item) => ({
+      course: {
+        id: item.course?.id,
+        code: item.course?.code,
+        name: item.course?.name,
+      },
+      enrollment: {
+        semester: item.enrollment?.semester,
+        year: item.enrollment?.year,
+        enrolledAt: item.enrollment?.enrolledAt,
+      },
+      resourceCount: item.resourceCount,
+    }));
   },
 
   get_courses_full_details: async (_args, userId) => {
@@ -38,29 +52,83 @@ const toolHandlers: Record<string, ToolHandler> = {
     const resources = await academicsService.getCourseResources(args.courseId);
 
     // Get user's Moodle token to append to URLs
+    let moodleToken: string | null = null;
     try {
       const { getMoodleToken } = await import('../../academics/moodle-auth.service');
-      const moodleToken = await getMoodleToken(userId);
-
-      if (moodleToken) {
-        // Append token to file URLs that don't already have it
-        return resources.map((resource) => {
-          if (resource.fileUrl && !resource.fileUrl.includes('token=')) {
-            const separator = resource.fileUrl.includes('?') ? '&' : '?';
-            return {
-              ...resource,
-              fileUrl: `${resource.fileUrl}${separator}token=${moodleToken}`,
-            };
-          }
-          return resource;
-        });
-      }
+      moodleToken = await getMoodleToken(userId);
     } catch (error) {
       console.warn('[get_course_resources] Could not get Moodle token:', error);
     }
 
-    // Return resources as-is if token unavailable
-    return resources;
+    // Map database schema (title, url) to expected format (name, fileUrl)
+    return resources.map((resource) => {
+      let fileUrl = resource.url;
+
+      // Append Moodle token if available and not already in URL
+      if (moodleToken && fileUrl && !fileUrl.includes('token=')) {
+        const separator = fileUrl.includes('?') ? '&' : '?';
+        fileUrl = `${fileUrl}${separator}token=${moodleToken}`;
+      }
+
+      return {
+        ...resource,
+        name: resource.title,      // Map title -> name
+        fileUrl: fileUrl,           // Map url -> fileUrl (with token)
+        type: resource.type,
+      };
+    });
+  },
+
+  get_course_full_details: async (args, userId) => {
+    if (!args.code) {
+      return { message: 'Course code is required' };
+    }
+    const course = await academicsService.getCourseByCode(args.code);
+    if (!course) {
+      return { message: `Course ${args.code} not found` };
+    }
+
+    // Get resources from DB
+    const resources = await academicsService.getCourseResources(course.id);
+
+    // Get user's Moodle token to append to URLs
+    let moodleToken: string | null = null;
+    try {
+      const { getMoodleToken } = await import('../../academics/moodle-auth.service');
+      moodleToken = await getMoodleToken(userId);
+    } catch (error) {
+      console.warn('[get_course_full_details] Could not get Moodle token:', error);
+    }
+
+    const mappedResources = resources
+      .slice()
+      .sort((a, b) => {
+        const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return bTime - aTime;
+      })
+      .map((resource) => {
+        let fileUrl = resource.url;
+        if (moodleToken && fileUrl && !fileUrl.includes('token=')) {
+          const separator = fileUrl.includes('?') ? '&' : '?';
+          fileUrl = `${fileUrl}${separator}token=${moodleToken}`;
+        }
+
+        return {
+          id: resource.id,
+          name: resource.title,
+          fileUrl,
+          type: resource.type,
+          createdAt: resource.createdAt,
+        };
+      });
+
+    return {
+      id: course.id,
+      code: course.code,
+      name: course.name,
+      resources: mappedResources,
+    };
   },
 
   get_course_by_code: async (args, _userId) => {
@@ -140,6 +208,25 @@ const toolHandlers: Record<string, ToolHandler> = {
       limit: 50,
     });
     return tasks;
+  },
+
+  get_conversation_history: async (args, userId) => {
+    const requestedLimit = Number(args.limit ?? 5);
+    const limit = Number.isFinite(requestedLimit) ? Math.min(Math.max(requestedLimit, 1), 20) : 5;
+
+    const messages = await db.query.aiConversations.findMany({
+      where: eq(aiConversations.userId, userId),
+      orderBy: desc(aiConversations.createdAt),
+      limit,
+    });
+
+    // Return chronological order for easier model consumption.
+    return messages.reverse().map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+      createdAt: msg.createdAt,
+      source: msg.source,
+    }));
   },
 
   // === MOODLE ===
@@ -229,9 +316,9 @@ const toolHandlers: Record<string, ToolHandler> = {
 
       console.log(`[analyze_course_handout] Analyzing with Vertex AI...`);
 
-      // Use gemini-2.5-flash-lite for PDF analysis (better multimodal capabilities)
+      // Use gemini-3-flash-preview for PDF analysis (single-model strategy)
       const model = vertexAI.getGenerativeModel({
-        model: 'gemini-2.5-flash-lite',
+        model: 'gemini-3-flash-preview',
       });
 
       const result = await model.generateContent({
@@ -331,9 +418,9 @@ Be thorough but concise.`,
 
       console.log(`[analyze_pdf_document] Analyzing with Vertex AI...`);
 
-      // Use gemini-2.5-flash-lite for PDF analysis
+      // Use gemini-3-flash-preview for PDF analysis (single-model strategy)
       const model = vertexAI.getGenerativeModel({
-        model: 'gemini-2.5-flash-lite',
+        model: 'gemini-3-flash-preview',
       });
 
       const result = await model.generateContent({
@@ -607,8 +694,9 @@ export async function executeToolCall(
   }
 
   try {
-    // Generous timeouts: PDF analysis (60s), normal tools (30s)
-    const timeout = name === 'analyze_course_handout' ? 60000 : 30000;
+    // Generous timeouts: PDF analysis (120s), normal tools (30s)
+    const longRunningTools = ['analyze_course_handout', 'analyze_pdf_document'];
+    const timeout = longRunningTools.includes(name) ? 120000 : 30000;
 
     const result = await Promise.race([
       handler(args, userId),

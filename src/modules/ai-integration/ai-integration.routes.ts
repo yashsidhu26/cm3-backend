@@ -19,11 +19,11 @@ app.post('/chat', protect, zValidator('json', chatRequestSchema), async (c) => {
   }
 
   try {
-    const { query, includeHistory, format } = c.req.valid('json');
+    const { query, format, includeHistory } = c.req.valid('json');
 
-    // Get conversation history if requested
+    const historyLimit = 5;
     const history = includeHistory
-      ? await aiIntegrationService.getConversationHistory(user.id, 10)
+      ? await aiIntegrationService.getConversationHistory(user.id, historyLimit)
       : [];
 
     // Process the query with Gemini agent
@@ -72,6 +72,19 @@ app.post('/chat', protect, zValidator('json', chatRequestSchema), async (c) => {
       'AI_PROCESSING_ERROR'
     );
   }
+});
+
+/**
+ * POST /api/ai-integration/chat-stream
+ * Deprecated: streaming is handled directly by the isolated server on port 4444.
+ */
+app.post('/chat-stream', protect, async (c) => {
+  return errorResponse(
+    c,
+    'Streaming has moved to the isolated server on port 4444. Use http://localhost:4444/stream directly.',
+    410,
+    'STREAMING_MOVED'
+  );
 });
 
 /**
@@ -198,37 +211,24 @@ app.get('/health', async (c) => {
 
 /**
  * GET /api/ai-integration/cache-status
- * Get prompt cache statistics
+ * Get prompt cache statistics and info
+ * Vertex AI automatically caches systemInstruction content
  */
 app.get('/cache-status', async (c) => {
   try {
     const stats = promptCacheService.getCacheStats();
     return successResponse(c, {
-      cache: stats,
-      message: 'Prompt caching is active - reduces token costs by ~85%',
+      ...stats,
       info: {
-        staticPromptSize: '~11 KB (cached)',
-        dynamicContextSize: '~200 bytes (per request)',
-        estimatedSavings: '85% on input tokens after first request',
+        howItWorks: 'Vertex AI automatically caches systemInstruction when > 2048 tokens',
+        cacheDuration: '1 hour (managed by Vertex AI)',
+        staticPromptSize: `${Math.round(stats.staticPromptSize / 1024)} KB`,
+        estimatedTokens: stats.estimatedTokens,
+        estimatedSavings: stats.cachingActive ? '~85% on input tokens after first request per hour' : 'N/A',
       },
     });
   } catch (error: any) {
     return errorResponse(c, error.message || 'Failed to get cache status', 500);
-  }
-});
-
-/**
- * POST /api/ai-integration/invalidate-cache
- * Force cache refresh (use after updating system prompt)
- */
-app.post('/invalidate-cache', protect, async (c) => {
-  try {
-    promptCacheService.invalidateCache();
-    return successResponse(c, {
-      message: 'Cache invalidated - will be recreated on next request',
-    });
-  } catch (error: any) {
-    return errorResponse(c, error.message || 'Failed to invalidate cache', 500);
   }
 });
 

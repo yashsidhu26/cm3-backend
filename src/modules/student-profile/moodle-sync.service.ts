@@ -169,7 +169,7 @@ Type must be one of: quiz, exam, report, presentation, project`;
         try {
             const vertexAI = new VertexAI({ project: projectId, location, apiEndpoint });
             const model = vertexAI.getGenerativeModel({
-                model: 'gemini-2.5-flash-lite',
+                model: 'gemini-3-flash-preview-lite',
             });
 
             const userPrompt = `Analyze these Moodle notifications and extract assignments and evaluations:\n\n${notificationText}`;
