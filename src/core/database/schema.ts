@@ -18,4 +18,5 @@ export * from '../../modules/academics/moodle-auth.schema';
 export * from '../../modules/academics/studydeck-auth.schema';
 export * from '../../modules/social/social.schema';
 export * from '../../modules/ai-integration/ai-integration.schema';
+export * from '../../modules/brain/brain.schema';
 export * from '../../modules/skills-interests/skills-interests.schema';
