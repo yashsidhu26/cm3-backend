@@ -16,6 +16,10 @@ export const TOOL_MESSAGES: Record<string, string> = {
   // Schedule Tools
   get_class_schedule: "📅 Checking your class schedule...",
   get_schedule_items: "🗓️ Loading schedule items...",
+  get_user_schedules: "🗂️ Loading your schedules...",
+  get_schedule_details: "🧩 Loading schedule details...",
+  optimize_day_schedule: "🛠️ Optimizing your day...",
+  edit_smart_schedule: "✍️ Updating your schedule...",
 
   // Moodle Tools
   get_moodle_notifications: "🔔 Checking Moodle notifications...",
@@ -35,6 +39,10 @@ export const TOOL_MESSAGES: Record<string, string> = {
   get_assignments: "📝 Checking assignments...",
   get_upcoming_evaluations: "📊 Looking up upcoming evaluations...",
 
+  // Course Progress
+  get_user_course_progress: "📈 Checking course progress...",
+  update_course_progress: "✏️ Updating course progress...",
+
   // Dashboard & Analytics
   get_dashboard: "📊 Loading your dashboard data...",
   get_study_plan: "📘 Retrieving your study plan...",
@@ -50,6 +58,10 @@ export const TOOL_MESSAGES: Record<string, string> = {
   get_skill_resources: "📚 Loading learning resources...",
   add_skill_to_user: "➕ Adding skill to your profile...",
   update_user_skill: "✏️ Updating skill progress...",
+  add_interest_with_plan: "🧠 Building a learning plan...",
+  get_skill_plan: "🗺️ Loading your learning plan...",
+  update_skill_task: "✅ Updating task progress...",
+  add_skill_task_to_schedule: "📌 Adding task to schedule...",
   remove_user_skill: "➖ Removing skill...",
   create_skill: "🆕 Creating new skill...",
   update_skill: "✏️ Updating skill...",

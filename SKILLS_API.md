@@ -7,10 +7,11 @@ Complete API reference for implementing skills/interests tracking features in th
 2. [Skills Catalog](#skills-catalog)
 3. [User Skills Management](#user-skills-management)
 4. [Learning Resources](#learning-resources)
-5. [Skill Relationships](#skill-relationships)
-6. [Recommendations](#recommendations)
-7. [Common Use Cases](#common-use-cases)
-8. [Error Handling](#error-handling)
+5. [Learning Plans & Tasks](#learning-plans--tasks)
+6. [Skill Relationships](#skill-relationships)
+7. [Recommendations](#recommendations)
+8. [Common Use Cases](#common-use-cases)
+9. [Error Handling](#error-handling)
 
 ---
 
@@ -218,6 +219,85 @@ GET /api/skills-interests/my-skills?status=learning
       }
     }
   ]
+}
+```
+
+---
+
+## Learning Plans & Tasks
+
+### 1. Add Interest With AI Plan
+```http
+POST /api/skills-interests/my-skills/add-interest
+```
+
+**Request Body:**
+```json
+{
+  "interest": "Web Development",
+  "status": "learning",
+  "additionalPreferences": "Focus on hands-on projects"
+}
+```
+
+**Response** (200):
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Interest added with learning plan",
+    "skill": { "id": "skill-uuid", "name": "Web Development" },
+    "userSkill": { "id": "user-skill-uuid" },
+    "plan": { "id": "plan-uuid", "title": "Plan for Web Development" },
+    "tasks": [
+      { "id": "task-uuid", "title": "Learn HTML basics", "taskType": "task" }
+    ]
+  }
+}
+```
+
+### 2. Get Skill Plan
+```http
+GET /api/skills-interests/my-skills/:skillInterestId/plan
+```
+
+**Response** (200):
+```json
+{
+  "success": true,
+  "data": {
+    "plan": { "id": "plan-uuid", "title": "Plan for Web Development" },
+    "tasks": [
+      { "id": "task-uuid", "title": "Learn HTML basics", "status": "pending" }
+    ]
+  }
+}
+```
+
+### 3. Update Skill Task (Auto-updates progress)
+```http
+PATCH /api/skills-interests/my-skills/tasks/:taskId
+```
+
+**Request Body:**
+```json
+{
+  "status": "completed",
+  "notes": "Finished with MDN docs"
+}
+```
+
+### 4. Add Skill Task to Schedule
+```http
+POST /api/skills-interests/my-skills/tasks/:taskId/schedule
+```
+
+**Request Body:**
+```json
+{
+  "scheduleId": "schedule-uuid",
+  "startDateTime": "2026-02-14T10:00:00.000Z",
+  "endDateTime": "2026-02-14T11:00:00.000Z"
 }
 ```
 

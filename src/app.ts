@@ -21,6 +21,7 @@ import socialRoutes from './modules/social/social.routes';
 import gmailAuthRoutes from './modules/gmail-auth/gmail-auth.routes';
 import studentProfileRoutes from './modules/student-profile/student-profile.routes';
 import skillsInterestsRoutes from './modules/skills-interests/skills-interests.routes';
+import smartScheduleRoutes from './modules/smart-schedule/smart-schedule.routes';
 
 // Initialize debug logger before anything else
 initializeDebugLogger();
@@ -184,6 +185,7 @@ const modules = [
   { name: 'gmail-auth', path: '/auth', routes: gmailAuthRoutes },
   { name: 'student-profile', path: '/api/student-profile', routes: studentProfileRoutes },
   { name: 'skills-interests', path: '/api/skills-interests', routes: skillsInterestsRoutes },
+  { name: 'smart-schedule', path: '/api/smart-schedule', routes: smartScheduleRoutes },
 ];
 
 console.log('\n🔄 Mounting modules...\n');

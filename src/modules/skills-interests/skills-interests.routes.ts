@@ -34,6 +34,23 @@ const userSkillUpdateSchema = z.object({
   notes: z.string().optional(),
 });
 
+const addInterestSchema = z.object({
+  interest: z.string().min(1).max(255),
+  status: z.enum(['interested', 'learning', 'completed', 'paused']).optional(),
+  additionalPreferences: z.string().max(4000).optional(),
+});
+
+const skillTaskUpdateSchema = z.object({
+  status: z.enum(['pending', 'in_progress', 'completed', 'skipped']).optional(),
+  notes: z.string().optional(),
+});
+
+const addSkillTaskToScheduleSchema = z.object({
+  scheduleId: z.string().uuid(),
+  startDateTime: z.string().datetime(),
+  endDateTime: z.string().datetime(),
+});
+
 const resourceCreateSchema = z.object({
   skillInterestId: z.string().uuid(),
   title: z.string().max(500),
@@ -74,27 +91,6 @@ app.get('/', protect, async (c) => {
 });
 
 /**
- * GET /:id
- * Get skill by ID
- */
-app.get('/:id', protect, async (c) => {
-  try {
-    const id = c.req.param('id');
-
-    const skill = await skillsInterestsService.getSkillById(id);
-
-    if (!skill) {
-      return errorResponse(c, 'Skill not found', 404);
-    }
-
-    return successResponse(c, skill);
-  } catch (error: any) {
-    console.error('Failed to get skill:', error);
-    return errorResponse(c, error.message || 'Failed to fetch skill', 500);
-  }
-});
-
-/**
  * POST /
  * Create new skill/interest (authenticated)
  */
@@ -108,41 +104,6 @@ app.post('/', protect, zValidator('json', skillCreateSchema), async (c) => {
   } catch (error: any) {
     console.error('Failed to create skill:', error);
     return errorResponse(c, error.message || 'Failed to create skill', 500);
-  }
-});
-
-/**
- * PUT /:id
- * Update skill/interest
- */
-app.put('/:id', protect, zValidator('json', skillUpdateSchema), async (c) => {
-  try {
-    const id = c.req.param('id');
-    const data = c.req.valid('json');
-
-    const skill = await skillsInterestsService.updateSkill(id, data);
-
-    return successResponse(c, skill);
-  } catch (error: any) {
-    console.error('Failed to update skill:', error);
-    return errorResponse(c, error.message || 'Failed to update skill', 500);
-  }
-});
-
-/**
- * DELETE /:id
- * Delete skill/interest
- */
-app.delete('/:id', protect, async (c) => {
-  try {
-    const id = c.req.param('id');
-
-    await skillsInterestsService.deleteSkill(id);
-
-    return successResponse(c, { message: 'Skill deleted successfully' });
-  } catch (error: any) {
-    console.error('Failed to delete skill:', error);
-    return errorResponse(c, error.message || 'Failed to delete skill', 500);
   }
 });
 
@@ -209,6 +170,97 @@ app.post('/my-skills', protect, zValidator('json', userSkillAddSchema), async (c
     return errorResponse(c, error.message || 'Failed to add skill', 500);
   }
 });
+
+/**
+ * POST /my-skills/add-interest
+ * Add a new interest and generate an AI plan with sub-tasks
+ */
+app.post('/my-skills/add-interest', protect, zValidator('json', addInterestSchema), async (c) => {
+  try {
+    const user = c.get('user');
+    const data = c.req.valid('json');
+
+    const result = await skillsInterestsService.addInterestWithPlan(user.id, data);
+
+    return successResponse(c, {
+      message: 'Interest added with learning plan',
+      ...result,
+    });
+  } catch (error: any) {
+    console.error('Failed to add interest with plan:', error);
+    return errorResponse(c, error.message || 'Failed to add interest', 500);
+  }
+});
+
+/**
+ * GET /my-skills/:skillInterestId/plan
+ * Get the latest plan and tasks for a skill
+ */
+app.get('/my-skills/:skillInterestId/plan', protect, async (c) => {
+  try {
+    const user = c.get('user');
+    const skillInterestId = c.req.param('skillInterestId');
+
+    const plan = await skillsInterestsService.getSkillPlan(user.id, skillInterestId);
+    if (!plan) {
+      return errorResponse(c, 'Skill plan not found', 404);
+    }
+
+    return successResponse(c, plan);
+  } catch (error: any) {
+    console.error('Failed to get skill plan:', error);
+    return errorResponse(c, error.message || 'Failed to fetch skill plan', 500);
+  }
+});
+
+/**
+ * PATCH /my-skills/tasks/:taskId
+ * Update a skill task status/notes (auto-updates skill progress)
+ */
+app.patch('/my-skills/tasks/:taskId', protect, zValidator('json', skillTaskUpdateSchema), async (c) => {
+  try {
+    const user = c.get('user');
+    const taskId = c.req.param('taskId');
+    const data = c.req.valid('json');
+
+    const task = await skillsInterestsService.updateSkillTask(user.id, taskId, data);
+
+    return successResponse(c, {
+      message: 'Skill task updated successfully',
+      task,
+    });
+  } catch (error: any) {
+    console.error('Failed to update skill task:', error);
+    return errorResponse(c, error.message || 'Failed to update skill task', 500);
+  }
+});
+
+/**
+ * POST /my-skills/tasks/:taskId/schedule
+ * Add a skill task to a schedule
+ */
+app.post(
+  '/my-skills/tasks/:taskId/schedule',
+  protect,
+  zValidator('json', addSkillTaskToScheduleSchema),
+  async (c) => {
+    try {
+      const user = c.get('user');
+      const taskId = c.req.param('taskId');
+      const data = c.req.valid('json');
+
+      const item = await skillsInterestsService.addSkillTaskToSchedule(user.id, taskId, data);
+
+      return successResponse(c, {
+        message: 'Task added to schedule',
+        scheduleItem: item,
+      });
+    } catch (error: any) {
+      console.error('Failed to add task to schedule:', error);
+      return errorResponse(c, error.message || 'Failed to add task to schedule', 500);
+    }
+  }
+);
 
 /**
  * PATCH /my-skills/:skillInterestId
@@ -422,6 +474,66 @@ app.get('/recommendations', protect, async (c) => {
   } catch (error: any) {
     console.error('Failed to get recommendations:', error);
     return errorResponse(c, error.message || 'Failed to get recommendations', 500);
+  }
+});
+
+// ============================================
+// SKILL DETAIL ENDPOINTS (placed last to avoid route conflicts)
+// ============================================
+
+/**
+ * GET /:id
+ * Get skill by ID
+ */
+app.get('/:id', protect, async (c) => {
+  try {
+    const id = c.req.param('id');
+
+    const skill = await skillsInterestsService.getSkillById(id);
+
+    if (!skill) {
+      return errorResponse(c, 'Skill not found', 404);
+    }
+
+    return successResponse(c, skill);
+  } catch (error: any) {
+    console.error('Failed to get skill:', error);
+    return errorResponse(c, error.message || 'Failed to fetch skill', 500);
+  }
+});
+
+/**
+ * PUT /:id
+ * Update skill/interest
+ */
+app.put('/:id', protect, zValidator('json', skillUpdateSchema), async (c) => {
+  try {
+    const id = c.req.param('id');
+    const data = c.req.valid('json');
+
+    const skill = await skillsInterestsService.updateSkill(id, data);
+
+    return successResponse(c, skill);
+  } catch (error: any) {
+    console.error('Failed to update skill:', error);
+    return errorResponse(c, error.message || 'Failed to update skill', 500);
+  }
+});
+
+/**
+ * DELETE /:id
+ * Delete skill/interest
+ */
+app.delete('/:id', protect, async (c) => {
+  try {
+    const id = c.req.param('id');
+
+    await skillsInterestsService.deleteSkill(id);
+
+    return successResponse(c, { message: 'Skill deleted successfully' });
+  } catch (error: any) {
+    console.error('Failed to delete skill:', error);
+    return errorResponse(c, error.message || 'Failed to delete skill', 500);
   }
 });
 

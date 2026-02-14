@@ -7,8 +7,9 @@ import { academicsService } from '../../../modules/academics/academics.service';
 import { sectionsService } from '../../../modules/academics/sections.service';
 import { studentProfileService } from '../../../modules/student-profile/student-profile.service';
 import { skillsInterestsService } from '../../../modules/skills-interests/skills-interests.service';
+import { smartScheduleService } from '../../../modules/smart-schedule/smart-schedule.service';
 import { db } from '../../../core/database/client';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and } from 'drizzle-orm';
 import type { ToolExecutionResult } from './types';
 import { aiConversations } from '../ai-integration.schema';
 
@@ -17,6 +18,8 @@ import {
   activityLogs,
   studentExperiences,
   studentCommitments,
+  schedules,
+  scheduleItems,
 } from '../../../modules/student-profile/student-profile.schema';
 
 type ToolHandler = (args: Record<string, any>, userId: string) => Promise<any>;
@@ -160,6 +163,33 @@ const toolHandlers: Record<string, ToolHandler> = {
     return await sectionsService.getCourseSections(args.courseId);
   },
 
+  get_user_course_progress: async (args, userId) => {
+    const status = args.status as string | undefined;
+    return await academicsService.getUserCourseProgress(userId, status);
+  },
+
+  update_course_progress: async (args, userId) => {
+    let courseId = args.courseId as string | undefined;
+
+    if (!courseId && args.courseCode) {
+      const course = await academicsService.getCourseByCode(args.courseCode);
+      if (!course) {
+        return { error: `Course ${args.courseCode} not found` };
+      }
+      courseId = course.id;
+    }
+
+    if (!courseId) {
+      return { error: 'courseId or courseCode is required' };
+    }
+
+    return await academicsService.updateUserCourseProgress(userId, courseId, {
+      status: args.status,
+      progress: args.progress,
+      notes: args.notes,
+    });
+  },
+
   // === STUDENT PROFILE ===
   get_dashboard: async (_args, userId) => {
     return await studentProfileService.getDashboardData(userId);
@@ -182,6 +212,50 @@ const toolHandlers: Record<string, ToolHandler> = {
       limit: Math.min(limit, 100), // Cap at 100
     });
     return logs;
+  },
+
+  // === SMART SCHEDULE ===
+  get_user_schedules: async (_args, userId) => {
+    return await db
+      .select({
+        id: schedules.id,
+        name: schedules.name,
+        isActive: schedules.isActive,
+        createdAt: schedules.createdAt,
+        updatedAt: schedules.updatedAt,
+      })
+      .from(schedules)
+      .where(eq(schedules.userId, userId))
+      .orderBy(desc(schedules.isActive), desc(schedules.createdAt));
+  },
+
+  get_schedule_details: async (args, userId) => {
+    const scheduleId = args.scheduleId as string;
+    const [schedule] = await db
+      .select()
+      .from(schedules)
+      .where(and(eq(schedules.id, scheduleId), eq(schedules.userId, userId)))
+      .limit(1);
+
+    if (!schedule) {
+      return { error: 'Schedule not found' };
+    }
+
+    const items = await db
+      .select()
+      .from(scheduleItems)
+      .where(eq(scheduleItems.scheduleId, scheduleId))
+      .orderBy(scheduleItems.startDateTime);
+
+    return { ...schedule, items };
+  },
+
+  optimize_day_schedule: async (args, userId) => {
+    return await smartScheduleService.optimizeDay(userId, args as any);
+  },
+
+  edit_smart_schedule: async (args, userId) => {
+    return await smartScheduleService.editSchedule(userId, args as any);
   },
 
   get_experiences: async (_args, userId) => {
@@ -623,6 +697,29 @@ Be thorough and specific. Format in a clear, organized way.`,
       status: args.status,
       progress: args.progress,
       notes: args.notes,
+    });
+  },
+  add_interest_with_plan: async (args, userId) => {
+    return await skillsInterestsService.addInterestWithPlan(userId, {
+      interest: args.interest,
+      status: args.status,
+      additionalPreferences: args.additionalPreferences,
+    });
+  },
+  get_skill_plan: async (args, userId) => {
+    return await skillsInterestsService.getSkillPlan(userId, args.skillInterestId);
+  },
+  update_skill_task: async (args, userId) => {
+    return await skillsInterestsService.updateSkillTask(userId, args.taskId, {
+      status: args.status,
+      notes: args.notes,
+    });
+  },
+  add_skill_task_to_schedule: async (args, userId) => {
+    return await skillsInterestsService.addSkillTaskToSchedule(userId, args.taskId, {
+      scheduleId: args.scheduleId,
+      startDateTime: args.startDateTime,
+      endDateTime: args.endDateTime,
     });
   },
 

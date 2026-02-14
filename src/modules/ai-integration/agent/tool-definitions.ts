@@ -116,6 +116,52 @@ export const toolDefinitions: FunctionDeclaration[] = [
       required: ['pdfUrl', 'documentName'],
     },
   },
+  {
+    name: 'get_user_course_progress',
+    description:
+      "Get the student's course progress for all enrolled courses, including status and percentage. Use when the user asks about progress tracking across courses.",
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        status: {
+          type: SchemaType.STRING,
+          description: 'Optional status filter: not_started, in_progress, completed, paused',
+        },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'update_course_progress',
+    description:
+      "Update the student's progress for a specific course. Use when the user says they've completed or progressed in a course.",
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        courseId: {
+          type: SchemaType.STRING,
+          description: 'The internal UUID of the course (preferred if known)',
+        },
+        courseCode: {
+          type: SchemaType.STRING,
+          description: 'Course code if UUID is unknown (e.g., CS F111)',
+        },
+        status: {
+          type: SchemaType.STRING,
+          description: 'Progress status: not_started, in_progress, completed, paused',
+        },
+        progress: {
+          type: SchemaType.NUMBER,
+          description: 'Progress percentage (0-100)',
+        },
+        notes: {
+          type: SchemaType.STRING,
+          description: 'Optional notes about progress',
+        },
+      },
+      required: [],
+    },
+  },
 
   // === SCHEDULE DOMAIN ===
   {
@@ -126,6 +172,118 @@ export const toolDefinitions: FunctionDeclaration[] = [
       type: SchemaType.OBJECT,
       properties: {},
       required: [],
+    },
+  },
+  {
+    name: 'get_user_schedules',
+    description:
+      "Get all schedules for the student (id, name, active status). Use when you need a scheduleId to edit or reference.",
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {},
+      required: [],
+    },
+  },
+  {
+    name: 'get_schedule_details',
+    description:
+      'Get a schedule with all its items by scheduleId. Use before editing if you need to see current items.',
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        scheduleId: {
+          type: SchemaType.STRING,
+          description: 'The schedule UUID',
+        },
+      },
+      required: ['scheduleId'],
+    },
+  },
+  {
+    name: 'optimize_day_schedule',
+    description:
+      'Create a new optimized daily schedule based on user preferences. Use for "optimize my day" or "make a schedule".',
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        date: { type: SchemaType.STRING, description: 'Date in YYYY-MM-DD (optional)' },
+        dayWindow: {
+          type: SchemaType.OBJECT,
+          description: 'Active day window {start,end} in HH:MM',
+          properties: {
+            start: { type: SchemaType.STRING },
+            end: { type: SchemaType.STRING },
+          },
+        },
+        sleepWindow: {
+          type: SchemaType.OBJECT,
+          description: 'Explicit sleep window {start,end} in HH:MM (optional)',
+          properties: {
+            start: { type: SchemaType.STRING },
+            end: { type: SchemaType.STRING },
+          },
+        },
+        goals: {
+          type: SchemaType.ARRAY,
+          description: 'Goals to prioritize',
+          items: { type: SchemaType.STRING },
+        },
+        skipClasses: {
+          type: SchemaType.ARRAY,
+          description: 'Class types to skip: lesson, tutorial, lab',
+          items: { type: SchemaType.STRING },
+        },
+        preferredFreeTime: {
+          type: SchemaType.OBJECT,
+          description: 'Preferred free time slot {start,end} in HH:MM',
+          properties: {
+            start: { type: SchemaType.STRING },
+            end: { type: SchemaType.STRING },
+          },
+        },
+        additionalPreferences: { type: SchemaType.STRING },
+        selectedCourseIds: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+        selectedSkillIds: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+        scheduleName: { type: SchemaType.STRING },
+      },
+      required: ['goals'],
+    },
+  },
+  {
+    name: 'edit_smart_schedule',
+    description:
+      'Edit an existing schedule using a natural language instruction. Use when the user asks to change or tweak their schedule.',
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        scheduleId: { type: SchemaType.STRING, description: 'The schedule UUID' },
+        instruction: { type: SchemaType.STRING, description: 'Edit instruction from user' },
+        dayWindow: {
+          type: SchemaType.OBJECT,
+          properties: {
+            start: { type: SchemaType.STRING },
+            end: { type: SchemaType.STRING },
+          },
+        },
+        sleepWindow: {
+          type: SchemaType.OBJECT,
+          properties: {
+            start: { type: SchemaType.STRING },
+            end: { type: SchemaType.STRING },
+          },
+        },
+        preferredFreeTime: {
+          type: SchemaType.OBJECT,
+          properties: {
+            start: { type: SchemaType.STRING },
+            end: { type: SchemaType.STRING },
+          },
+        },
+        additionalPreferences: { type: SchemaType.STRING },
+        goals: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+        skipClasses: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+      },
+      required: ['scheduleId', 'instruction'],
     },
   },
   {
@@ -422,6 +580,94 @@ export const toolDefinitions: FunctionDeclaration[] = [
         },
       },
       required: ['skillInterestId'],
+    },
+  },
+  {
+    name: 'add_interest_with_plan',
+    description:
+      'Add a new interest by name and generate an AI learning plan with sub-tasks/sub-skills. Use when the user says they want to learn something new.',
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        interest: {
+          type: SchemaType.STRING,
+          description: 'The skill or interest the user mentioned (e.g., "Web Development")',
+        },
+        status: {
+          type: SchemaType.STRING,
+          description: 'Initial status: interested, learning, completed, paused',
+        },
+        additionalPreferences: {
+          type: SchemaType.STRING,
+          description: 'Optional preferences for the learning plan',
+        },
+      },
+      required: ['interest'],
+    },
+  },
+  {
+    name: 'get_skill_plan',
+    description:
+      'Get the latest AI-generated plan and tasks for a specific skill.',
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        skillInterestId: {
+          type: SchemaType.STRING,
+          description: 'The skill UUID',
+        },
+      },
+      required: ['skillInterestId'],
+    },
+  },
+  {
+    name: 'update_skill_task',
+    description:
+      'Update a skill task status or notes. Use when the user completes a sub-task; this auto-updates skill progress.',
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        taskId: {
+          type: SchemaType.STRING,
+          description: 'The skill task UUID',
+        },
+        status: {
+          type: SchemaType.STRING,
+          description: 'pending, in_progress, completed, skipped',
+        },
+        notes: {
+          type: SchemaType.STRING,
+          description: 'Optional notes about completion',
+        },
+      },
+      required: ['taskId'],
+    },
+  },
+  {
+    name: 'add_skill_task_to_schedule',
+    description:
+      'Add a specific skill task to the user schedule as a schedule item.',
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        taskId: {
+          type: SchemaType.STRING,
+          description: 'The skill task UUID',
+        },
+        scheduleId: {
+          type: SchemaType.STRING,
+          description: 'Schedule UUID',
+        },
+        startDateTime: {
+          type: SchemaType.STRING,
+          description: 'Start time (ISO datetime)',
+        },
+        endDateTime: {
+          type: SchemaType.STRING,
+          description: 'End time (ISO datetime)',
+        },
+      },
+      required: ['taskId', 'scheduleId', 'startDateTime', 'endDateTime'],
     },
   },
   {

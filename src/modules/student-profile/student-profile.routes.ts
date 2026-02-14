@@ -1023,6 +1023,104 @@ const scheduleItemCreateSchema = z.object({
 
 const scheduleItemUpdateSchema = scheduleItemCreateSchema.partial().omit({ scheduleId: true });
 
+const freeSlotAddSchema = z.object({
+    startDateTime: z.string().datetime(),
+    endDateTime: z.string().datetime(),
+    title: z.string().max(255).optional(),
+    description: z.string().optional(),
+    location: z.string().max(255).optional(),
+    color: z.string().max(7).optional(),
+});
+
+function parseDateParam(dateParam?: string | null) {
+    if (!dateParam) return null;
+    const [year, month, day] = dateParam.split('-').map(Number);
+    if (!year || !month || !day) return null;
+    return { year, month, day };
+}
+
+function createUtcDate(year: number, month: number, day: number, hours = 0, minutes = 0) {
+    return new Date(Date.UTC(year, month - 1, day, hours, minutes, 0, 0));
+}
+
+function parseDayWindow(dateParam: string | null, start?: string | null, end?: string | null) {
+    const parsed = parseDateParam(dateParam);
+    const today = new Date();
+    const year = parsed?.year ?? today.getUTCFullYear();
+    const month = parsed?.month ?? (today.getUTCMonth() + 1);
+    const day = parsed?.day ?? today.getUTCDate();
+
+    const startTime = start || '00:00';
+    const endTime = end || '23:59';
+
+    const [sh, sm] = startTime.split(':').map(Number);
+    const [eh, em] = endTime.split(':').map(Number);
+
+    const windowStart = createUtcDate(year, month, day, sh, sm);
+    const windowEnd = createUtcDate(year, month, day, eh, em);
+    if (windowEnd <= windowStart) {
+        windowEnd.setUTCDate(windowEnd.getUTCDate() + 1);
+    }
+
+    return { windowStart, windowEnd };
+}
+
+function buildDateTimeWithTime(date: Date, source: Date) {
+    const result = new Date(date);
+    result.setUTCHours(source.getUTCHours(), source.getUTCMinutes(), 0, 0);
+    return result;
+}
+
+function getDayName(date: Date) {
+    const dayIndex = date.getUTCDay();
+    const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return names[dayIndex];
+}
+
+function floorToMinuteLocal(date: Date) {
+    const d = new Date(date);
+    d.setSeconds(0, 0);
+    return d;
+}
+
+function ceilToSlotLocalByClock(date: Date, minutes: number) {
+    const d = new Date(date);
+    const minute = d.getMinutes();
+    const remainder = minute % minutes;
+    if (remainder === 0 && d.getSeconds() === 0 && d.getMilliseconds() === 0) {
+        return d;
+    }
+    const add = remainder === 0 ? 0 : minutes - remainder;
+    d.setMinutes(d.getMinutes() + add);
+    d.setSeconds(0, 0);
+    return d;
+}
+
+function splitIntoHourSlots(start: Date, end: Date, minutes: number) {
+    const slots: { start: string; end: string }[] = [];
+    const stepMinutes = Math.max(minutes, 5);
+    const stepMs = stepMinutes * 60 * 1000;
+    let cursor = ceilToSlotLocalByClock(floorToMinuteLocal(start), stepMinutes);
+    const endFloor = floorToMinuteLocal(end);
+    while (cursor.getTime() + stepMs <= endFloor.getTime()) {
+        const next = new Date(cursor.getTime() + stepMs);
+        slots.push({ start: cursor.toISOString(), end: next.toISOString() });
+        cursor = next;
+    }
+    return slots;
+}
+
+function parseUtcDateTime(input: string) {
+    // If timezone is missing, treat as UTC by appending Z
+    const hasTimezone = /Z$|[+-]\d{2}:?\d{2}$/.test(input);
+    const normalized = hasTimezone ? input : `${input}Z`;
+    const parsed = new Date(normalized);
+    if (Number.isNaN(parsed.getTime())) {
+        throw new Error('Invalid datetime');
+    }
+    return parsed;
+}
+
 /**
  * GET /schedules
  * Get all schedules for user
@@ -1194,6 +1292,133 @@ app.post('/schedules/:id/set-active', protect, async (c) => {
         return errorResponse(c, error.message || 'Failed to set active schedule', 500);
     }
 });
+
+/**
+ * GET /schedules/active/free-slots
+ * Get free time slots for today (split into 1-hour slots)
+ */
+app.get('/schedules/active/free-slots', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const dateParam = c.req.query('date') || null;
+        const dayStart = c.req.query('dayStart');
+        const dayEnd = c.req.query('dayEnd');
+        const slotMinutesParam = c.req.query('slotMinutes');
+        const slotMinutes = slotMinutesParam ? Number(slotMinutesParam) : 60;
+        if (!Number.isFinite(slotMinutes) || slotMinutes < 5 || slotMinutes > 240) {
+            return errorResponse(c, 'Invalid slotMinutes (5-240)', 400, 'INVALID_SLOT_MINUTES');
+        }
+
+        const [activeSchedule] = await db
+            .select()
+            .from(schedules)
+            .where(and(eq(schedules.userId, user.id), eq(schedules.isActive, true)))
+            .orderBy(desc(schedules.createdAt))
+            .limit(1);
+
+        if (!activeSchedule) {
+            return errorResponse(c, 'Active schedule not found', 404);
+        }
+
+        const { windowStart, windowEnd } = parseDayWindow(dateParam, dayStart, dayEnd);
+        const dayName = getDayName(windowStart);
+
+        const items = await db
+            .select()
+            .from(scheduleItems)
+            .where(eq(scheduleItems.scheduleId, activeSchedule.id));
+
+        const busyIntervals: Array<{ start: Date; end: Date }> = [];
+
+        for (const item of items) {
+            if (item.isRecurring && item.dayOfWeek === dayName) {
+                const start = buildDateTimeWithTime(targetDate, new Date(item.startDateTime));
+                const end = buildDateTimeWithTime(targetDate, new Date(item.endDateTime));
+                busyIntervals.push({ start, end });
+                continue;
+            }
+
+            const start = new Date(item.startDateTime);
+            const end = new Date(item.endDateTime);
+            if (end <= windowStart || start >= windowEnd) continue;
+            busyIntervals.push({
+                start: start < windowStart ? windowStart : start,
+                end: end > windowEnd ? windowEnd : end,
+            });
+        }
+
+        busyIntervals.sort((a, b) => a.start.getTime() - b.start.getTime());
+
+        const slots: { start: string; end: string }[] = [];
+        const stepMs = Math.max(slotMinutes, 5) * 60 * 1000;
+        let cursor = ceilToSlotLocalByClock(floorToMinuteLocal(windowStart), slotMinutes);
+
+        while (cursor.getTime() + stepMs <= windowEnd.getTime()) {
+            const next = new Date(cursor.getTime() + stepMs);
+            const overlaps = busyIntervals.some(
+                (interval) => cursor < interval.end && next > interval.start
+            );
+            if (!overlaps) {
+                slots.push({ start: cursor.toISOString(), end: next.toISOString() });
+            }
+            cursor = next;
+        }
+
+        return successResponse(c, {
+            date: dateParam || windowStart.toISOString().slice(0, 10),
+            scheduleId: activeSchedule.id,
+            slots,
+        });
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to fetch free slots', 500);
+    }
+});
+
+/**
+ * POST /schedules/active/add-free-slot
+ * Add a custom slot to the active schedule
+ */
+app.post(
+    '/schedules/active/add-free-slot',
+    protect,
+    zValidator('json', freeSlotAddSchema),
+    async (c) => {
+        try {
+            const user = c.get('user');
+            const data = c.req.valid('json');
+
+            const [activeSchedule] = await db
+                .select()
+                .from(schedules)
+                .where(and(eq(schedules.userId, user.id), eq(schedules.isActive, true)))
+                .orderBy(desc(schedules.createdAt))
+                .limit(1);
+
+            if (!activeSchedule) {
+                return errorResponse(c, 'Active schedule not found', 404);
+            }
+
+            const [item] = await db
+                .insert(scheduleItems)
+                .values({
+                    scheduleId: activeSchedule.id,
+                    userId: user.id,
+                    title: data.title || 'Custom Slot',
+                    description: data.description,
+                    type: 'custom',
+                    startDateTime: parseUtcDateTime(data.startDateTime),
+                    endDateTime: parseUtcDateTime(data.endDateTime),
+                    location: data.location,
+                    color: data.color,
+                })
+                .returning();
+
+            return successResponse(c, item);
+        } catch (error: any) {
+            return errorResponse(c, error.message || 'Failed to add schedule slot', 500);
+        }
+    }
+);
 
 // ============================================
 // SCHEDULE ITEMS ENDPOINTS

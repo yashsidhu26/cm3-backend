@@ -45,6 +45,18 @@ export const resourceTypeEnum = pgEnum('resource_type', [
   'other'
 ]);
 
+export const skillTaskStatusEnum = pgEnum('skill_task_status', [
+  'pending',
+  'in_progress',
+  'completed',
+  'skipped'
+]);
+
+export const skillTaskTypeEnum = pgEnum('skill_task_type', [
+  'task',
+  'subskill'
+]);
+
 /**
  * Skills & Interests Catalog
  * Master list of all available skills/interests
@@ -106,6 +118,53 @@ export const skillResources = pgTable('skill_resources', {
 });
 
 /**
+ * Skill Plans
+ * AI-generated learning plans for a specific skill
+ */
+export const skillPlans = pgTable('skill_plans', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  skillInterestId: uuid('skill_interest_id')
+    .notNull()
+    .references(() => skillsInterests.id, { onDelete: 'cascade' }),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/**
+ * Skill Tasks
+ * Subtasks or subskills within a learning plan
+ */
+export const skillTasks = pgTable('skill_tasks', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  planId: uuid('plan_id')
+    .notNull()
+    .references(() => skillPlans.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  skillInterestId: uuid('skill_interest_id')
+    .notNull()
+    .references(() => skillsInterests.id, { onDelete: 'cascade' }),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  howTo: text('how_to'),
+  taskType: skillTaskTypeEnum('task_type').notNull().default('task'),
+  order: integer('order').notNull().default(0),
+  estimatedMinutes: integer('estimated_minutes'),
+  status: skillTaskStatusEnum('status').notNull().default('pending'),
+  notes: text('notes'),
+  completedAt: timestamp('completed_at'),
+  scheduleItemId: uuid('schedule_item_id'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/**
  * Skill Relationships
  * Links between skills (prerequisites, related skills, etc.)
  */
@@ -137,6 +196,35 @@ export const skillsInterestsRelations = relations(skillsInterests, ({ many }) =>
   resources: many(skillResources),
   relatedFrom: many(skillRelationships, { relationName: 'fromSkill' }),
   relatedTo: many(skillRelationships, { relationName: 'toSkill' }),
+  plans: many(skillPlans),
+  tasks: many(skillTasks),
+}));
+
+export const skillPlansRelations = relations(skillPlans, ({ one, many }) => ({
+  user: one(user, {
+    fields: [skillPlans.userId],
+    references: [user.id],
+  }),
+  skill: one(skillsInterests, {
+    fields: [skillPlans.skillInterestId],
+    references: [skillsInterests.id],
+  }),
+  tasks: many(skillTasks),
+}));
+
+export const skillTasksRelations = relations(skillTasks, ({ one }) => ({
+  plan: one(skillPlans, {
+    fields: [skillTasks.planId],
+    references: [skillPlans.id],
+  }),
+  user: one(user, {
+    fields: [skillTasks.userId],
+    references: [user.id],
+  }),
+  skill: one(skillsInterests, {
+    fields: [skillTasks.skillInterestId],
+    references: [skillsInterests.id],
+  }),
 }));
 
 export const userSkillsInterestsRelations = relations(userSkillsInterests, ({ one }) => ({
@@ -183,5 +271,10 @@ export type UserSkillInterest = typeof userSkillsInterests.$inferSelect;
 export type NewUserSkillInterest = typeof userSkillsInterests.$inferInsert;
 export type SkillResource = typeof skillResources.$inferSelect;
 export type NewSkillResource = typeof skillResources.$inferInsert;
+
+export type SkillPlan = typeof skillPlans.$inferSelect;
+export type NewSkillPlan = typeof skillPlans.$inferInsert;
+export type SkillTask = typeof skillTasks.$inferSelect;
+export type NewSkillTask = typeof skillTasks.$inferInsert;
 export type SkillRelationship = typeof skillRelationships.$inferSelect;
 export type NewSkillRelationship = typeof skillRelationships.$inferInsert;

@@ -69,6 +69,14 @@ const enrollmentSchema = z.object({
   year: z.string().optional(),
 });
 
+const courseProgressUpdateSchema = z.object({
+  status: z.enum(['not_started', 'in_progress', 'completed', 'paused']).optional(),
+  progress: z.number().min(0).max(100).optional(),
+  notes: z.string().max(4000).optional(),
+  startedAt: z.string().datetime().optional(),
+  completedAt: z.string().datetime().optional(),
+});
+
 /**
  * POST /sync
  * Sync user's Moodle data
@@ -159,6 +167,69 @@ academics.get('/my-courses', protect, async (c) => {
     return errorResponse(c, 'Failed to fetch courses', 500);
   }
 });
+
+/**
+ * GET /progress
+ * Get user's course progress for enrolled courses
+ * Requires authentication
+ */
+academics.get('/progress', protect, async (c) => {
+  try {
+    const user = c.get('user');
+    if (!user) {
+      return errorResponse(c, 'User not authenticated', 401);
+    }
+
+    const status = c.req.query('status') || undefined;
+    const progress = await academicsService.getUserCourseProgress(user.id, status);
+
+    return successResponse(c, {
+      courses: progress,
+      count: progress.length,
+    });
+  } catch (error: any) {
+    console.error('[API] Error fetching course progress:', error);
+    return errorResponse(c, 'Failed to fetch course progress', 500);
+  }
+});
+
+/**
+ * PUT /progress/:courseId
+ * Update user's course progress
+ * Requires authentication
+ */
+academics.put(
+  '/progress/:courseId',
+  protect,
+  zValidator('json', courseProgressUpdateSchema),
+  async (c) => {
+    try {
+      const user = c.get('user');
+      if (!user) {
+        return errorResponse(c, 'User not authenticated', 401);
+      }
+
+      const courseId = c.req.param('courseId');
+      if (!z.string().uuid().safeParse(courseId).success) {
+        return errorResponse(c, 'Invalid course ID', 400, 'INVALID_COURSE_ID');
+      }
+
+      const data = c.req.valid('json');
+      const updated = await academicsService.updateUserCourseProgress(user.id, courseId, {
+        status: data.status,
+        progress: data.progress,
+        notes: data.notes,
+        startedAt: data.startedAt ? new Date(data.startedAt) : undefined,
+        completedAt: data.completedAt ? new Date(data.completedAt) : undefined,
+      });
+
+      return successResponse(c, updated);
+    } catch (error: any) {
+      console.error('[API] Error updating course progress:', error);
+      return errorResponse(c, error.message || 'Failed to update course progress', 500);
+    }
+  }
+);
 
 /**
  * GET /courses/:id/resources

@@ -12,6 +12,12 @@ export const resourceTypeEnum = pgEnum('resource_type', ['pdf', 'slide', 'video'
 
 // Semester enum
 export const semesterEnum = pgEnum('semester', ['fall', 'spring', 'summer']);
+export const courseProgressStatusEnum = pgEnum('course_progress_status', [
+  'not_started',
+  'in_progress',
+  'completed',
+  'paused',
+]);
 
 /**
  * Courses table
@@ -62,6 +68,27 @@ export const enrollments = pgTable('enrollments', {
   semester: semesterEnum('semester').notNull().default('fall'),
   year: varchar('year', { length: 10 }),
   enrolledAt: timestamp('enrolled_at').notNull().defaultNow(),
+});
+
+/**
+ * Course Progress table
+ * Tracks a user's learning progress for a specific course
+ */
+export const userCourseProgress = pgTable('user_course_progress', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  courseId: uuid('course_id')
+    .notNull()
+    .references(() => courses.id, { onDelete: 'cascade' }),
+  status: courseProgressStatusEnum('status').notNull().default('not_started'),
+  progress: integer('progress').default(0), // 0-100 percentage
+  notes: text('notes'),
+  startedAt: timestamp('started_at'),
+  completedAt: timestamp('completed_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
 /**
@@ -155,6 +182,17 @@ export const enrollmentsRelations = relations(enrollments, ({ one }) => ({
   }),
 }));
 
+export const userCourseProgressRelations = relations(userCourseProgress, ({ one }) => ({
+  user: one(user, {
+    fields: [userCourseProgress.userId],
+    references: [user.id],
+  }),
+  course: one(courses, {
+    fields: [userCourseProgress.courseId],
+    references: [courses.id],
+  }),
+}));
+
 // Resource relations
 export const resourcesRelations = relations(resources, ({ one }) => ({
   course: one(courses, {
@@ -201,6 +239,8 @@ export type NewCourse = typeof courses.$inferInsert;
 
 export type Enrollment = typeof enrollments.$inferSelect;
 export type NewEnrollment = typeof enrollments.$inferInsert;
+export type UserCourseProgress = typeof userCourseProgress.$inferSelect;
+export type NewUserCourseProgress = typeof userCourseProgress.$inferInsert;
 
 export type Resource = typeof resources.$inferSelect;
 export type NewResource = typeof resources.$inferInsert;

@@ -7,11 +7,13 @@ import {
   courseSections,
   classSchedule,
   userSectionRegistrations,
+  userCourseProgress,
   type Course,
   type NewCourse,
   type Enrollment,
   type Resource,
   type NewResource,
+  type UserCourseProgress,
 } from './academics.schema';
 import { user } from '../auth/auth.schema';
 import { moodleClient, type MoodleCourse, MoodleError } from './moodle.service';
@@ -438,6 +440,132 @@ export class AcademicsService {
     );
 
     return coursesWithDetails;
+  }
+
+  /**
+   * Get user's course progress (optionally filtered by status)
+   */
+  async getUserCourseProgress(userId: string, status?: string) {
+    const rows = await db
+      .select({
+        course: courses,
+        enrollment: enrollments,
+        progress: userCourseProgress,
+      })
+      .from(enrollments)
+      .innerJoin(courses, eq(enrollments.courseId, courses.id))
+      .leftJoin(
+        userCourseProgress,
+        and(
+          eq(userCourseProgress.courseId, courses.id),
+          eq(userCourseProgress.userId, userId)
+        )
+      )
+      .where(eq(enrollments.userId, userId));
+
+    const normalized = rows.map((row) => {
+      const progress = row.progress ?? null;
+      return {
+        course: row.course,
+        enrollment: row.enrollment,
+        progress: progress
+          ? progress
+          : {
+              status: 'not_started',
+              progress: 0,
+              notes: null,
+              startedAt: null,
+              completedAt: null,
+            },
+      };
+    });
+
+    if (!status) return normalized;
+
+    return normalized.filter((entry) => entry.progress?.status === status);
+  }
+
+  /**
+   * Update or create a user's course progress
+   */
+  async updateUserCourseProgress(
+    userId: string,
+    courseId: string,
+    data: {
+      status?: string;
+      progress?: number;
+      notes?: string;
+      startedAt?: Date | null;
+      completedAt?: Date | null;
+    }
+  ): Promise<UserCourseProgress> {
+    const enrollment = await db
+      .select()
+      .from(enrollments)
+      .where(and(eq(enrollments.userId, userId), eq(enrollments.courseId, courseId)))
+      .limit(1);
+
+    if (enrollment.length === 0) {
+      throw new Error('You are not enrolled in this course');
+    }
+
+    const [existing] = await db
+      .select()
+      .from(userCourseProgress)
+      .where(and(eq(userCourseProgress.userId, userId), eq(userCourseProgress.courseId, courseId)))
+      .limit(1);
+
+    const updateData: any = {
+      ...data,
+      updatedAt: new Date(),
+    };
+
+    if (data.status === 'in_progress' && !data.startedAt) {
+      updateData.startedAt = new Date();
+    }
+
+    if (data.status === 'completed') {
+      updateData.completedAt = new Date();
+      updateData.progress = 100;
+    }
+
+    if (typeof data.progress === 'number' && data.progress >= 100 && !data.status) {
+      updateData.status = 'completed';
+      updateData.completedAt = new Date();
+    }
+
+    if (existing) {
+      const [updated] = await db
+        .update(userCourseProgress)
+        .set(updateData)
+        .where(eq(userCourseProgress.id, existing.id))
+        .returning();
+
+      if (!updated) {
+        throw new Error('Failed to update course progress');
+      }
+
+      return updated;
+    }
+
+    const [created] = await db
+      .insert(userCourseProgress)
+      .values({
+        userId,
+        courseId,
+        status: data.status || 'not_started',
+        progress: data.progress ?? 0,
+        notes: data.notes,
+        startedAt: data.startedAt ?? (data.status === 'in_progress' ? new Date() : null),
+        completedAt: data.status === 'completed' ? new Date() : data.completedAt ?? null,
+      })
+      .returning();
+
+    if (!created) {
+      throw new Error('Failed to create course progress');
+    }
+
+    return created;
   }
 
   /**
