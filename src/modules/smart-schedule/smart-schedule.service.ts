@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { and, eq, gte, lte, or } from 'drizzle-orm';
+import { and, eq, gte, lte, or, desc } from 'drizzle-orm';
 import { db } from '../../core/database/client';
 import { schedules, scheduleItems, studentAssignments, studentEvaluations, campusEvents } from '../student-profile/student-profile.schema';
 import { academicsService } from '../academics/academics.service';
@@ -10,6 +10,7 @@ import { aiScheduleResponseSchema } from './smart-schedule.schema';
 
 const DEFAULT_DAY_START = '06:00';
 const DEFAULT_DAY_END = '23:00';
+const DEFAULT_TIMEZONE = process.env.DEFAULT_TIMEZONE || 'Asia/Kolkata';
 
 type FixedBlock = {
   title: string;
@@ -20,12 +21,50 @@ type FixedBlock = {
   linkedEntityId?: string | null;
   linkedEntityType?: string | null;
   location?: string | null;
+  color?: string | null;
 };
 
+function parseDateParts(dateStr: string) {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return { year, month, day };
+}
+
+function getZonedOffsetMinutes(date: Date, timeZone: string) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(date);
+  const lookup = (type: string) => parts.find((p) => p.type === type)?.value || '00';
+  const y = Number(lookup('year'));
+  const m = Number(lookup('month'));
+  const d = Number(lookup('day'));
+  const h = Number(lookup('hour'));
+  const min = Number(lookup('minute'));
+  const s = Number(lookup('second'));
+  const asUtc = Date.UTC(y, m - 1, d, h, min, s, 0);
+  return (asUtc - date.getTime()) / (60 * 1000);
+}
+
+function zonedTimeToUtc(dateStr: string, timeStr: string, timeZone: string): Date {
+  const { year, month, day } = parseDateParts(dateStr);
+  const [hour, minute] = timeStr.split(':').map(Number);
+  const utcGuess = Date.UTC(year, month - 1, day, hour, minute, 0, 0);
+  const guessDate = new Date(utcGuess);
+  const offsetMinutes = getZonedOffsetMinutes(guessDate, timeZone);
+  const corrected = utcGuess - offsetMinutes * 60 * 1000;
+  return new Date(corrected);
+}
+
 function toDateTime(dateStr: string, timeStr: string, addDay: boolean = false): Date {
-  const base = new Date(`${dateStr}T${timeStr}:00`);
+  const base = zonedTimeToUtc(dateStr, timeStr, DEFAULT_TIMEZONE);
   if (addDay) {
-    base.setDate(base.getDate() + 1);
+    base.setUTCDate(base.getUTCDate() + 1);
   }
   return base;
 }
@@ -70,8 +109,9 @@ function formatDate(date: Date): string {
 }
 
 function dayOfWeek(dateStr: string): string {
-  const date = new Date(`${dateStr}T00:00:00`);
-  return date.toLocaleDateString('en-US', { weekday: 'long' });
+  const { year, month, day } = parseDateParts(dateStr);
+  const date = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+  return date.toLocaleDateString('en-US', { weekday: 'long', timeZone: DEFAULT_TIMEZONE });
 }
 
 function computeFreeSlots(dayStart: Date, dayEnd: Date, fixedBlocks: FixedBlock[]) {
@@ -126,6 +166,30 @@ function mapSkipTypes(skipClasses: string[]) {
   };
 }
 
+function getItemColor(type: string, title?: string | null) {
+  const palette: Record<string, string> = {
+    class: '#2563EB', // blue
+    lesson: '#2563EB',
+    tutorial: '#06B6D4', // cyan
+    lab: '#7C3AED', // purple
+    evaluation: '#EF4444', // red
+    event: '#F97316', // orange
+    assignment: '#F59E0B', // amber
+    break: '#22C55E', // green
+    sleep: '#64748B', // slate
+    custom: '#22C55E',
+  };
+
+  const lowerTitle = (title || '').toLowerCase();
+  if (lowerTitle.includes('break')) return palette.break;
+  if (lowerTitle.includes('sleep')) return palette.sleep;
+  if (lowerTitle.includes('tutorial')) return palette.tutorial;
+  if (lowerTitle.includes('lab')) return palette.lab;
+  if (lowerTitle.includes('lecture') || lowerTitle.includes('class') || lowerTitle.includes('lesson')) return palette.class;
+
+  return palette[type] || palette.custom;
+}
+
 export class SmartScheduleService {
   private buildAiClient() {
     const projectId = process.env.GCP_PROJECT_ID;
@@ -151,86 +215,118 @@ export class SmartScheduleService {
     );
   }
 
+  private isTimeoutError(error: any) {
+    return error?.name === 'TimeoutError' || String(error?.message || '').toLowerCase().includes('timed out');
+  }
+
   private async generateContentWithFallback(payload: {
     systemPrompt: string;
     userPrompt: string;
+    thinkingBudget?: number;
   }) {
     const ai = this.buildAiClient();
     const primaryModel = this.getModelName();
     const fallbackModel = this.getFallbackModelName();
-
-    try {
-      return await ai.models.generateContent({
-        model: primaryModel,
+    const aiTimeoutMs = Number(process.env.SMART_SCHEDULE_AI_TIMEOUT_MS || 45000);
+    const thinkingBudget = payload.thinkingBudget ?? 0;
+    const run = async (model: string) => {
+      const withThinking = ai.models.generateContent({
+        model,
         contents: [{ role: 'user', parts: [{ text: payload.userPrompt }] }],
         config: {
           systemInstruction: { parts: [{ text: payload.systemPrompt }] },
           temperature: 0.2,
+          responseMimeType: 'application/json',
+          thinkingConfig: {
+            thinkingBudget,
+          },
         },
       });
-    } catch (error: any) {
-      if (this.isModelNotFound(error) && fallbackModel !== primaryModel) {
-        console.warn('[SmartSchedule] Primary model not found, falling back:', primaryModel, '->', fallbackModel);
-        return await ai.models.generateContent({
-          model: fallbackModel,
+      try {
+        return await Promise.race([
+          withThinking,
+          new Promise((_, reject) => setTimeout(() => reject(new Error(`AI timeout after ${aiTimeoutMs}ms`)), aiTimeoutMs)),
+        ]);
+      } catch (error: any) {
+        const msg = String(error?.message || '');
+        if (!msg.toLowerCase().includes('thinking')) throw error;
+        const withoutThinking = ai.models.generateContent({
+          model,
           contents: [{ role: 'user', parts: [{ text: payload.userPrompt }] }],
           config: {
             systemInstruction: { parts: [{ text: payload.systemPrompt }] },
             temperature: 0.2,
+            responseMimeType: 'application/json',
           },
         });
+        return await Promise.race([
+          withoutThinking,
+          new Promise((_, reject) => setTimeout(() => reject(new Error(`AI timeout after ${aiTimeoutMs}ms`)), aiTimeoutMs)),
+        ]);
+      }
+    };
+
+    try {
+      return await run(primaryModel);
+    } catch (error: any) {
+      if ((this.isModelNotFound(error) || this.isTimeoutError(error)) && fallbackModel !== primaryModel) {
+        console.warn('[SmartSchedule] Primary model not found, falling back:', primaryModel, '->', fallbackModel);
+        return await run(fallbackModel);
       }
       throw error;
     }
   }
 
   private async getContext(userId: string, dateStr: string, request: OptimizeDayRequest) {
+    const t0 = Date.now();
     const window = normalizeDayWindow(dateStr, request.dayWindow);
     const sleepWindow = request.sleepWindow ? normalizeSleepWindow(dateStr, window, request.sleepWindow) : null;
     const dayStart = window.start;
     const dayEnd = window.end;
     const dayName = dayOfWeek(dateStr);
 
-    const [courses, skills, classSchedule] = await Promise.all([
+    const tFetch = Date.now();
+    const [courses, skills, classSchedule, upcomingAssignments, upcomingEvaluations, events] = await Promise.all([
       academicsService.getUserCoursesWithResources(userId),
       skillsInterestsService.getUserSkills(userId),
       sectionsService.getUserSchedule(userId),
+      db
+        .select()
+        .from(studentAssignments)
+        .where(
+          and(
+            eq(studentAssignments.userId, userId),
+            gte(studentAssignments.dueDate, new Date(dateStr + 'T00:00:00'))
+          )
+        )
+        .orderBy(studentAssignments.dueDate)
+        .limit(10),
+      db
+        .select()
+        .from(studentEvaluations)
+        .where(
+          and(
+            eq(studentEvaluations.userId, userId),
+            gte(studentEvaluations.date, new Date(dateStr + 'T00:00:00'))
+          )
+        )
+        .orderBy(studentEvaluations.date)
+        .limit(10),
+      db
+        .select()
+        .from(campusEvents)
+        .where(
+          and(
+            eq(campusEvents.userId, userId),
+            gte(campusEvents.date, dayStart),
+            lte(campusEvents.date, dayEnd),
+            or(eq(campusEvents.isEnrolled, true), eq(campusEvents.isInterested, true))
+          )
+        )
+        .orderBy(campusEvents.date)
+        .limit(10),
     ]);
-
-    const upcomingAssignments = await db
-      .select()
-      .from(studentAssignments)
-      .where(
-        and(
-          eq(studentAssignments.userId, userId),
-          gte(studentAssignments.dueDate, new Date(dateStr + 'T00:00:00'))
-        )
-      )
-      .orderBy(studentAssignments.dueDate);
-
-    const upcomingEvaluations = await db
-      .select()
-      .from(studentEvaluations)
-      .where(
-        and(
-          eq(studentEvaluations.userId, userId),
-          gte(studentEvaluations.date, new Date(dateStr + 'T00:00:00'))
-        )
-      )
-      .orderBy(studentEvaluations.date);
-
-    const events = await db
-      .select()
-      .from(campusEvents)
-      .where(
-        and(
-          eq(campusEvents.userId, userId),
-          gte(campusEvents.date, dayStart),
-          lte(campusEvents.date, dayEnd),
-          or(eq(campusEvents.isEnrolled, true), eq(campusEvents.isInterested, true))
-        )
-      )
-      .orderBy(campusEvents.date);
+    console.log(`[SmartSchedule] Context fetches in ${Date.now() - tFetch}ms`);
 
     const skipMap = mapSkipTypes(request.skipClasses || []);
 
@@ -253,6 +349,7 @@ export class SmartScheduleService {
           linkedEntityId: entry.sectionId,
           linkedEntityType: 'section',
           location: entry.roomNumber || null,
+          color: getItemColor('class', entry.sectionType),
         });
       }
     }
@@ -272,6 +369,7 @@ export class SmartScheduleService {
           linkedEntityId: evaluation.id,
           linkedEntityType: 'evaluation',
           location: evaluation.location || null,
+          color: getItemColor('evaluation', evaluation.title),
         });
       }
     }
@@ -288,6 +386,7 @@ export class SmartScheduleService {
         linkedEntityId: event.id,
         linkedEntityType: 'event',
         location: event.location || null,
+        color: getItemColor('event', event.title),
       });
     }
 
@@ -299,11 +398,13 @@ export class SmartScheduleService {
         type: 'custom',
         startDateTime: new Date(sleepWindow.start),
         endDateTime: new Date(sleepWindow.end),
+        color: getItemColor('sleep', 'Sleep'),
       });
     }
 
     const freeSlots = computeFreeSlots(dayStart, dayEnd, fixedBlocks);
 
+    console.log(`[SmartSchedule] Context built in ${Date.now() - t0}ms (fixedBlocks=${fixedBlocks.length}, freeSlots=${freeSlots.length})`);
     return {
       dateStr,
       dayName,
@@ -327,6 +428,7 @@ export class SmartScheduleService {
   }
 
   private async generateFlexibleBlocks(context: any, request: OptimizeDayRequest) {
+    const sleepFixed = Boolean(request.sleepWindow);
     const payload = {
       date: context.dateStr,
       dayOfWeek: context.dayName,
@@ -335,7 +437,7 @@ export class SmartScheduleService {
       preferredFreeTime: request.preferredFreeTime || null,
       dayWindow: request.dayWindow || { start: DEFAULT_DAY_START, end: DEFAULT_DAY_END },
       sleepWindow: request.sleepWindow || null,
-      sleepFixed: Boolean(sleepWindow),
+      sleepFixed,
       additionalPreferences: request.additionalPreferences || null,
       courses: context.courses.map((c: any) => ({
         id: c.course?.id,
@@ -375,27 +477,74 @@ export class SmartScheduleService {
         startDateTime: s.startDateTime.toISOString(),
         endDateTime: s.endDateTime.toISOString(),
       })),
+      freeMinutes: context.freeSlots.reduce((sum: number, s: any) => {
+        return sum + Math.max(0, Math.floor((new Date(s.endDateTime).getTime() - new Date(s.startDateTime).getTime()) / 60000));
+      }, 0),
     };
 
-    const systemPrompt = `You are a scheduling engine. You must return ONLY valid JSON with the shape {"scheduleItems": [...]}.\n\nRules:\n- ONLY schedule flexible items inside the provided freeSlots.\n- If sleepFixed=false, you MUST include a \"Sleep\" block in scheduleItems based on user preferences.\n- If sleepFixed=true, do NOT include a sleep block (already fixed).\n- Do NOT include fixed blocks (classes, evaluations, events); those are already fixed.\n- Respect goals and preferences.\n- Try to keep the preferredFreeTime slot free or light.\n- Use 30-120 minute blocks where appropriate.\n- Avoid overlaps and keep within the same date window.\n- Use type \"assignment\" for assignment work blocks, \"custom\" for study, breaks, learning, personal goals.\n- Use linkedEntityId when referencing a specific assignment or skill.\n- Output ISO timestamps for startDateTime/endDateTime.\n- No markdown, no extra text.`;
+    const systemPrompt = `You are a scheduling engine. Return ONLY strict JSON: {"scheduleItems":[...]}.
+Rules:
+- Schedule ONLY inside freeSlots.
+- Do NOT return fixed blocks (classes/evaluations/events).
+- If there is very little free time, return fewer items (possibly 1).
+- If sleepFixed=false, include Sleep only if it fits naturally; do not force impossible overlap.
+- Prefer concise blocks and zero overlaps.
+- Types allowed: assignment, custom, evaluation, event, class.
+- Use linkedEntityId for assignment/skill blocks when relevant.
+- Output ISO timestamps.
+- No markdown, no prose.`;
 
     const userPrompt = `Context:\n${JSON.stringify(payload)}`;
+    console.log(`[SmartSchedule] AI payload chars=${userPrompt.length}`);
 
-    const result = await this.generateContentWithFallback({
-      systemPrompt,
-      userPrompt,
-    });
+    const tAi = Date.now();
+    const parseResult = (result: any) => {
+      const text = result?.text?.trim() || result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const json = extractJson(text);
+      return aiScheduleResponseSchema.parse(json).scheduleItems;
+    };
 
-    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const json = extractJson(text);
-    const parsed = aiScheduleResponseSchema.parse(json);
-
-    return parsed.scheduleItems;
+    try {
+      const result = await this.generateContentWithFallback({
+        systemPrompt,
+        userPrompt,
+        thinkingBudget: 0,
+      });
+      console.log(`[SmartSchedule] AI generation in ${Date.now() - tAi}ms`);
+      return parseResult(result);
+    } catch (error: any) {
+      console.warn('[SmartSchedule] First AI parse/generation failed, retrying with compact prompt:', error?.message || error);
+      const compactPayload = {
+        date: context.dateStr,
+        goals: request.goals,
+        dayWindow: request.dayWindow || { start: DEFAULT_DAY_START, end: DEFAULT_DAY_END },
+        sleepWindow: request.sleepWindow || null,
+        freeSlots: context.freeSlots.map((s: any) => ({
+          startDateTime: s.startDateTime.toISOString(),
+          endDateTime: s.endDateTime.toISOString(),
+        })),
+        topAssignments: context.assignments.slice(0, 2).map((a: any) => ({
+          id: a.id,
+          title: a.title,
+          dueDate: a.dueDate,
+          priority: a.priority,
+        })),
+      };
+      const retrySystemPrompt = `Return ONLY valid JSON {"scheduleItems":[...]} with no extra text. If no feasible slot, return {"scheduleItems":[]} exactly.`;
+      const retryUserPrompt = `Context:\n${JSON.stringify(compactPayload)}`;
+      const retryResult = await this.generateContentWithFallback({
+        systemPrompt: retrySystemPrompt,
+        userPrompt: retryUserPrompt,
+        thinkingBudget: 0,
+      });
+      console.log(`[SmartSchedule] AI retry generation in ${Date.now() - tAi}ms`);
+      return parseResult(retryResult);
+    }
   }
 
   async optimizeDay(userId: string, request: OptimizeDayRequest) {
-    const inferredSleep = extractSleepWindowFromText(request.additionalPreferences);
-    const sleepWindow = resolveSleepWindow(request.sleepWindow, inferredSleep);
+    const t0 = Date.now();
+    const sleepWindow = request.sleepWindow;
     const dateStr = request.date || formatDate(new Date());
     const context = await this.getContext(userId, dateStr, {
       ...request,
@@ -406,6 +555,13 @@ export class SmartScheduleService {
       ...request,
       sleepWindow,
     });
+    console.log(`[SmartSchedule] Flexible items generated in ${Date.now() - t0}ms`);
+
+    const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000);
+    await db
+      .update(schedules)
+      .set({ isActive: false })
+      .where(eq(schedules.userId, userId));
 
     const [schedule] = await db
       .insert(schedules)
@@ -413,7 +569,8 @@ export class SmartScheduleService {
         userId,
         name: request.scheduleName || `Optimized Day ${dateStr}`,
         description: request.additionalPreferences || null,
-        isActive: false,
+        isActive: true,
+        expiresAt,
       })
       .returning();
 
@@ -428,6 +585,7 @@ export class SmartScheduleService {
       startDateTime: block.startDateTime,
       endDateTime: block.endDateTime,
       location: block.location || null,
+      color: block.color || getItemColor(block.type, block.title),
     }));
 
     const aiItems = flexibleItems.map((item) => ({
@@ -441,9 +599,49 @@ export class SmartScheduleService {
       startDateTime: new Date(item.startDateTime),
       endDateTime: new Date(item.endDateTime),
       location: item.location || null,
+      color: getItemColor(item.type, item.title),
     }));
 
-    const allItems = [...fixedItems, ...aiItems].sort(
+    const [activeSchedule] = await db
+      .select()
+      .from(schedules)
+      .where(and(eq(schedules.userId, userId), eq(schedules.isActive, true)))
+      .orderBy(desc(schedules.createdAt))
+      .limit(1);
+
+    let carryOverItems: any[] = [];
+    if (activeSchedule) {
+      const existingItems = await db
+        .select()
+        .from(scheduleItems)
+        .where(eq(scheduleItems.scheduleId, activeSchedule.id));
+
+      const window = normalizeDayWindow(dateStr, request.dayWindow);
+      carryOverItems = existingItems
+        .filter((item) => {
+          const start = new Date(item.startDateTime);
+          return start < window.start || start >= window.end;
+        })
+        .map((item) => ({
+          scheduleId: schedule.id,
+          userId,
+          title: item.title,
+          description: item.description,
+          type: item.type,
+          linkedEntityId: item.linkedEntityId,
+          linkedEntityType: item.linkedEntityType,
+          startDateTime: item.startDateTime,
+          endDateTime: item.endDateTime,
+          isRecurring: item.isRecurring,
+          recurrencePattern: item.recurrencePattern,
+          recurrenceEndDate: item.recurrenceEndDate,
+          dayOfWeek: item.dayOfWeek,
+          location: item.location,
+          color: item.color,
+        }));
+    }
+
+    const allItems = [...carryOverItems, ...fixedItems, ...aiItems].sort(
       (a, b) => a.startDateTime.getTime() - b.startDateTime.getTime()
     );
 
@@ -451,7 +649,12 @@ export class SmartScheduleService {
       await db.insert(scheduleItems).values(allItems);
     }
 
-    return { schedule, items: allItems };
+    return {
+      schedule,
+      items: allItems,
+      expiresAt,
+      expiresInHours: Math.max(0, Math.round((expiresAt.getTime() - Date.now()) / (60 * 60 * 1000))),
+    };
   }
 
   async editSchedule(userId: string, request: EditScheduleRequest) {

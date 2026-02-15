@@ -1,5 +1,6 @@
 import { eq, and, desc, sql, gte } from 'drizzle-orm';
 import { db } from '../../core/database/client';
+import { GoogleGenAI } from '@google/genai';
 import {
     studentProfiles,
     studentAcademics,
@@ -10,6 +11,7 @@ import {
     studentEvaluations,
     schedules,
     scheduleItems,
+    campusEvents,
     type learningStyleEnum
 } from './student-profile.schema';
 import { user as userTable } from '../auth/auth.schema';
@@ -20,6 +22,7 @@ import { user as userTable } from '../auth/auth.schema';
  */
 
 export class StudentProfileService {
+    private aiTipsCache = new Map<string, { expiresAt: number; data: any }>();
 
     /**
      * Create or Update Profile Profile
@@ -235,7 +238,8 @@ export class StudentProfileService {
         const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
 
         // Get upcoming assignments (due in next 7 days)
-        const now = new Date();
+        const timeZone = process.env.DEFAULT_TIMEZONE || 'Asia/Kolkata';
+        const now = this.getZonedNow(timeZone);
         const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
         const assignments = await db.select()
@@ -248,6 +252,7 @@ export class StudentProfileService {
             )
             .orderBy(studentAssignments.dueDate)
             .limit(10);
+        const pendingAssignments = assignments.filter(a => a.status !== 'completed' && a.status !== 'graded' && a.status !== 'submitted');
 
         // Get upcoming evaluations (next 30 days)
         const monthFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
@@ -263,7 +268,11 @@ export class StudentProfileService {
             .orderBy(studentEvaluations.date)
             .limit(10);
 
-        // Get active schedule
+        // Get what's up next from active schedule (next upcoming item, no matter how far)
+        let whatsUpNext = null;
+        let ongoingItem: any = null;
+        let scheduledItems: Array<{ item: any; nextStart: Date; nextEnd: Date | null }> = [];
+        let upcomingEvents: any[] = [];
         const [activeSchedule] = await db.select()
             .from(schedules)
             .where(
@@ -274,56 +283,180 @@ export class StudentProfileService {
             )
             .limit(1);
 
-        // Get what's up next from schedule (next upcoming item, no matter how far)
-        let whatsUpNext = null;
         if (activeSchedule) {
-            // Get all schedule items (both recurring and one-time)
             const allItems = await db.select()
                 .from(scheduleItems)
                 .where(eq(scheduleItems.scheduleId, activeSchedule.id));
 
-            // Calculate next occurrence for each item
-            const itemsWithNextOccurrence = allItems
+            scheduledItems = allItems
                 .map(item => {
-                    let nextOccurrence: Date;
+                    let nextStart: Date | null = null;
+                    let nextEnd: Date | null = null;
 
                     if (item.isRecurring && item.recurrencePattern === 'weekly' && item.dayOfWeek) {
-                        // For recurring weekly items, calculate next occurrence
-                        nextOccurrence = this.calculateNextWeeklyOccurrence(
+                        const nextOccurrence = this.calculateNextWeeklyOccurrence(
                             item.dayOfWeek,
                             item.startDateTime
                         );
+                        const endTemplate = item.endDateTime || item.startDateTime;
+                        const occurrenceEnd = new Date(nextOccurrence);
+                        occurrenceEnd.setHours(endTemplate.getHours(), endTemplate.getMinutes(), 0, 0);
+
+                        if (nextOccurrence <= now && occurrenceEnd >= now) {
+                            nextStart = now;
+                            nextEnd = occurrenceEnd;
+                        } else {
+                            nextStart = nextOccurrence;
+                            nextEnd = occurrenceEnd;
+                        }
                     } else {
-                        // For one-time events, use the startDateTime as-is
-                        nextOccurrence = item.startDateTime;
+                        const start = this.interpretAsZonedWallTime(item.startDateTime, timeZone);
+                        let end = item.endDateTime
+                            ? this.interpretAsZonedWallTime(item.endDateTime, timeZone)
+                            : start;
+                        if (end.getTime() === start.getTime()) {
+                            end = new Date(start.getTime() + 60 * 60 * 1000);
+                        }
+                        if (end >= now) {
+                            nextStart = start <= now ? now : start;
+                            nextEnd = end;
+                        }
                     }
 
-                    return {
-                        item,
-                        nextOccurrence,
-                    };
+                    if (!nextStart) return null;
+                    return { item, nextStart, nextEnd };
                 })
-                .filter(({ nextOccurrence }) => nextOccurrence >= now) // Only future occurrences
-                .sort((a, b) => a.nextOccurrence.getTime() - b.nextOccurrence.getTime()); // Sort by time
+                .filter((entry): entry is { item: any; nextStart: Date; nextEnd: Date | null } => Boolean(entry));
 
-            // Get the next upcoming item
-            if (itemsWithNextOccurrence.length > 0) {
-                const { item, nextOccurrence } = itemsWithNextOccurrence[0];
+            upcomingEvents = await db.select()
+                .from(campusEvents)
+                .where(
+                    and(
+                        eq(campusEvents.userId, userId),
+                        eq(campusEvents.isEnrolled, true),
+                        gte(campusEvents.date, now)
+                    )
+                )
+                .orderBy(campusEvents.date)
+                .limit(5);
 
+            const eventCandidates = upcomingEvents.map(event => {
+                const start = this.interpretAsZonedWallTime(event.date, timeZone);
+                let end = event.endDate ? this.interpretAsZonedWallTime(event.endDate, timeZone) : start;
+                if (end.getTime() === start.getTime()) {
+                    end = new Date(start.getTime() + 60 * 60 * 1000);
+                }
+                return {
+                    event,
+                    nextStart: start,
+                    nextEnd: end,
+                };
+            });
+
+            const classCandidates = scheduledItems.filter(entry => entry.item.type === 'class');
+            const nonClassCandidates = scheduledItems.filter(entry => entry.item.type !== 'class');
+
+            const ongoingCandidates = scheduledItems.filter(entry => entry.nextStart <= now && (entry.nextEnd || entry.nextStart) >= now);
+            const ongoingEventCandidates = eventCandidates.filter(entry => entry.nextStart <= now && (entry.nextEnd || entry.nextStart) >= now);
+
+            if (ongoingCandidates.length > 0) {
+                const active = ongoingCandidates.sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime())[0];
+                ongoingItem = {
+                    id: active.item.id,
+                    type: active.item.type,
+                    title: active.item.title,
+                    description: active.item.description,
+                    startDateTime: active.nextStart.toISOString(),
+                    endDateTime: active.nextEnd ? active.nextEnd.toISOString() : active.item.endDateTime?.toISOString(),
+                    location: active.item.location,
+                    linkedEntityType: active.item.linkedEntityType,
+                    color: active.item.color,
+                    isRecurring: active.item.isRecurring,
+                    dayOfWeek: active.item.dayOfWeek,
+                };
+            } else if (ongoingEventCandidates.length > 0) {
+                const activeEvent = ongoingEventCandidates.sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime())[0];
+                ongoingItem = {
+                    id: activeEvent.event.id,
+                    type: 'event',
+                    title: activeEvent.event.title,
+                    description: activeEvent.event.description,
+                    startDateTime: activeEvent.nextStart.toISOString(),
+                    endDateTime: activeEvent.nextEnd ? activeEvent.nextEnd.toISOString() : null,
+                    location: activeEvent.event.location,
+                    linkedEntityType: 'event',
+                    color: null,
+                    isRecurring: false,
+                    dayOfWeek: null,
+                };
+            }
+
+            const upcomingClasses = classCandidates.filter(entry => entry.nextStart > now);
+            const upcomingNonClasses = nonClassCandidates.filter(entry => entry.nextStart > now);
+            const upcomingEventsOnly = eventCandidates.filter(entry => entry.nextStart > now);
+
+            const nextClass = upcomingClasses.sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime())[0] || null;
+            const nextEvent = upcomingEventsOnly.sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime())[0] || null;
+            const nextNonClass = upcomingNonClasses.sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime())[0] || null;
+
+            let pick = null;
+            if (nextClass && nextEvent) {
+                const classStart = nextClass.nextStart;
+                const classEnd = nextClass.nextEnd || nextClass.nextStart;
+                const eventStart = nextEvent.nextStart;
+                const eventEnd = nextEvent.nextEnd || nextEvent.nextStart;
+
+                const overlaps = classStart < eventEnd && classEnd > eventStart;
+                if (overlaps) {
+                    pick = { type: 'schedule', payload: nextClass };
+                } else {
+                    pick = classStart <= eventStart
+                        ? { type: 'schedule', payload: nextClass }
+                        : { type: 'event', payload: nextEvent };
+                }
+            } else if (nextClass) {
+                pick = { type: 'schedule', payload: nextClass };
+            } else if (nextEvent) {
+                pick = { type: 'event', payload: nextEvent };
+            } else if (nextNonClass) {
+                pick = { type: 'schedule', payload: nextNonClass };
+            }
+
+            if (pick?.type === 'event') {
+                const { event, nextStart, nextEnd } = pick.payload;
+                whatsUpNext = {
+                    id: event.id,
+                    type: 'event',
+                    title: event.title,
+                    description: event.description,
+                    startDateTime: nextStart.toISOString(),
+                    endDateTime: nextEnd ? nextEnd.toISOString() : null,
+                    startDateTimeLocal: this.toLocalIso(nextStart),
+                    endDateTimeLocal: nextEnd ? this.toLocalIso(nextEnd) : null,
+                    location: event.location,
+                    linkedEntityType: 'event',
+                    color: null,
+                    isRecurring: false,
+                    dayOfWeek: null,
+                    timeUntil: this.calculateTimeUntil(nextStart, now),
+                };
+            } else if (pick?.type === 'schedule') {
+                const { item, nextStart, nextEnd } = pick.payload;
                 whatsUpNext = {
                     id: item.id,
                     type: item.type,
                     title: item.title,
                     description: item.description,
-                    startDateTime: nextOccurrence.toISOString(),
-                    endDateTime: item.endDateTime?.toISOString(),
+                    startDateTime: nextStart.toISOString(),
+                    endDateTime: nextEnd ? nextEnd.toISOString() : item.endDateTime?.toISOString(),
+                    startDateTimeLocal: this.toLocalIso(nextStart),
+                    endDateTimeLocal: nextEnd ? this.toLocalIso(nextEnd) : item.endDateTime ? this.toLocalIso(item.endDateTime) : null,
                     location: item.location,
                     linkedEntityType: item.linkedEntityType,
                     color: item.color,
                     isRecurring: item.isRecurring,
                     dayOfWeek: item.dayOfWeek,
-                    // Calculate time until event
-                    timeUntil: this.calculateTimeUntil(nextOccurrence),
+                    timeUntil: this.calculateTimeUntil(nextStart, now),
                 };
             }
         }
@@ -358,9 +491,140 @@ export class StudentProfileService {
                 duration: e.duration,
                 description: e.description,
             })),
+            ongoing: ongoingItem,
             behavior: behaviorAnalysis,
-            aiTips: this.generateAiTips(assignments, evaluations, whatsUpNext),
         };
+    }
+
+    async getAiTips(userId: string) {
+        const cached = this.aiTipsCache.get(userId);
+        if (cached && cached.expiresAt > Date.now()) {
+            return cached.data;
+        }
+        const now = new Date();
+
+        const assignments = await db.select()
+            .from(studentAssignments)
+            .where(
+                and(
+                    eq(studentAssignments.userId, userId),
+                    gte(studentAssignments.dueDate, now)
+                )
+            )
+            .orderBy(studentAssignments.dueDate)
+            .limit(10);
+
+        const pendingAssignments = assignments.filter(a => a.status !== 'completed' && a.status !== 'graded' && a.status !== 'submitted');
+
+        const evaluations = await db.select()
+            .from(studentEvaluations)
+            .where(
+                and(
+                    eq(studentEvaluations.userId, userId),
+                    gte(studentEvaluations.date, now)
+                )
+            )
+            .orderBy(studentEvaluations.date)
+            .limit(10);
+
+        const events = await db.select()
+            .from(campusEvents)
+            .where(
+                and(
+                    eq(campusEvents.userId, userId),
+                    eq(campusEvents.isEnrolled, true),
+                    gte(campusEvents.date, now)
+                )
+            )
+            .orderBy(campusEvents.date)
+            .limit(10);
+
+        const [activeSchedule] = await db.select()
+            .from(schedules)
+            .where(
+                and(
+                    eq(schedules.userId, userId),
+                    eq(schedules.isActive, true)
+                )
+            )
+            .limit(1);
+
+        let scheduleSummary: any[] = [];
+        if (activeSchedule) {
+            const items = await db.select()
+                .from(scheduleItems)
+                .where(eq(scheduleItems.scheduleId, activeSchedule.id))
+                .orderBy(scheduleItems.startDateTime)
+                .limit(15);
+
+            scheduleSummary = items.map((item) => ({
+                title: item.title,
+                type: item.type,
+                start: item.startDateTime,
+                end: item.endDateTime,
+            }));
+        }
+
+        const ai = this.getAiClient();
+        const model = this.getAiModel();
+        const payload = {
+            now: now.toISOString(),
+            schedule: scheduleSummary,
+            assignments: pendingAssignments.map(a => ({
+                title: a.title,
+                due: a.dueDate,
+                course: a.courseCode,
+                priority: a.priority,
+                status: a.status,
+            })),
+            evaluations: evaluations.map(e => ({
+                title: e.title,
+                date: e.date,
+                course: e.courseCode,
+                type: e.type,
+            })),
+            events: events.map(e => ({
+                title: e.title,
+                date: e.date,
+                endDate: e.endDate,
+                location: e.location,
+            })),
+        };
+
+        const systemPrompt = 'You are a helpful student planner. Return 1-3 concise tips as a JSON array of strings. No markdown. Look for schedule clashes ONLY within the current day and mention them.';
+        const userPrompt = `Context: ${JSON.stringify(payload)}`;
+
+        const result = await ai.models.generateContent({
+            model,
+            contents: [{ role: 'user', parts: [{ text: systemPrompt + '\\n' + userPrompt }] }],
+            config: { temperature: 0.2 },
+        });
+
+        const text = result.text?.trim() || '';
+        const start = text.indexOf('[');
+        const end = text.lastIndexOf(']');
+        if (start === -1 || end === -1) {
+            return { tips: [] };
+        }
+        const parsed = JSON.parse(text.slice(start, end + 1));
+        if (!Array.isArray(parsed)) return { tips: [] };
+        const data = { tips: parsed.slice(0, 3) };
+        this.aiTipsCache.set(userId, { expiresAt: Date.now() + 60 * 60 * 1000, data });
+        return data;
+    }
+
+    private getAiClient() {
+        const projectId =
+            process.env.GOOGLE_CLOUD_PROJECT ||
+            process.env.GCP_PROJECT_ID ||
+            process.env.VERTEX_PROJECT_ID;
+        if (!projectId) throw new Error('Google Cloud project ID not configured');
+        const location = process.env.GCP_LOCATION || 'global';
+        return new GoogleGenAI({ vertexai: true, project: projectId, location });
+    }
+
+    private getAiModel() {
+        return process.env.STUDENT_PROFILE_TIPS_MODEL || process.env.GEMINI_MODEL || 'gemini-2.5-flash';
     }
 
     /**
@@ -378,9 +642,9 @@ export class StudentProfileService {
         const now = new Date();
         const currentDayIndex = now.getDay();
 
-        // Extract time from template (in UTC to match how we store them)
-        const hours = templateDateTime.getUTCHours();
-        const minutes = templateDateTime.getUTCMinutes();
+        // Extract time from template in local time
+        const hours = templateDateTime.getHours();
+        const minutes = templateDateTime.getMinutes();
 
         // Calculate days until next occurrence
         let daysUntil = targetDayIndex - currentDayIndex;
@@ -388,7 +652,7 @@ export class StudentProfileService {
         // If target day is today, check if time has passed
         if (daysUntil === 0) {
             const todayAtTargetTime = new Date(now);
-            todayAtTargetTime.setUTCHours(hours, minutes, 0, 0);
+            todayAtTargetTime.setHours(hours, minutes, 0, 0);
 
             // If time has passed, use next week
             if (todayAtTargetTime <= now) {
@@ -402,7 +666,7 @@ export class StudentProfileService {
         // Create next occurrence date
         const nextOccurrence = new Date(now);
         nextOccurrence.setDate(now.getDate() + daysUntil);
-        nextOccurrence.setUTCHours(hours, minutes, 0, 0);
+        nextOccurrence.setHours(hours, minutes, 0, 0);
 
         return nextOccurrence;
     }
@@ -410,12 +674,16 @@ export class StudentProfileService {
     /**
      * Calculate human-readable time until an event
      */
-    private calculateTimeUntil(futureDate: Date): string {
-        const now = new Date();
+    private calculateTimeUntil(futureDate: Date, nowOverride?: Date): string {
+        const now = nowOverride || new Date();
         const diffMs = futureDate.getTime() - now.getTime();
         const diffMins = Math.floor(diffMs / (1000 * 60));
         const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffMins < 0) {
+            return 'ongoing';
+        }
 
         if (diffMins < 60) {
             return `in ${diffMins} minute${diffMins !== 1 ? 's' : ''}`;
@@ -435,12 +703,60 @@ export class StudentProfileService {
         }
     }
 
+    private toLocalIso(date: Date): string {
+        const pad = (n: number) => String(n).padStart(2, '0');
+        return [
+            date.getFullYear(),
+            pad(date.getMonth() + 1),
+            pad(date.getDate()),
+        ].join('-') + 'T' +
+            [pad(date.getHours()), pad(date.getMinutes()), pad(date.getSeconds())].join(':');
+    }
+
+    private interpretAsZonedWallTime(date: Date, timeZone: string): Date {
+        const wall = new Date(Date.UTC(
+            date.getUTCFullYear(),
+            date.getUTCMonth(),
+            date.getUTCDate(),
+            date.getUTCHours(),
+            date.getUTCMinutes(),
+            date.getUTCSeconds(),
+            date.getUTCMilliseconds()
+        ));
+        return wall;
+    }
+
+    private getZonedNow(timeZone: string): Date {
+        const parts = new Intl.DateTimeFormat('en-US', {
+            timeZone,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+        }).formatToParts(new Date());
+        const lookup = (type: string) => parts.find(p => p.type === type)?.value || '00';
+        const year = Number(lookup('year'));
+        const month = Number(lookup('month'));
+        const day = Number(lookup('day'));
+        const hour = Number(lookup('hour'));
+        const minute = Number(lookup('minute'));
+        const second = Number(lookup('second'));
+        return new Date(Date.UTC(year, month - 1, day, hour, minute, second, 0));
+    }
+
     /**
      * Generate AI Tips based on upcoming items and schedule
      */
-    private generateAiTips(assignments: any[], evaluations: any[], whatsUpNext: any): string[] {
+    private generateAiTips(assignments: any[], evaluations: any[], whatsUpNext: any, events: any[] = [], scheduleItems: any[] = []): string[] {
         const tips: string[] = [];
         const now = new Date();
+        const clashTips = this.detectClashes(events, scheduleItems);
+        for (const tip of clashTips) {
+            tips.push(tip);
+        }
 
         // Tip about what's up next
         if (whatsUpNext) {
@@ -526,6 +842,46 @@ export class StudentProfileService {
                 '🚀 Smooth sailing ahead! Use this time wisely to stay ahead of deadlines.',
             ];
             tips.push(motivationalTips[Math.floor(Math.random() * motivationalTips.length)]);
+        }
+
+        return tips;
+    }
+
+    private detectClashes(events: any[], scheduleItems: any[]): string[] {
+        const tips: string[] = [];
+        if (!events.length || !scheduleItems.length) return tips;
+
+        const upcomingEvents = events
+            .filter((e) => e?.date)
+            .map((e) => ({
+                title: e.title,
+                start: new Date(e.date),
+                end: e.endDate ? new Date(e.endDate) : new Date(e.date),
+            }));
+
+        const upcomingSchedule = scheduleItems
+            .map((entry) => {
+                const item = entry.item ?? entry;
+                const nextStart = entry.nextStart ? new Date(entry.nextStart) : new Date(item.startDateTime);
+                const nextEnd = entry.nextEnd ? new Date(entry.nextEnd) : new Date(item.endDateTime || item.startDateTime);
+                return {
+                    title: item.title,
+                    type: item.type,
+                    start: nextStart,
+                    end: nextEnd,
+                };
+            })
+            .filter((s) => s.end >= new Date());
+
+        for (const event of upcomingEvents) {
+            const clashes = upcomingSchedule.filter(
+                (s) => event.start < s.end && event.end > s.start
+            );
+            if (clashes.length > 0) {
+                const top = clashes[0];
+                tips.push(`⚠️ Clash detected: "${event.title}" overlaps with "${top.title}". Classes/labs are prioritized.`);
+                break;
+            }
         }
 
         return tips;

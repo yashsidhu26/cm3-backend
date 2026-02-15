@@ -194,6 +194,7 @@ export const schedules = pgTable('schedules', {
     isActive: boolean('is_active').notNull().default(false), // Only one can be active
     semester: semesterEnum('semester'),
     year: varchar('year', { length: 10 }),
+    expiresAt: timestamp('expires_at'), // Optional expiry for temporary schedules
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });

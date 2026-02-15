@@ -227,6 +227,20 @@ app.get('/focus-data', protect, async (c) => {
     }
 });
 
+/**
+ * GET /focus-data/ai-tips
+ * AI-generated tips for focus screen
+ */
+app.get('/focus-data/ai-tips', protect, async (c) => {
+    try {
+        const user = c.get('user');
+        const tips = await studentProfileService.getAiTips(user.id);
+        return successResponse(c, tips);
+    } catch (error: any) {
+        return errorResponse(c, error.message || 'Failed to fetch AI tips', 500);
+    }
+});
+
 // ============================================
 // SPLIT DATA ENDPOINTS (Performance Optimized)
 // ============================================
@@ -1135,7 +1149,18 @@ app.get('/schedules', protect, async (c) => {
             .where(eq(schedules.userId, user.id))
             .orderBy(desc(schedules.isActive), desc(schedules.createdAt));
 
-        return successResponse(c, userSchedules);
+        const now = Date.now();
+        const mapped = userSchedules.map((schedule) => {
+            const expiresAt = schedule.expiresAt ? new Date(schedule.expiresAt) : null;
+            const expiresInHours =
+                expiresAt ? Math.max(0, Math.round((expiresAt.getTime() - now) / (60 * 60 * 1000))) : null;
+            return {
+                ...schedule,
+                expiresInHours,
+            };
+        });
+
+        return successResponse(c, mapped);
     } catch (error: any) {
         return errorResponse(c, error.message || 'Failed to fetch schedules', 500);
     }
