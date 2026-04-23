@@ -238,8 +238,7 @@ export class StudentProfileService {
         const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
 
         // Get upcoming assignments (due in next 7 days)
-        const timeZone = process.env.DEFAULT_TIMEZONE || 'Asia/Kolkata';
-        const now = this.getZonedNow(timeZone);
+        const now = new Date();
         const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
         const assignments = await db.select()
@@ -255,8 +254,6 @@ export class StudentProfileService {
         const pendingAssignments = assignments.filter(a => a.status !== 'completed' && a.status !== 'graded' && a.status !== 'submitted');
 
         // Get upcoming evaluations (next 30 days)
-        const monthFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-
         const evaluations = await db.select()
             .from(studentEvaluations)
             .where(
@@ -300,7 +297,7 @@ export class StudentProfileService {
                         );
                         const endTemplate = item.endDateTime || item.startDateTime;
                         const occurrenceEnd = new Date(nextOccurrence);
-                        occurrenceEnd.setHours(endTemplate.getHours(), endTemplate.getMinutes(), 0, 0);
+                        occurrenceEnd.setUTCHours(endTemplate.getUTCHours(), endTemplate.getUTCMinutes(), 0, 0);
 
                         if (nextOccurrence <= now && occurrenceEnd >= now) {
                             nextStart = now;
@@ -310,10 +307,8 @@ export class StudentProfileService {
                             nextEnd = occurrenceEnd;
                         }
                     } else {
-                        const start = this.interpretAsZonedWallTime(item.startDateTime, timeZone);
-                        let end = item.endDateTime
-                            ? this.interpretAsZonedWallTime(item.endDateTime, timeZone)
-                            : start;
+                        const start = new Date(item.startDateTime);
+                        let end = item.endDateTime ? new Date(item.endDateTime) : start;
                         if (end.getTime() === start.getTime()) {
                             end = new Date(start.getTime() + 60 * 60 * 1000);
                         }
@@ -341,8 +336,8 @@ export class StudentProfileService {
                 .limit(5);
 
             const eventCandidates = upcomingEvents.map(event => {
-                const start = this.interpretAsZonedWallTime(event.date, timeZone);
-                let end = event.endDate ? this.interpretAsZonedWallTime(event.endDate, timeZone) : start;
+                const start = new Date(event.date);
+                let end = event.endDate ? new Date(event.endDate) : start;
                 if (end.getTime() === start.getTime()) {
                     end = new Date(start.getTime() + 60 * 60 * 1000);
                 }
@@ -392,34 +387,38 @@ export class StudentProfileService {
             }
 
             const upcomingClasses = classCandidates.filter(entry => entry.nextStart > now);
-            const upcomingNonClasses = nonClassCandidates.filter(entry => entry.nextStart > now);
-            const upcomingEventsOnly = eventCandidates.filter(entry => entry.nextStart > now);
+            const upcomingScheduleCandidates = scheduledItems
+                .filter(entry => entry.nextStart > now)
+                .sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime());
+            const upcomingEventCandidates = eventCandidates
+                .filter(entry => entry.nextStart > now)
+                .sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime());
 
-            const nextClass = upcomingClasses.sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime())[0] || null;
-            const nextEvent = upcomingEventsOnly.sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime())[0] || null;
-            const nextNonClass = upcomingNonClasses.sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime())[0] || null;
+            const unifiedCandidates = [
+                ...upcomingScheduleCandidates.map((payload) => ({ type: 'schedule' as const, payload, nextStart: payload.nextStart })),
+                ...upcomingEventCandidates.map((payload) => ({ type: 'event' as const, payload, nextStart: payload.nextStart })),
+            ].sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime());
 
-            let pick = null;
-            if (nextClass && nextEvent) {
-                const classStart = nextClass.nextStart;
-                const classEnd = nextClass.nextEnd || nextClass.nextStart;
-                const eventStart = nextEvent.nextStart;
-                const eventEnd = nextEvent.nextEnd || nextEvent.nextStart;
+            let pick: { type: 'schedule' | 'event'; payload: any } | null = unifiedCandidates[0]
+                ? { type: unifiedCandidates[0].type, payload: unifiedCandidates[0].payload }
+                : null;
 
-                const overlaps = classStart < eventEnd && classEnd > eventStart;
-                if (overlaps) {
-                    pick = { type: 'schedule', payload: nextClass };
-                } else {
-                    pick = classStart <= eventStart
-                        ? { type: 'schedule', payload: nextClass }
-                        : { type: 'event', payload: nextEvent };
+            // Classes are prioritized only when they clash with the soonest candidate.
+            if (pick) {
+                const pickStart = pick.payload.nextStart;
+                const pickEnd = pick.payload.nextEnd || pick.payload.nextStart;
+                const overlappingClass = upcomingClasses
+                    .sort((a, b) => a.nextStart.getTime() - b.nextStart.getTime())
+                    .find((candidate) => {
+                        const classStart = candidate.nextStart;
+                        const classEnd = candidate.nextEnd || candidate.nextStart;
+                        return classStart < pickEnd && classEnd > pickStart;
+                    });
+
+                const pickedType = pick.type === 'schedule' ? pick.payload.item?.type : 'event';
+                if (overlappingClass && pickedType !== 'class') {
+                    pick = { type: 'schedule', payload: overlappingClass };
                 }
-            } else if (nextClass) {
-                pick = { type: 'schedule', payload: nextClass };
-            } else if (nextEvent) {
-                pick = { type: 'event', payload: nextEvent };
-            } else if (nextNonClass) {
-                pick = { type: 'schedule', payload: nextNonClass };
             }
 
             if (pick?.type === 'event') {
@@ -431,8 +430,6 @@ export class StudentProfileService {
                     description: event.description,
                     startDateTime: nextStart.toISOString(),
                     endDateTime: nextEnd ? nextEnd.toISOString() : null,
-                    startDateTimeLocal: this.toLocalIso(nextStart),
-                    endDateTimeLocal: nextEnd ? this.toLocalIso(nextEnd) : null,
                     location: event.location,
                     linkedEntityType: 'event',
                     color: null,
@@ -449,8 +446,6 @@ export class StudentProfileService {
                     description: item.description,
                     startDateTime: nextStart.toISOString(),
                     endDateTime: nextEnd ? nextEnd.toISOString() : item.endDateTime?.toISOString(),
-                    startDateTimeLocal: this.toLocalIso(nextStart),
-                    endDateTimeLocal: nextEnd ? this.toLocalIso(nextEnd) : item.endDateTime ? this.toLocalIso(item.endDateTime) : null,
                     location: item.location,
                     linkedEntityType: item.linkedEntityType,
                     color: item.color,
@@ -640,11 +635,11 @@ export class StudentProfileService {
         }
 
         const now = new Date();
-        const currentDayIndex = now.getDay();
+        const currentDayIndex = now.getUTCDay();
 
-        // Extract time from template in local time
-        const hours = templateDateTime.getHours();
-        const minutes = templateDateTime.getMinutes();
+        // Extract time from template in UTC
+        const hours = templateDateTime.getUTCHours();
+        const minutes = templateDateTime.getUTCMinutes();
 
         // Calculate days until next occurrence
         let daysUntil = targetDayIndex - currentDayIndex;
@@ -652,7 +647,7 @@ export class StudentProfileService {
         // If target day is today, check if time has passed
         if (daysUntil === 0) {
             const todayAtTargetTime = new Date(now);
-            todayAtTargetTime.setHours(hours, minutes, 0, 0);
+            todayAtTargetTime.setUTCHours(hours, minutes, 0, 0);
 
             // If time has passed, use next week
             if (todayAtTargetTime <= now) {
@@ -665,8 +660,8 @@ export class StudentProfileService {
 
         // Create next occurrence date
         const nextOccurrence = new Date(now);
-        nextOccurrence.setDate(now.getDate() + daysUntil);
-        nextOccurrence.setHours(hours, minutes, 0, 0);
+        nextOccurrence.setUTCDate(now.getUTCDate() + daysUntil);
+        nextOccurrence.setUTCHours(hours, minutes, 0, 0);
 
         return nextOccurrence;
     }
@@ -701,50 +696,6 @@ export class StudentProfileService {
             const years = Math.floor(diffDays / 365);
             return `in ${years} year${years !== 1 ? 's' : ''}`;
         }
-    }
-
-    private toLocalIso(date: Date): string {
-        const pad = (n: number) => String(n).padStart(2, '0');
-        return [
-            date.getFullYear(),
-            pad(date.getMonth() + 1),
-            pad(date.getDate()),
-        ].join('-') + 'T' +
-            [pad(date.getHours()), pad(date.getMinutes()), pad(date.getSeconds())].join(':');
-    }
-
-    private interpretAsZonedWallTime(date: Date, timeZone: string): Date {
-        const wall = new Date(Date.UTC(
-            date.getUTCFullYear(),
-            date.getUTCMonth(),
-            date.getUTCDate(),
-            date.getUTCHours(),
-            date.getUTCMinutes(),
-            date.getUTCSeconds(),
-            date.getUTCMilliseconds()
-        ));
-        return wall;
-    }
-
-    private getZonedNow(timeZone: string): Date {
-        const parts = new Intl.DateTimeFormat('en-US', {
-            timeZone,
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false,
-        }).formatToParts(new Date());
-        const lookup = (type: string) => parts.find(p => p.type === type)?.value || '00';
-        const year = Number(lookup('year'));
-        const month = Number(lookup('month'));
-        const day = Number(lookup('day'));
-        const hour = Number(lookup('hour'));
-        const minute = Number(lookup('minute'));
-        const second = Number(lookup('second'));
-        return new Date(Date.UTC(year, month - 1, day, hour, minute, second, 0));
     }
 
     /**

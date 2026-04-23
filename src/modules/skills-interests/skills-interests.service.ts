@@ -1,5 +1,6 @@
 import { eq, and, ilike, or, inArray, desc } from 'drizzle-orm';
 import { db } from '../../core/database/client';
+import { parseUtcIsoInput } from '../../core/utils/datetime';
 import {
   skillsInterests,
   userSkillsInterests,
@@ -495,8 +496,8 @@ export class SkillsInterestsService {
         type: 'custom',
         linkedEntityId: task.id,
         linkedEntityType: 'skill_task',
-        startDateTime: new Date(data.startDateTime),
-        endDateTime: new Date(data.endDateTime),
+        startDateTime: parseUtcIsoInput(data.startDateTime),
+        endDateTime: parseUtcIsoInput(data.endDateTime),
       })
       .returning();
 

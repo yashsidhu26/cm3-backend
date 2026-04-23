@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { socialService } from './social.service';
 import { successResponse, errorResponse, createdResponse } from '../../core/utils/response';
 import { protect } from '../../core/auth/middleware';
+import { parseUtcIsoInput } from '../../core/utils/datetime';
 
 /**
  * Social Module Routes
@@ -11,6 +12,10 @@ import { protect } from '../../core/auth/middleware';
  */
 
 const social = new Hono();
+
+function parseUtcDateTime(input: string): Date {
+  return parseUtcIsoInput(input);
+}
 
 // ==================== VALIDATION SCHEMAS ====================
 
@@ -378,7 +383,7 @@ social.post('/groups/:groupId/announcements', zValidator('json', createAnnouncem
       groupId,
       userId,
       ...data,
-      meetingDate: data.meetingDate ? new Date(data.meetingDate) : undefined,
+      meetingDate: data.meetingDate ? parseUtcDateTime(data.meetingDate) : undefined,
     });
 
     return createdResponse(c, result);
@@ -638,7 +643,7 @@ social.post('/groups/:groupId/polls', zValidator('json', createPollSchema), asyn
       groupId,
       userId,
       ...data,
-      endsAt: data.endsAt ? new Date(data.endsAt) : undefined,
+      endsAt: data.endsAt ? parseUtcDateTime(data.endsAt) : undefined,
     });
 
     return createdResponse(c, result);
@@ -713,7 +718,7 @@ social.post('/groups/:groupId/tasks', zValidator('json', createTaskSchema), asyn
       groupId,
       assignedBy,
       ...data,
-      dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+      dueDate: data.dueDate ? parseUtcDateTime(data.dueDate) : undefined,
     });
 
     return createdResponse(c, result);
@@ -734,7 +739,7 @@ social.put('/tasks/:taskId', zValidator('json', updateTaskSchema), async (c) => 
 
     const updates: any = { ...data };
     if (data.dueDate) {
-      updates.dueDate = new Date(data.dueDate);
+      updates.dueDate = parseUtcDateTime(data.dueDate);
     }
 
     const task = await socialService.updateTask(taskId, updates);

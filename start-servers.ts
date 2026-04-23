@@ -18,14 +18,14 @@ console.log(`
 
 // Start main app
 console.log('🚀 Starting main app on port 3000...');
-const mainApp = spawn('bun', ['src/app.ts'], {
+const mainApp = spawn('bun', ['--hot', 'src/app.ts'], {
   stdio: 'inherit',
   env: { ...process.env, PORT: '3000' },
 });
 
 // Start streaming server
 console.log('🎯 Starting streaming server on port 4444...');
-const streamingServer = spawn('bun', ['test-isolated-server.ts'], {
+const streamingServer = spawn('bun', ['--hot', 'test-isolated-server.ts'], {
   stdio: 'inherit',
 });
 

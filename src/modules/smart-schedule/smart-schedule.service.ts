@@ -7,10 +7,11 @@ import { sectionsService } from '../academics/sections.service';
 import { skillsInterestsService } from '../skills-interests/skills-interests.service';
 import type { OptimizeDayRequest, EditScheduleRequest } from './smart-schedule.schema';
 import { aiScheduleResponseSchema } from './smart-schedule.schema';
+import { parseUtcIsoInput } from '../../core/utils/datetime';
 
 const DEFAULT_DAY_START = '06:00';
 const DEFAULT_DAY_END = '23:00';
-const DEFAULT_TIMEZONE = process.env.DEFAULT_TIMEZONE || 'Asia/Kolkata';
+const PREFERENCE_TIMEZONE = process.env.DEFAULT_TIMEZONE || 'Asia/Kolkata';
 
 type FixedBlock = {
   title: string;
@@ -24,9 +25,33 @@ type FixedBlock = {
   color?: string | null;
 };
 
+type AiCandidate = {
+  title: string;
+  description?: string | null;
+  type: 'custom' | 'assignment' | 'evaluation' | 'event' | 'class';
+  startDateTime: Date;
+  endDateTime: Date;
+  linkedEntityId?: string | null;
+  linkedEntityType?: string | null;
+  location?: string | null;
+};
+
+type GoalTarget = {
+  title: string;
+  type: 'custom' | 'assignment';
+  linkedEntityId?: string | null;
+  linkedEntityType?: string | null;
+};
+
 function parseDateParts(dateStr: string) {
   const [year, month, day] = dateStr.split('-').map(Number);
   return { year, month, day };
+}
+
+function utcTimeOnDate(dateStr: string, timeStr: string): Date {
+  const { year, month, day } = parseDateParts(dateStr);
+  const [hour, minute] = timeStr.split(':').map(Number);
+  return new Date(Date.UTC(year, month - 1, day, hour, minute, 0, 0));
 }
 
 function getZonedOffsetMinutes(date: Date, timeZone: string) {
@@ -40,6 +65,7 @@ function getZonedOffsetMinutes(date: Date, timeZone: string) {
     second: '2-digit',
     hour12: false,
   }).formatToParts(date);
+
   const lookup = (type: string) => parts.find((p) => p.type === type)?.value || '00';
   const y = Number(lookup('year'));
   const m = Number(lookup('month'));
@@ -51,31 +77,43 @@ function getZonedOffsetMinutes(date: Date, timeZone: string) {
   return (asUtc - date.getTime()) / (60 * 1000);
 }
 
-function zonedTimeToUtc(dateStr: string, timeStr: string, timeZone: string): Date {
+function localWallTimeToUtc(dateStr: string, timeStr: string, timeZone: string): Date {
   const { year, month, day } = parseDateParts(dateStr);
   const [hour, minute] = timeStr.split(':').map(Number);
   const utcGuess = Date.UTC(year, month - 1, day, hour, minute, 0, 0);
   const guessDate = new Date(utcGuess);
   const offsetMinutes = getZonedOffsetMinutes(guessDate, timeZone);
-  const corrected = utcGuess - offsetMinutes * 60 * 1000;
-  return new Date(corrected);
+  return new Date(utcGuess - offsetMinutes * 60 * 1000);
 }
 
 function toDateTime(dateStr: string, timeStr: string, addDay: boolean = false): Date {
-  const base = zonedTimeToUtc(dateStr, timeStr, DEFAULT_TIMEZONE);
+  const base = utcTimeOnDate(dateStr, timeStr);
   if (addDay) {
     base.setUTCDate(base.getUTCDate() + 1);
   }
   return base;
 }
 
+function isClockTime(value: string) {
+  return /^\d{2}:\d{2}$/.test(value);
+}
+
+function parseWindowPoint(dateStr: string, value: string): Date {
+  if (isClockTime(value)) {
+    return toDateTime(dateStr, value);
+  }
+  return parseUtcIsoInput(value);
+}
+
 function normalizeDayWindow(dateStr: string, window?: { start: string; end: string }) {
   const startTime = window?.start || DEFAULT_DAY_START;
   const endTime = window?.end || DEFAULT_DAY_END;
-  const start = toDateTime(dateStr, startTime);
-  const endRaw = toDateTime(dateStr, endTime);
+  const start = parseWindowPoint(dateStr, startTime);
+  const endRaw = parseWindowPoint(dateStr, endTime);
   // If end time is earlier than start, it means sleep crosses midnight.
-  const end = endRaw <= start ? toDateTime(dateStr, endTime, true) : endRaw;
+  const end = endRaw <= start
+    ? (isClockTime(endTime) ? toDateTime(dateStr, endTime, true) : new Date(endRaw.getTime() + 24 * 60 * 60 * 1000))
+    : endRaw;
   return { start, end };
 }
 
@@ -91,10 +129,12 @@ function normalizeSleepWindow(
     };
   }
 
-  const start = toDateTime(dateStr, sleepWindow.start);
-  let end = toDateTime(dateStr, sleepWindow.end);
+  const start = parseWindowPoint(dateStr, sleepWindow.start);
+  let end = parseWindowPoint(dateStr, sleepWindow.end);
   if (end <= start) {
-    end = toDateTime(dateStr, sleepWindow.end, true);
+    end = isClockTime(sleepWindow.end)
+      ? toDateTime(dateStr, sleepWindow.end, true)
+      : new Date(end.getTime() + 24 * 60 * 60 * 1000);
   }
   return { start, end };
 }
@@ -111,7 +151,7 @@ function formatDate(date: Date): string {
 function dayOfWeek(dateStr: string): string {
   const { year, month, day } = parseDateParts(dateStr);
   const date = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
-  return date.toLocaleDateString('en-US', { weekday: 'long', timeZone: DEFAULT_TIMEZONE });
+  return date.toLocaleDateString('en-US', { weekday: 'long', timeZone: PREFERENCE_TIMEZONE });
 }
 
 function computeFreeSlots(dayStart: Date, dayEnd: Date, fixedBlocks: FixedBlock[]) {
@@ -133,6 +173,122 @@ function computeFreeSlots(dayStart: Date, dayEnd: Date, fixedBlocks: FixedBlock[
   }
 
   return slots.filter((slot) => slot.endDateTime > slot.startDateTime);
+}
+
+function splitSlot(
+  slots: Array<{ startDateTime: Date; endDateTime: Date }>,
+  usedStart: Date,
+  usedEnd: Date
+) {
+  const next: Array<{ startDateTime: Date; endDateTime: Date }> = [];
+  for (const slot of slots) {
+    if (usedEnd <= slot.startDateTime || usedStart >= slot.endDateTime) {
+      next.push(slot);
+      continue;
+    }
+    if (usedStart > slot.startDateTime) {
+      next.push({ startDateTime: slot.startDateTime, endDateTime: new Date(usedStart) });
+    }
+    if (usedEnd < slot.endDateTime) {
+      next.push({ startDateTime: new Date(usedEnd), endDateTime: slot.endDateTime });
+    }
+  }
+  return next.sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
+}
+
+function normalizeAiCandidates(
+  raw: Array<{
+    title: string;
+    description?: string;
+    type: 'custom' | 'assignment' | 'evaluation' | 'event' | 'class';
+    startDateTime: string;
+    endDateTime: string;
+    linkedEntityId?: string | null;
+    linkedEntityType?: string | null;
+    location?: string | null;
+  }>,
+  dayStart: Date,
+  dayEnd: Date
+): AiCandidate[] {
+  const out: AiCandidate[] = [];
+  for (const item of raw) {
+    const start = new Date(item.startDateTime);
+    const end = new Date(item.endDateTime);
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) continue;
+    if (end <= start) continue;
+
+    const clippedStart = start < dayStart ? new Date(dayStart) : start;
+    const clippedEnd = end > dayEnd ? new Date(dayEnd) : end;
+    if (clippedEnd <= clippedStart) continue;
+
+    out.push({
+      title: item.title,
+      description: item.description || null,
+      type: item.type,
+      startDateTime: clippedStart,
+      endDateTime: clippedEnd,
+      linkedEntityId: item.linkedEntityId || null,
+      linkedEntityType: item.linkedEntityType || null,
+      location: item.location || null,
+    });
+  }
+  return out;
+}
+
+function normalizeClassCandidates(
+  raw: Array<{
+    title: string;
+    description?: string;
+    type: 'custom' | 'assignment' | 'evaluation' | 'event' | 'class';
+    startDateTime: string;
+    endDateTime: string;
+    linkedEntityId?: string | null;
+    linkedEntityType?: string | null;
+    location?: string | null;
+  }>,
+  dayStart: Date,
+  dayEnd: Date
+): AiCandidate[] {
+  return normalizeAiCandidates(raw, dayStart, dayEnd).filter((item) =>
+    item.type === 'class' || item.linkedEntityType === 'section'
+  );
+}
+
+function fitAiCandidatesIntoFreeSlots(
+  candidates: AiCandidate[],
+  freeSlots: Array<{ startDateTime: Date; endDateTime: Date }>
+) {
+  const placed: AiCandidate[] = [];
+  let available = [...freeSlots].sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
+
+  for (const item of candidates.sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime())) {
+    const durationMs = Math.max(15 * 60 * 1000, item.endDateTime.getTime() - item.startDateTime.getTime());
+    let chosenStart: Date | null = null;
+    let chosenEnd: Date | null = null;
+
+    for (const slot of available) {
+      const slotStart = slot.startDateTime;
+      const slotEnd = slot.endDateTime;
+      const start = item.startDateTime > slotStart ? new Date(item.startDateTime) : new Date(slotStart);
+      const end = new Date(start.getTime() + durationMs);
+      if (end <= slotEnd) {
+        chosenStart = start;
+        chosenEnd = end;
+        break;
+      }
+    }
+
+    if (!chosenStart || !chosenEnd) continue;
+
+    placed.push({
+      ...item,
+      startDateTime: chosenStart,
+      endDateTime: chosenEnd,
+    });
+    available = splitSlot(available, chosenStart, chosenEnd);
+  }
+
+  return placed.sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
 }
 
 function extractJson(text: string): any {
@@ -190,6 +346,154 @@ function getItemColor(type: string, title?: string | null) {
   return palette[type] || palette.custom;
 }
 
+function addTwoHoursToWindowEnd(dayWindow?: { start: string; end: string }) {
+  if (!dayWindow) {
+    return { start: DEFAULT_DAY_START, end: '01:00' };
+  }
+
+  const end = dayWindow.end;
+  if (isClockTime(end)) {
+    const [h, m] = end.split(':').map(Number);
+    const total = (h * 60 + m + 120) % (24 * 60);
+    const hh = String(Math.floor(total / 60)).padStart(2, '0');
+    const mm = String(total % 60).padStart(2, '0');
+    return { ...dayWindow, end: `${hh}:${mm}` };
+  }
+
+  const d = parseUtcIsoInput(end);
+  d.setUTCHours(d.getUTCHours() + 2);
+  return { ...dayWindow, end: d.toISOString() };
+}
+
+function overlaps(startA: Date, endA: Date, startB: Date, endB: Date) {
+  return startA < endB && endA > startB;
+}
+
+function parse12HourTo24(input: string) {
+  const match = input.trim().toLowerCase().match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/);
+  if (!match) return null;
+  let hour = Number(match[1]);
+  const minute = Number(match[2] || '0');
+  const ap = match[3];
+  if (hour < 1 || hour > 12 || minute < 0 || minute > 59) return null;
+  if (ap === 'am') {
+    if (hour === 12) hour = 0;
+  } else if (hour !== 12) {
+    hour += 12;
+  }
+  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
+function parsePreferenceFixedBlocks(
+  additionalPreferences: string | undefined,
+  dateStr: string
+): FixedBlock[] {
+  if (!additionalPreferences) return [];
+  const lines = additionalPreferences
+    .split(/\n+/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  const blocks: FixedBlock[] = [];
+  for (const line of lines) {
+    const m = line.match(/^(.*?)\bfrom\s+(\d{1,2}(?::\d{2})?\s*(?:am|pm))\s*(?:to|-)\s*(\d{1,2}(?::\d{2})?\s*(?:am|pm))/i);
+    if (!m) continue;
+
+    const rawTitle = (m[1] || '')
+      .replace(/^[\s"'`]+|[\s"'`]+$/g, '')
+      .replace(/^(i\s+(want|will|need)\s+to\s+)/i, '')
+      .trim();
+    const startLocal = parse12HourTo24(m[2]);
+    const endLocal = parse12HourTo24(m[3]);
+    if (!startLocal || !endLocal) continue;
+
+    const start = localWallTimeToUtc(dateStr, startLocal, PREFERENCE_TIMEZONE);
+    let end = localWallTimeToUtc(dateStr, endLocal, PREFERENCE_TIMEZONE);
+    if (end <= start) end = new Date(end.getTime() + 24 * 60 * 60 * 1000);
+
+    const title = rawTitle ? rawTitle.replace(/\s+/g, ' ').replace(/\.$/, '') : 'Preference Block';
+    const prettyTitle = title
+      .split(' ')
+      .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
+      .join(' ');
+
+    blocks.push({
+      title: prettyTitle,
+      description: 'User preference',
+      type: 'custom',
+      startDateTime: start,
+      endDateTime: end,
+      linkedEntityType: 'preference_lock',
+      color: getItemColor('custom', prettyTitle),
+    });
+  }
+  return blocks;
+}
+
+function slotDurationMinutes(slot: { startDateTime: Date; endDateTime: Date }) {
+  return Math.max(0, Math.floor((slot.endDateTime.getTime() - slot.startDateTime.getTime()) / 60000));
+}
+
+function fillMissingTargets(
+  placed: AiCandidate[],
+  freeSlots: Array<{ startDateTime: Date; endDateTime: Date }>,
+  targets: GoalTarget[]
+) {
+  const covered = new Set(
+    placed
+      .map((p) => p.linkedEntityId || p.title.toLowerCase())
+      .filter(Boolean)
+  );
+
+  let available = [...freeSlots].sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
+  const added: AiCandidate[] = [];
+
+  const allocate = (target: GoalTarget, preferredMinutes: number) => {
+    for (const slot of available) {
+      const freeMins = slotDurationMinutes(slot);
+      if (freeMins < 20) continue;
+      const useMins = Math.min(preferredMinutes, freeMins);
+      if (useMins < 20) continue;
+      const start = new Date(slot.startDateTime);
+      const end = new Date(start.getTime() + useMins * 60 * 1000);
+      added.push({
+        title: target.title,
+        description: null,
+        type: target.type,
+        linkedEntityId: target.linkedEntityId || null,
+        linkedEntityType: target.linkedEntityType || null,
+        startDateTime: start,
+        endDateTime: end,
+        location: null,
+      });
+      available = splitSlot(available, start, end);
+      return true;
+    }
+    return false;
+  };
+
+  for (const target of targets) {
+    const key = target.linkedEntityId || target.title.toLowerCase();
+    if (covered.has(key)) continue;
+    const ok = allocate(target, 60);
+    if (ok) covered.add(key);
+  }
+
+  // Use remaining space with round-robin reinforcement blocks.
+  let guard = 0;
+  while (available.some((s) => slotDurationMinutes(s) >= 30) && targets.length > 0 && guard < 50) {
+    const idx = guard % targets.length;
+    allocate(targets[idx], 45);
+    guard++;
+  }
+
+  return [...placed, ...added].sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
+}
+
+function daysUntil(from: Date, to: Date) {
+  return (to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000);
+}
+
 export class SmartScheduleService {
   private buildAiClient() {
     const projectId = process.env.GCP_PROJECT_ID;
@@ -222,14 +526,15 @@ export class SmartScheduleService {
   private async generateContentWithFallback(payload: {
     systemPrompt: string;
     userPrompt: string;
-    thinkingBudget?: number;
+    thinkingLevel?: 'minimal' | 'low' | 'medium' | 'high';
   }) {
     const ai = this.buildAiClient();
     const primaryModel = this.getModelName();
     const fallbackModel = this.getFallbackModelName();
     const aiTimeoutMs = Number(process.env.SMART_SCHEDULE_AI_TIMEOUT_MS || 45000);
-    const thinkingBudget = payload.thinkingBudget ?? 0;
+    const thinkingLevel = payload.thinkingLevel || 'medium';
     const run = async (model: string) => {
+      const supportsThinkingLevel = model.includes('gemini-3');
       const withThinking = ai.models.generateContent({
         model,
         contents: [{ role: 'user', parts: [{ text: payload.userPrompt }] }],
@@ -237,9 +542,7 @@ export class SmartScheduleService {
           systemInstruction: { parts: [{ text: payload.systemPrompt }] },
           temperature: 0.2,
           responseMimeType: 'application/json',
-          thinkingConfig: {
-            thinkingBudget,
-          },
+          ...(supportsThinkingLevel ? { thinkingConfig: { thinkingLevel } } : {}),
         },
       });
       try {
@@ -330,7 +633,8 @@ export class SmartScheduleService {
 
     const skipMap = mapSkipTypes(request.skipClasses || []);
 
-    const fixedBlocks: FixedBlock[] = [];
+    const classFixedBlocks: FixedBlock[] = [];
+    const anchoredFixedBlocks: FixedBlock[] = [];
 
     for (const entry of classSchedule) {
       for (const timing of entry.schedule) {
@@ -340,12 +644,16 @@ export class SmartScheduleService {
         if (sectionType.includes('tutorial') && skipMap.tutorial) continue;
         if (sectionType.includes('lab') && skipMap.lab) continue;
 
-        fixedBlocks.push({
+        const classStart = localWallTimeToUtc(dateStr, timing.startTime, PREFERENCE_TIMEZONE);
+        const classEnd = localWallTimeToUtc(dateStr, timing.endTime, PREFERENCE_TIMEZONE);
+        if (!overlaps(classStart, classEnd, dayStart, dayEnd)) continue;
+
+        classFixedBlocks.push({
           title: `${entry.courseCode} ${entry.sectionType} ${entry.sectionNumber}`,
           description: entry.courseName,
           type: 'class',
-          startDateTime: toDateTime(dateStr, timing.startTime),
-          endDateTime: toDateTime(dateStr, timing.endTime),
+          startDateTime: classStart < dayStart ? new Date(dayStart) : classStart,
+          endDateTime: classEnd > dayEnd ? new Date(dayEnd) : classEnd,
           linkedEntityId: entry.sectionId,
           linkedEntityType: 'section',
           location: entry.roomNumber || null,
@@ -360,7 +668,7 @@ export class SmartScheduleService {
         const end = evaluation.duration
           ? new Date(evalDate.getTime() + this.parseDuration(evaluation.duration))
           : new Date(evalDate.getTime() + 90 * 60 * 1000);
-        fixedBlocks.push({
+        anchoredFixedBlocks.push({
           title: `${evaluation.courseCode || ''} ${evaluation.title}`.trim(),
           description: evaluation.type,
           type: 'evaluation',
@@ -377,7 +685,7 @@ export class SmartScheduleService {
     for (const event of events) {
       const start = new Date(event.date);
       const end = event.endDate ? new Date(event.endDate) : new Date(start.getTime() + 90 * 60 * 1000);
-      fixedBlocks.push({
+      anchoredFixedBlocks.push({
         title: event.title,
         description: event.type,
         type: 'event',
@@ -402,6 +710,18 @@ export class SmartScheduleService {
       });
     }
 
+    const preferenceBlocks = parsePreferenceFixedBlocks(request.additionalPreferences, dateStr)
+      .filter((b) => overlaps(b.startDateTime, b.endDateTime, dayStart, dayEnd))
+      .map((b) => ({
+        ...b,
+        startDateTime: b.startDateTime < dayStart ? new Date(dayStart) : b.startDateTime,
+        endDateTime: b.endDateTime > dayEnd ? new Date(dayEnd) : b.endDateTime,
+      }))
+      .filter((b) => b.endDateTime > b.startDateTime);
+    anchoredFixedBlocks.push(...preferenceBlocks);
+
+    const fixedBlocks: FixedBlock[] = [...classFixedBlocks, ...anchoredFixedBlocks];
+
     const freeSlots = computeFreeSlots(dayStart, dayEnd, fixedBlocks);
 
     console.log(`[SmartSchedule] Context built in ${Date.now() - t0}ms (fixedBlocks=${fixedBlocks.length}, freeSlots=${freeSlots.length})`);
@@ -415,6 +735,9 @@ export class SmartScheduleService {
       assignments: upcomingAssignments.filter((a) => !['submitted', 'graded'].includes(a.status || '')),
       evaluations: upcomingEvaluations,
       events,
+      classFixedBlocks,
+      anchoredFixedBlocks,
+      preferenceBlocks,
       fixedBlocks,
       freeSlots,
     };
@@ -432,6 +755,7 @@ export class SmartScheduleService {
     const payload = {
       date: context.dateStr,
       dayOfWeek: context.dayName,
+      preferenceTimezone: PREFERENCE_TIMEZONE,
       goals: request.goals,
       skipClasses: request.skipClasses || [],
       preferredFreeTime: request.preferredFreeTime || null,
@@ -473,6 +797,26 @@ export class SmartScheduleService {
         startDateTime: b.startDateTime.toISOString(),
         endDateTime: b.endDateTime.toISOString(),
       })),
+      classBlocks: context.classFixedBlocks.map((b: FixedBlock) => ({
+        title: b.title,
+        description: b.description || null,
+        type: b.type,
+        linkedEntityId: b.linkedEntityId || null,
+        linkedEntityType: b.linkedEntityType || null,
+        startDateTime: b.startDateTime.toISOString(),
+        endDateTime: b.endDateTime.toISOString(),
+        location: b.location || null,
+      })),
+      anchoredBlocks: context.anchoredFixedBlocks.map((b: FixedBlock) => ({
+        title: b.title,
+        description: b.description || null,
+        type: b.type,
+        linkedEntityId: b.linkedEntityId || null,
+        linkedEntityType: b.linkedEntityType || null,
+        startDateTime: b.startDateTime.toISOString(),
+        endDateTime: b.endDateTime.toISOString(),
+        location: b.location || null,
+      })),
       freeSlots: context.freeSlots.map((s: any) => ({
         startDateTime: s.startDateTime.toISOString(),
         endDateTime: s.endDateTime.toISOString(),
@@ -482,17 +826,51 @@ export class SmartScheduleService {
       }, 0),
     };
 
-    const systemPrompt = `You are a scheduling engine. Return ONLY strict JSON: {"scheduleItems":[...]}.
-Rules:
-- Schedule ONLY inside freeSlots.
-- Do NOT return fixed blocks (classes/evaluations/events).
-- If there is very little free time, return fewer items (possibly 1).
-- If sleepFixed=false, include Sleep only if it fits naturally; do not force impossible overlap.
-- Prefer concise blocks and zero overlaps.
+    const systemPrompt = `You are an expert schedule optimizer. Return ONLY strict JSON: {"scheduleItems":[...]}.
+
+MISSION:
+- Produce the best possible day plan in one pass.
+- Maximize meaningful use of available time in freeSlots.
+- Cover selected academics + selected skills whenever possible.
+- If freeSlots span across midnight, use those cross-day slots too.
+
+HARD CONSTRAINTS (never violate):
+- Schedule ONLY inside dayWindow.
+- Non-class fixed blocks (evaluations/events/sleep/preference locks) must be kept as-is.
+- Class blocks are editable: you may keep/omit/reorder class/tutorial/lab blocks based on skipClasses and additionalPreferences (e.g., skipping specific courses or particular lessons).
+- No overlaps between returned scheduleItems.
+- dayWindow/freeSlots/fixedBlocks are UTC timestamps; respect exactly.
+- Output valid ISO UTC timestamps for startDateTime/endDateTime.
+- endDateTime must be strictly after startDateTime.
+- Minimum useful block length: 20 minutes.
 - Types allowed: assignment, custom, evaluation, event, class.
-- Use linkedEntityId for assignment/skill blocks when relevant.
-- Output ISO timestamps.
-- No markdown, no prose.`;
+- No markdown, no explanation, no extra keys, no prose.
+
+PREFERENCE TIME INTERPRETATION:
+- If additionalPreferences contains time phrases (e.g. "9-10pm", "8:30 to 9pm"), interpret those phrases in local timezone ${PREFERENCE_TIMEZONE}, then convert to UTC output times.
+- Backend will not parse preference text. You must handle it.
+
+QUALITY TARGETS:
+- Use as much feasible free time as possible (target >=85% utilization unless free time is too fragmented).
+- Include at least one block for each selected course when feasible.
+- Include at least one block for each selected skill when feasible.
+- Prioritize urgent items with these thresholds only:
+  - Assignments are urgent only if due within 1 day.
+  - Evaluations are urgent only if within 3 days.
+- If not urgent by the above thresholds, do NOT let assignments/evaluations dominate selected courses/skills or user preferences.
+- Split long free periods into focused blocks (typically 30-90 min) with short breaks when helpful.
+
+PLANNING METHOD (apply internally before output):
+1) Decide class/tutorial/lab inclusions first (respect explicit skip requests).
+2) Treat non-class fixed blocks as immovable.
+3) Place urgent academic tasks next.
+4) Place selected course blocks ensuring coverage.
+5) Place selected skill blocks ensuring coverage.
+6) Fill remaining gaps with useful study/practice/revision blocks.
+7) Validate final schedule: inside dayWindow, no overlaps, high utilization.
+
+Output format exactly:
+{"scheduleItems":[{"title":"...","description":"...","type":"custom","startDateTime":"...","endDateTime":"...","linkedEntityId":null,"linkedEntityType":null,"location":null}]}`;
 
     const userPrompt = `Context:\n${JSON.stringify(payload)}`;
     console.log(`[SmartSchedule] AI payload chars=${userPrompt.length}`);
@@ -508,7 +886,7 @@ Rules:
       const result = await this.generateContentWithFallback({
         systemPrompt,
         userPrompt,
-        thinkingBudget: 0,
+        thinkingLevel: 'medium',
       });
       console.log(`[SmartSchedule] AI generation in ${Date.now() - tAi}ms`);
       return parseResult(result);
@@ -516,9 +894,11 @@ Rules:
       console.warn('[SmartSchedule] First AI parse/generation failed, retrying with compact prompt:', error?.message || error);
       const compactPayload = {
         date: context.dateStr,
+        preferenceTimezone: PREFERENCE_TIMEZONE,
         goals: request.goals,
         dayWindow: request.dayWindow || { start: DEFAULT_DAY_START, end: DEFAULT_DAY_END },
         sleepWindow: request.sleepWindow || null,
+        additionalPreferences: request.additionalPreferences || null,
         freeSlots: context.freeSlots.map((s: any) => ({
           startDateTime: s.startDateTime.toISOString(),
           endDateTime: s.endDateTime.toISOString(),
@@ -530,12 +910,18 @@ Rules:
           priority: a.priority,
         })),
       };
-      const retrySystemPrompt = `Return ONLY valid JSON {"scheduleItems":[...]} with no extra text. If no feasible slot, return {"scheduleItems":[]} exactly.`;
+      const retrySystemPrompt = `Return ONLY valid JSON {"scheduleItems":[...]} with no extra text.
+Hard rules:
+- Use only freeSlots; never overlap.
+- UTC timestamps only.
+- Prefer high utilization and include selected course/skill coverage when feasible.
+- Treat time phrases in additionalPreferences as local timezone ${PREFERENCE_TIMEZONE}, convert to UTC.
+If impossible, return {"scheduleItems":[]} exactly.`;
       const retryUserPrompt = `Context:\n${JSON.stringify(compactPayload)}`;
       const retryResult = await this.generateContentWithFallback({
         systemPrompt: retrySystemPrompt,
         userPrompt: retryUserPrompt,
-        thinkingBudget: 0,
+        thinkingLevel: 'medium',
       });
       console.log(`[SmartSchedule] AI retry generation in ${Date.now() - tAi}ms`);
       return parseResult(retryResult);
@@ -546,16 +932,137 @@ Rules:
     const t0 = Date.now();
     const sleepWindow = request.sleepWindow;
     const dateStr = request.date || formatDate(new Date());
-    const context = await this.getContext(userId, dateStr, {
-      ...request,
-      sleepWindow,
-    });
 
-    const flexibleItems = await this.generateFlexibleBlocks(context, {
-      ...request,
-      sleepWindow,
-    });
-    console.log(`[SmartSchedule] Flexible items generated in ${Date.now() - t0}ms`);
+    const runOptimization = async (effectiveRequest: OptimizeDayRequest) => {
+      const context = await this.getContext(userId, dateStr, {
+        ...effectiveRequest,
+        sleepWindow,
+      });
+      const aiItemsRaw = await this.generateFlexibleBlocks(context, {
+        ...effectiveRequest,
+        sleepWindow,
+      });
+
+      const aiClassCandidates = normalizeClassCandidates(aiItemsRaw, context.dayStart, context.dayEnd);
+      const effectiveClassFixedBlocks: FixedBlock[] = aiClassCandidates.length > 0
+        ? aiClassCandidates.map((c) => ({
+            title: c.title,
+            description: c.description || null,
+            type: 'class',
+            startDateTime: c.startDateTime,
+            endDateTime: c.endDateTime,
+            linkedEntityId: c.linkedEntityId || null,
+            linkedEntityType: c.linkedEntityType || 'section',
+            location: c.location || null,
+            color: getItemColor('class', c.title),
+          }))
+        : context.classFixedBlocks;
+
+      const activeFixedBlocks = [...context.anchoredFixedBlocks, ...effectiveClassFixedBlocks]
+        .sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
+      const activeFreeSlots = computeFreeSlots(context.dayStart, context.dayEnd, activeFixedBlocks);
+      const preferenceTitles = new Set(
+        (context.preferenceBlocks || [])
+          .map((b: any) => (b.title || '').toLowerCase().trim())
+          .filter(Boolean)
+      );
+
+      const aiFlexibleRaw = aiItemsRaw.filter((item) => item.type !== 'class' && item.linkedEntityType !== 'section');
+      const urgentAssignmentIds = new Set(
+        (context.assignments || [])
+          .filter((a: any) => daysUntil(context.dayStart, new Date(a.dueDate)) <= 1)
+          .map((a: any) => a.id)
+      );
+      const hasUrgentEvaluations = (context.evaluations || []).some(
+        (e: any) => daysUntil(context.dayStart, new Date(e.date)) <= 3
+      );
+
+      let candidates = normalizeAiCandidates(aiFlexibleRaw, context.dayStart, context.dayEnd);
+      candidates = candidates.filter((c) => {
+        const title = (c.title || '').toLowerCase().trim();
+        if (title && Array.from(preferenceTitles).some((p) => p && (title.includes(p) || p.includes(title)))) {
+          return false; // Avoid duplicating user locked preference activities.
+        }
+        if (c.type === 'assignment') {
+          return c.linkedEntityId ? urgentAssignmentIds.has(c.linkedEntityId) : false;
+        }
+        if (c.type === 'evaluation') {
+          return hasUrgentEvaluations;
+        }
+        return true;
+      });
+      let fitted = fitAiCandidatesIntoFreeSlots(candidates, activeFreeSlots);
+      let remaining = [...activeFreeSlots];
+      for (const p of fitted) {
+        remaining = splitSlot(remaining, p.startDateTime, p.endDateTime);
+      }
+
+      const targets: GoalTarget[] = [];
+      const wantsAcademics = (effectiveRequest.goals || []).includes('academics');
+      const wantsSkills = (effectiveRequest.goals || []).includes('personal_goals') || (effectiveRequest.goals || []).includes('learn_new');
+
+      const courseTargets: GoalTarget[] = wantsAcademics
+        ? context.courses.map((c: any) => {
+            const course = c.course || {};
+            return {
+              title: `Study ${course.name || course.code || 'Course'}${course.code ? ` (${course.code})` : ''}`.trim(),
+              type: 'custom' as const,
+              linkedEntityId: course.id || null,
+              linkedEntityType: 'course',
+            };
+          })
+        : [];
+
+      const skillTargets: GoalTarget[] = wantsSkills
+        ? context.skills.map((s: any) => {
+            const skill = s.skill || {};
+            return {
+              title: `${skill.name || 'Skill'} Practice`,
+              type: 'custom' as const,
+              linkedEntityId: skill.id || null,
+              linkedEntityType: 'skill',
+            };
+          })
+        : [];
+
+      // Interleave course+skill so personal goals do not get starved by academics.
+      const maxLen = Math.max(courseTargets.length, skillTargets.length);
+      for (let i = 0; i < maxLen; i++) {
+        if (courseTargets[i]) targets.push(courseTargets[i]);
+        if (skillTargets[i]) targets.push(skillTargets[i]);
+      }
+
+      const urgentAssignments = (context.assignments || [])
+        .filter((a: any) => daysUntil(context.dayStart, new Date(a.dueDate)) <= 1)
+        .sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+      if (urgentAssignments.length > 0) {
+        const top = urgentAssignments[0];
+        targets.unshift({
+          title: `Work on ${top.title}${top.courseCode ? ` (${top.courseCode})` : ''}`,
+          type: 'assignment',
+          linkedEntityId: top.id,
+          linkedEntityType: 'assignment',
+        });
+      }
+
+      fitted = fillMissingTargets(fitted, remaining, targets);
+      return { context, fitted, activeFixedBlocks };
+    };
+
+    let usedExtendedBuffer = false;
+    let effectiveRequest: OptimizeDayRequest = { ...request };
+    let { context, fitted, activeFixedBlocks } = await runOptimization(effectiveRequest);
+    console.log(`[SmartSchedule] Flexible items generated in ${Date.now() - t0}ms (placed=${fitted.length})`);
+
+    if (fitted.length === 0) {
+      usedExtendedBuffer = true;
+      effectiveRequest = {
+        ...request,
+        dayWindow: addTwoHoursToWindowEnd(request.dayWindow),
+      };
+      ({ context, fitted, activeFixedBlocks } = await runOptimization(effectiveRequest));
+      console.log(`[SmartSchedule] Re-ran with +2h buffer (placed=${fitted.length})`);
+    }
 
     const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000);
     await db
@@ -574,7 +1081,7 @@ Rules:
       })
       .returning();
 
-    const fixedItems = context.fixedBlocks.map((block: FixedBlock) => ({
+    const fixedItems = activeFixedBlocks.map((block: FixedBlock) => ({
       scheduleId: schedule.id,
       userId,
       title: block.title,
@@ -588,7 +1095,7 @@ Rules:
       color: block.color || getItemColor(block.type, block.title),
     }));
 
-    const aiItems = flexibleItems.map((item) => ({
+    const aiItems = fitted.map((item) => ({
       scheduleId: schedule.id,
       userId,
       title: item.title,
@@ -596,8 +1103,8 @@ Rules:
       type: item.type as any,
       linkedEntityId: item.linkedEntityId || null,
       linkedEntityType: item.linkedEntityType || null,
-      startDateTime: new Date(item.startDateTime),
-      endDateTime: new Date(item.endDateTime),
+      startDateTime: item.startDateTime,
+      endDateTime: item.endDateTime,
       location: item.location || null,
       color: getItemColor(item.type, item.title),
     }));
@@ -616,7 +1123,7 @@ Rules:
         .from(scheduleItems)
         .where(eq(scheduleItems.scheduleId, activeSchedule.id));
 
-      const window = normalizeDayWindow(dateStr, request.dayWindow);
+      const window = normalizeDayWindow(dateStr, effectiveRequest.dayWindow);
       carryOverItems = existingItems
         .filter((item) => {
           const start = new Date(item.startDateTime);
@@ -654,6 +1161,8 @@ Rules:
       items: allItems,
       expiresAt,
       expiresInHours: Math.max(0, Math.round((expiresAt.getTime() - Date.now()) / (60 * 60 * 1000))),
+      usedExtendedBuffer,
+      effectiveDayWindow: effectiveRequest.dayWindow || request.dayWindow || { start: DEFAULT_DAY_START, end: DEFAULT_DAY_END },
     };
   }
 
@@ -710,7 +1219,7 @@ Rules:
       })),
     };
 
-    const systemPrompt = `You are editing a daily schedule. Return ONLY valid JSON with the shape {"scheduleItems": [...]}.\n\nRules:\n- Apply the user's instruction.\n- Keep class/evaluation/event items unless instruction explicitly removes or skips them.\n- If sleepFixed=true, keep the sleep block unless the instruction explicitly changes sleep.\n- If sleepFixed=false, you may add or adjust sleep based on instruction and preferences.\n- Avoid overlaps and keep within the same date window.\n- Output ISO timestamps for startDateTime/endDateTime.\n- No markdown, no extra text.`;
+    const systemPrompt = `You are editing a daily schedule. Return ONLY valid JSON with the shape {"scheduleItems": [...]}.\n\nRules:\n- Apply the user's instruction.\n- Keep class/evaluation/event items unless instruction explicitly removes or skips them.\n- If sleepFixed=true, keep the sleep block unless the instruction explicitly changes sleep.\n- If sleepFixed=false, you may add or adjust sleep based on instruction and preferences.\n- Schedule window timestamps are UTC.\n- If instruction/additionalPreferences mentions human time phrases, interpret those phrases in local timezone ${PREFERENCE_TIMEZONE} and convert to UTC output timestamps.\n- Avoid overlaps and keep within the same date window.\n- Output ISO timestamps for startDateTime/endDateTime.\n- No markdown, no extra text.`;
 
     const userPrompt = `Context:\n${JSON.stringify(payload)}`;
 

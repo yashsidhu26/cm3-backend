@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bun --watch start-servers.ts",
-    "dev:main": "bun --watch src/app.ts",
-    "dev:streaming": "bun --watch test-isolated-server.ts",
+    "dev": "bun --hot start-servers.ts",
+    "dev:main": "bun --hot src/app.ts",
+    "dev:streaming": "bun --hot test-isolated-server.ts",
     "start": "bun start-servers.ts",
     "start:main": "bun src/app.ts",
     "build": "bun build src/app.ts --outfile=dist/app.js --target=bun",
@@ -13,6 +13,8 @@
     "db:generate": "drizzle-kit generate:pg",
     "db:migrate": "bun scripts/migrate.ts",
     "db:migrate:manual": "bun scripts/run-migration.ts",
+    "db:fix:class-timezone": "bun scripts/fix-class-timezone.ts --dry-run",
+    "db:fix:class-timezone:apply": "bun scripts/fix-class-timezone.ts --apply",
     "db:up": "drizzle-kit up:pg",
     "db:studio": "drizzle-kit studio",
     "db:push": "drizzle-kit push:pg",
@@ -20,7 +22,7 @@
     "fix:course-matching": "bun scripts/fix-course-matching.ts",
     "test": "bun run test-api.ts",
     "test:gmail-auth": "bun test src/modules/gmail-auth/gmail-auth.service.test.ts --preload ./src/modules/gmail-auth/test-setup.ts && bun test src/modules/gmail-auth/gmail-auth.routes.test.ts --preload ./src/modules/gmail-auth/test-setup.ts",
-    "test:watch": "bun --watch test-api.ts"
+    "test:watch": "bun --hot test-api.ts"
   },
   "dependencies": {
     "@google-cloud/vertexai": "^1.10.0",

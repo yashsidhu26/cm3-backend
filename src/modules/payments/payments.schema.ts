@@ -20,6 +20,9 @@ export const expenseCategoryEnum = pgEnum('expense_category', [
     'other',
 ]);
 
+export const groupTypeEnum = pgEnum('group_type', ['clubs', 'depts', 'friends']);
+export const friendRequestStatusEnum = pgEnum('friend_request_status', ['pending', 'accepted', 'rejected']);
+
 /**
  * Groups table
  * Containers for shared expenses (e.g., "Roommates", "Trip to Goa")
@@ -28,9 +31,57 @@ export const groups = pgTable('groups', {
     id: uuid('id').primaryKey().defaultRandom(),
     name: varchar('name', { length: 255 }).notNull(),
     description: text('description'),
+    type: groupTypeEnum('type').notNull().default('friends'),
+    inviteToken: varchar('invite_token', { length: 128 }).unique(),
     createdBy: uuid('created_by')
         .notNull()
         .references(() => user.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const paymentFriends = pgTable('payment_friends', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    requesterId: uuid('requester_id')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+    addresseeId: uuid('addressee_id')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+    status: friendRequestStatusEnum('status').notNull().default('pending'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const directExpenses = pgTable('direct_expenses', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    description: varchar('description', { length: 500 }).notNull(),
+    totalAmount: decimal('total_amount', { precision: 12, scale: 2 }).notNull(),
+    payerId: uuid('payer_id')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+    createdBy: uuid('created_by')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+    date: timestamp('date').notNull().defaultNow(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const directExpenseSplits = pgTable('direct_expense_splits', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    expenseId: uuid('expense_id')
+        .notNull()
+        .references(() => directExpenses.id, { onDelete: 'cascade' }),
+    owedByUserId: uuid('owed_by_user_id')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+    owedToUserId: uuid('owed_to_user_id')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+    shareAmount: decimal('share_amount', { precision: 12, scale: 2 }).notNull(),
+    isSettled: boolean('is_settled').notNull().default(false),
+    settledAt: timestamp('settled_at'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
@@ -195,3 +246,12 @@ export type NewExpenseParticipant = typeof expenseParticipants.$inferInsert;
 
 export type Settlement = typeof settlements.$inferSelect;
 export type NewSettlement = typeof settlements.$inferInsert;
+
+export type PaymentFriend = typeof paymentFriends.$inferSelect;
+export type NewPaymentFriend = typeof paymentFriends.$inferInsert;
+
+export type DirectExpense = typeof directExpenses.$inferSelect;
+export type NewDirectExpense = typeof directExpenses.$inferInsert;
+
+export type DirectExpenseSplit = typeof directExpenseSplits.$inferSelect;
+export type NewDirectExpenseSplit = typeof directExpenseSplits.$inferInsert;

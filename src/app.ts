@@ -18,11 +18,13 @@ import authRoutes from './modules/auth/auth.routes';
 import aiIntegrationRoutes from './modules/ai-integration/ai-integration.routes';
 import testStreamingRoute from './modules/ai-integration/test-streaming-route';
 import socialRoutes from './modules/social/social.routes';
+import socialPublicRoutes from './modules/social/social.public.routes';
 import gmailAuthRoutes from './modules/gmail-auth/gmail-auth.routes';
 import studentProfileRoutes from './modules/student-profile/student-profile.routes';
 import skillsInterestsRoutes from './modules/skills-interests/skills-interests.routes';
 import brainRoutes from './modules/brain/brain.routes';
 import smartScheduleRoutes from './modules/smart-schedule/smart-schedule.routes';
+import paymentsPublicRoutes from './modules/payments/payments.public.routes';
 
 // Initialize debug logger before anything else
 initializeDebugLogger();
@@ -183,11 +185,13 @@ const modules = [
   { name: 'ai-integration', path: '/api/ai-integration', routes: aiIntegrationRoutes },
   { name: 'test-streaming', path: '/api/test', routes: testStreamingRoute },
   { name: 'social', path: '/api/social', routes: socialRoutes },
+  { name: 'social-public', path: '/api', routes: socialPublicRoutes },
   { name: 'gmail-auth', path: '/auth', routes: gmailAuthRoutes },
   { name: 'student-profile', path: '/api/student-profile', routes: studentProfileRoutes },
   { name: 'skills-interests', path: '/api/skills-interests', routes: skillsInterestsRoutes },
   { name: 'brain', path: '/api/brain', routes: brainRoutes },
   { name: 'smart-schedule', path: '/api/smart-schedule', routes: smartScheduleRoutes },
+  { name: 'payments-public', path: '/api', routes: paymentsPublicRoutes },
 ];
 
 console.log('\n🔄 Mounting modules...\n');

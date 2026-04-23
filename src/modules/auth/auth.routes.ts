@@ -184,6 +184,7 @@ authRoutes.get('/profile', protect, async (c) => {
       id: userData[0].id,
       name: userData[0].name,
       email: userData[0].email,
+      image: userData[0].image,
       role: userData[0].role,
       bitsId: userData[0].bitsId,
       emailVerified: userData[0].emailVerified,
@@ -205,7 +206,7 @@ authRoutes.patch('/profile', protect, async (c) => {
   }
 
   const body = await c.req.json();
-  const { name, bitsId } = body;
+  const { name, bitsId, image } = body;
 
   // Update user in database
   const updated = await db
@@ -213,6 +214,7 @@ authRoutes.patch('/profile', protect, async (c) => {
     .set({
       ...(name && { name }),
       ...(bitsId && { bitsId }),
+      ...(image !== undefined && { image }),
       updatedAt: new Date(),
     })
     .where(eq(user.id, currentUser.id))
@@ -223,6 +225,7 @@ authRoutes.patch('/profile', protect, async (c) => {
       id: updated[0].id,
       name: updated[0].name,
       email: updated[0].email,
+      image: updated[0].image,
       role: updated[0].role,
       bitsId: updated[0].bitsId,
     },

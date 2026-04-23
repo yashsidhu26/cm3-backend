@@ -1,4 +1,4 @@
-import { eq, desc, sql, and, inArray } from 'drizzle-orm';
+import { eq, desc, sql, and, inArray, ilike, or, gte } from 'drizzle-orm';
 import { db } from '../../core/database/client';
 import {
   posts,
@@ -31,7 +31,8 @@ import {
   type Schedule,
 } from './social.schema';
 import { user } from '../auth/auth.schema';
-import { groups } from '../payments/payments.schema';
+import { groups, groupMembers } from '../payments/payments.schema';
+import { campusEvents, scheduleItems, schedules as studentSchedules } from '../student-profile/student-profile.schema';
 
 /**
  * Social Service
@@ -39,6 +40,9 @@ import { groups } from '../payments/payments.schema';
  */
 
 export class SocialService {
+  private generateInviteToken() {
+    return `${crypto.randomUUID().replace(/-/g, '')}${Date.now().toString(36)}`;
+  }
   // ==================== EXISTING POST METHODS ====================
 
   /**
@@ -153,14 +157,14 @@ export class SocialService {
     name: string;
     description?: string;
     createdBy: string;
+    type?: 'clubs' | 'depts' | 'friends';
   }) {
-    // Import groups from payments schema
-    const { groups } = await import('../payments/payments.schema');
-
     // 1. Create the group
     const groupResult = await db.insert(groups).values({
       name: data.name,
       description: data.description,
+      type: data.type || 'friends',
+      inviteToken: this.generateInviteToken(),
       createdBy: data.createdBy,
     }).returning();
     const group = groupResult[0];
@@ -215,6 +219,209 @@ export class SocialService {
         positionId: adminPosition.id,
       },
     };
+  }
+
+  async getGroupsFeed(userId: string, search?: string, type?: 'all' | 'clubs' | 'depts' | 'friends') {
+    const q = (search || '').trim();
+    const now = new Date();
+
+    const memberships = await db
+      .select({
+        groupId: groupMembership.groupId,
+        positionId: groupMembership.positionId,
+      })
+      .from(groupMembership)
+      .where(eq(groupMembership.userId, userId));
+
+    const membershipMap = new Map(memberships.map((m) => [m.groupId, m.positionId]));
+    const groupIds = memberships.map((m) => m.groupId);
+    if (groupIds.length === 0) return [];
+
+    const groupRows = await db
+      .select({
+        id: groups.id,
+        name: groups.name,
+        description: groups.description,
+        type: groups.type,
+        inviteToken: groups.inviteToken,
+      })
+      .from(groups)
+      .where(and(
+        inArray(groups.id, groupIds),
+        q ? ilike(groups.name, `%${q}%`) : undefined,
+        type && type !== 'all' ? eq(groups.type, type) : undefined,
+      ))
+      .orderBy(groups.name);
+
+    const memberCounts = await db
+      .select({
+        groupId: groupMembership.groupId,
+        count: sql<number>`cast(count(*) as integer)`,
+      })
+      .from(groupMembership)
+      .where(inArray(groupMembership.groupId, groupRows.map((g) => g.id)))
+      .groupBy(groupMembership.groupId);
+
+    const countMap = new Map(memberCounts.map((c) => [c.groupId, c.count]));
+
+    const socialEvents = await db
+      .select()
+      .from(campusEvents)
+      .where(and(
+        eq(campusEvents.sourceType, 'social_group'),
+        inArray(campusEvents.sourceId, groupRows.map((g) => g.id)),
+        gte(campusEvents.date, now),
+      ))
+      .orderBy(campusEvents.date);
+
+    const eventsByGroup = new Map<string, any[]>();
+    for (const ev of socialEvents) {
+      const groupId = ev.sourceId || '';
+      const list = eventsByGroup.get(groupId) || [];
+      if (!list.some((i) => i.id === ev.id)) {
+        list.push({
+          id: ev.id,
+          title: ev.title,
+          start_time: ev.date,
+          location: ev.location,
+        });
+      }
+      eventsByGroup.set(groupId, list);
+    }
+
+    const positionIds = Array.from(new Set(memberships.map((m) => m.positionId).filter(Boolean) as string[]));
+    const positionRows = positionIds.length
+      ? await db.select({ id: positions.id, isAdmin: positions.isAdmin }).from(positions).where(inArray(positions.id, positionIds))
+      : [];
+    const positionMap = new Map(positionRows.map((p) => [p.id, p.isAdmin]));
+
+    return groupRows.map((g) => {
+      const posId = membershipMap.get(g.id) || null;
+      const isAdmin = posId ? Boolean(positionMap.get(posId)) : false;
+      return {
+        id: g.id,
+        name: g.name,
+        type: g.type,
+        member_count: countMap.get(g.id) || 0,
+        user_role: isAdmin ? 'Admin' : 'Member',
+        invite_url: g.inviteToken ? `/invite/${g.inviteToken}` : null,
+        upcoming_events: (eventsByGroup.get(g.id) || []).slice(0, 5),
+      };
+    });
+  }
+
+  async joinGroupByInviteToken(userId: string, inviteToken: string) {
+    const [group] = await db.select().from(groups).where(eq(groups.inviteToken, inviteToken)).limit(1);
+    if (!group) throw new Error('Invalid invite token');
+
+    const existingSocial = await db
+      .select()
+      .from(groupMembership)
+      .where(and(eq(groupMembership.groupId, group.id), eq(groupMembership.userId, userId)))
+      .limit(1);
+
+    if (!existingSocial[0]) {
+      await db.insert(groupMembership).values({ groupId: group.id, userId });
+    }
+
+    const existingPayments = await db
+      .select()
+      .from(groupMembers)
+      .where(and(eq(groupMembers.groupId, group.id), eq(groupMembers.userId, userId)))
+      .limit(1);
+    if (!existingPayments[0]) {
+      await db.insert(groupMembers).values({ groupId: group.id, userId });
+    }
+
+    return group;
+  }
+
+  async hostGroupEvent(data: {
+    userId: string;
+    groupId: string;
+    title: string;
+    startTime: Date;
+    location?: string;
+  }) {
+    const hasPermission = await this.hasPermission(data.userId, data.groupId, 'create_announcements');
+    if (!hasPermission) {
+      throw new Error('Only group admins can host events');
+    }
+
+    const members = await db
+      .select({ userId: groupMembership.userId })
+      .from(groupMembership)
+      .where(eq(groupMembership.groupId, data.groupId));
+
+    const end = new Date(data.startTime.getTime() + 90 * 60 * 1000);
+    const createdEvents: any[] = [];
+
+    for (const member of members) {
+      const [event] = await db.insert(campusEvents).values({
+        userId: member.userId,
+        title: data.title,
+        type: 'seminar',
+        description: `Group hosted event`,
+        organizer: 'Group',
+        date: data.startTime,
+        endDate: end,
+        location: data.location,
+        isInterested: true,
+        isEnrolled: true,
+        sourceType: 'social_group',
+        sourceId: data.groupId,
+      }).returning();
+
+      createdEvents.push(event);
+
+      const [activeSchedule] = await db
+        .select()
+        .from(studentSchedules)
+        .where(and(
+          eq(studentSchedules.userId, member.userId),
+          eq(studentSchedules.isActive, true),
+        ))
+        .limit(1);
+
+      if (activeSchedule) {
+        await db.insert(scheduleItems).values({
+          scheduleId: activeSchedule.id,
+          userId: member.userId,
+          title: data.title,
+          description: 'event - Group hosted event',
+          type: 'event',
+          linkedEntityId: event.id,
+          linkedEntityType: 'event',
+          startDateTime: data.startTime,
+          endDateTime: end,
+          isRecurring: false,
+          recurrencePattern: 'none',
+          location: data.location,
+          color: '#4CAF50',
+        });
+      }
+    }
+
+    return { createdCount: createdEvents.length, event: createdEvents[0] };
+  }
+
+  async searchUsers(query: string) {
+    const q = query.trim();
+    if (!q) return [];
+
+    return await db
+      .select({
+        id: user.id,
+        name: user.name,
+        profile_picture_url: user.image,
+      })
+      .from(user)
+      .where(or(
+        ilike(user.name, `%${q}%`),
+        ilike(user.email, `%${q}%`),
+      ))
+      .orderBy(user.name)
+      .limit(20);
   }
 
   // ==================== RBAC METHODS ====================

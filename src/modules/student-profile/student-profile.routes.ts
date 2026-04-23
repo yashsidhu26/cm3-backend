@@ -8,48 +8,70 @@ import { db } from '../../core/database/client';
 import { activityLogs, studentAssignments, studentEvaluations, syncState, campusEvents, schedules, scheduleItems } from './student-profile.schema';
 import { protect } from '../../core/auth/middleware';
 import { successResponse, errorResponse } from '../../core/utils/response';
+import { parseUtcIsoInput } from '../../core/utils/datetime';
 import { eq, and, gte, desc, or } from 'drizzle-orm';
 
 // Background sync tracking
 const runningSyncs = new Map<string, Promise<any>>();
 
-/**
- * Helper: Calculate date for recurring weekly schedule item
- * Uses a canonical reference week to ensure absolute consistency
- * Creates dates in UTC to prevent timezone conversion issues
- *
- * Reference: Week of Feb 3, 2025 (Monday Feb 3, 2025)
- * This ensures all recurring events map to the same reference dates
- *
- * @param dayOfWeek - Day of week (e.g., "Monday", "Tuesday")
- * @param timeString - Time in HH:MM format (e.g., "09:00")
- * @returns Date object set to that day/time in the reference week (UTC)
- */
-function calculateRecurringDateTime(dayOfWeek: string, timeString: string): Date {
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const targetDayIndex = daysOfWeek.indexOf(dayOfWeek);
+function getTimeZoneOffsetMinutes(date: Date, timeZone: string): number {
+    const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    }).formatToParts(date);
 
-    if (targetDayIndex === -1) {
-        throw new Error(`Invalid day of week: ${dayOfWeek}`);
+    const map: Record<string, string> = {};
+    for (const part of parts) {
+        if (part.type !== 'literal') map[part.type] = part.value;
     }
 
-    // Parse time
-    const [hours, minutes] = timeString.split(':').map(s => parseInt(s));
+    const asUtc = Date.UTC(
+        Number(map.year),
+        Number(map.month) - 1,
+        Number(map.day),
+        Number(map.hour),
+        Number(map.minute),
+        Number(map.second),
+    );
 
-    // Use canonical reference week: Monday, Feb 3, 2025 (in UTC)
-    // This date is chosen as a stable reference point
-    const referenceMonday = new Date(Date.UTC(2025, 1, 3, 0, 0, 0, 0)); // Feb = month 1 (0-indexed)
+    return Math.round((asUtc - date.getTime()) / 60000);
+}
 
-    // Calculate days from Monday to target day
-    // Monday = 0 days, Tuesday = 1 day, ..., Sunday = 6 days
-    const daysFromMonday = targetDayIndex === 0 ? 6 : targetDayIndex - 1;
+function zonedTimeToUtc(dateStr: string, timeStr: string, timeZone: string): Date {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const utcGuess = Date.UTC(year, month - 1, day, hours, minutes, 0, 0);
+    const guessDate = new Date(utcGuess);
+    const offsetMinutes = getTimeZoneOffsetMinutes(guessDate, timeZone);
+    return new Date(utcGuess - offsetMinutes * 60000);
+}
 
-    // Create date in UTC to prevent timezone conversion
-    const result = new Date(referenceMonday);
-    result.setUTCDate(referenceMonday.getUTCDate() + daysFromMonday);
-    result.setUTCHours(hours, minutes, 0, 0);
-
-    return result;
+/**
+ * Helper: Calculate recurring class datetime from local timetable wall-clock.
+ * We store UTC instants in DB, but source `HH:MM` is local campus time.
+ */
+function calculateRecurringDateTime(dayOfWeek: string, timeString: string): Date {
+    const dayToDate: Record<string, string> = {
+        Monday: '2025-02-03',
+        Tuesday: '2025-02-04',
+        Wednesday: '2025-02-05',
+        Thursday: '2025-02-06',
+        Friday: '2025-02-07',
+        Saturday: '2025-02-08',
+        Sunday: '2025-02-09',
+    };
+    const referenceDate = dayToDate[dayOfWeek];
+    if (!referenceDate) {
+        throw new Error(`Invalid day of week: ${dayOfWeek}`);
+    }
+    const timeZone = process.env.DEFAULT_TIMEZONE || 'Asia/Kolkata';
+    return zonedTimeToUtc(referenceDate, timeString, timeZone);
 }
 
 /**
@@ -180,8 +202,8 @@ app.post('/log-activity', zValidator('json', logSchema), async (c) => {
     const result = await db.insert(activityLogs).values({
         userId: data.userId,
         taskId: data.taskId,
-        scheduledTime: new Date(data.scheduledTime),
-        completionTime: data.completionTime ? new Date(data.completionTime) : null,
+        scheduledTime: parseUtcDateTime(data.scheduledTime),
+        completionTime: data.completionTime ? parseUtcDateTime(data.completionTime) : null,
         priority: data.priority,
         status: data.status,
     }).returning();
@@ -524,7 +546,7 @@ app.post('/assignments', protect, zValidator('json', assignmentCreateSchema), as
             courseName: data.courseName,
             title: data.title,
             description: data.description,
-            dueDate: new Date(data.dueDate),
+            dueDate: parseUtcDateTime(data.dueDate),
             priority: data.priority,
             status: data.status,
         }).returning();
@@ -551,7 +573,7 @@ app.put('/assignments/:id', protect, zValidator('json', assignmentUpdateSchema),
         if (data.courseName !== undefined) updateData.courseName = data.courseName;
         if (data.title !== undefined) updateData.title = data.title;
         if (data.description !== undefined) updateData.description = data.description;
-        if (data.dueDate !== undefined) updateData.dueDate = new Date(data.dueDate);
+        if (data.dueDate !== undefined) updateData.dueDate = parseUtcDateTime(data.dueDate);
         if (data.priority !== undefined) updateData.priority = data.priority;
         if (data.status !== undefined) updateData.status = data.status;
         updateData.updatedAt = new Date();
@@ -710,7 +732,7 @@ app.post('/evaluations', protect, zValidator('json', evaluationCreateSchema), as
             courseName: data.courseName,
             title: data.title,
             type: data.type,
-            date: new Date(data.date),
+            date: parseUtcDateTime(data.date),
             duration: data.duration,
             location: data.location,
             description: data.description,
@@ -738,7 +760,7 @@ app.put('/evaluations/:id', protect, zValidator('json', evaluationUpdateSchema),
         if (data.courseName !== undefined) updateData.courseName = data.courseName;
         if (data.title !== undefined) updateData.title = data.title;
         if (data.type !== undefined) updateData.type = data.type;
-        if (data.date !== undefined) updateData.date = new Date(data.date);
+        if (data.date !== undefined) updateData.date = parseUtcDateTime(data.date);
         if (data.duration !== undefined) updateData.duration = data.duration;
         if (data.location !== undefined) updateData.location = data.location;
         if (data.description !== undefined) updateData.description = data.description;
@@ -1125,14 +1147,7 @@ function splitIntoHourSlots(start: Date, end: Date, minutes: number) {
 }
 
 function parseUtcDateTime(input: string) {
-    // If timezone is missing, treat as UTC by appending Z
-    const hasTimezone = /Z$|[+-]\d{2}:?\d{2}$/.test(input);
-    const normalized = hasTimezone ? input : `${input}Z`;
-    const parsed = new Date(normalized);
-    if (Number.isNaN(parsed.getTime())) {
-        throw new Error('Invalid datetime');
-    }
-    return parsed;
+    return parseUtcIsoInput(input);
 }
 
 /**
@@ -1656,9 +1671,9 @@ app.post('/schedule-items', protect, zValidator('json', scheduleItemCreateSchema
             .values({
                 ...data,
                 userId: user.id,
-                startDateTime: new Date(data.startDateTime),
-                endDateTime: new Date(data.endDateTime),
-                recurrenceEndDate: data.recurrenceEndDate ? new Date(data.recurrenceEndDate) : null,
+                startDateTime: parseUtcDateTime(data.startDateTime),
+                endDateTime: parseUtcDateTime(data.endDateTime),
+                recurrenceEndDate: data.recurrenceEndDate ? parseUtcDateTime(data.recurrenceEndDate) : null,
             })
             .returning();
 
@@ -1679,9 +1694,9 @@ app.put('/schedule-items/:id', protect, zValidator('json', scheduleItemUpdateSch
         const data = c.req.valid('json');
 
         const updateData: any = { ...data, updatedAt: new Date() };
-        if (data.startDateTime) updateData.startDateTime = new Date(data.startDateTime);
-        if (data.endDateTime) updateData.endDateTime = new Date(data.endDateTime);
-        if (data.recurrenceEndDate) updateData.recurrenceEndDate = new Date(data.recurrenceEndDate);
+        if (data.startDateTime) updateData.startDateTime = parseUtcDateTime(data.startDateTime);
+        if (data.endDateTime) updateData.endDateTime = parseUtcDateTime(data.endDateTime);
+        if (data.recurrenceEndDate) updateData.recurrenceEndDate = parseUtcDateTime(data.recurrenceEndDate);
 
         const [item] = await db
             .update(scheduleItems)

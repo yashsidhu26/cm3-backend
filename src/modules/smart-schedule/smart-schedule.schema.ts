@@ -10,9 +10,14 @@ export const goalEnum = z.enum([
 
 export const skipClassEnum = z.enum(['lesson', 'tutorial', 'lab']);
 
+const flexibleTimeValueSchema = z.union([
+  z.string().regex(/^\d{2}:\d{2}$/),
+  z.string().datetime(),
+]);
+
 export const timeSlotSchema = z.object({
-  start: z.string().regex(/^\d{2}:\d{2}$/),
-  end: z.string().regex(/^\d{2}:\d{2}$/),
+  start: flexibleTimeValueSchema,
+  end: flexibleTimeValueSchema,
 });
 
 export const optimizeDaySchema = z.object({

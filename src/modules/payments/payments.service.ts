@@ -1,4 +1,4 @@
-import { eq, and, sql, inArray } from 'drizzle-orm';
+import { eq, and, sql, inArray, or, ne, ilike, desc, asc } from 'drizzle-orm';
 import { db } from '../../core/database/client';
 import {
     groups,
@@ -6,6 +6,9 @@ import {
     expenses,
     expenseParticipants,
     settlements,
+    paymentFriends,
+    directExpenses,
+    directExpenseSplits,
     type Group,
     type NewGroup,
     type GroupMember,
@@ -60,6 +63,23 @@ export interface SuggestedSettlement {
 }
 
 export class PaymentsService {
+    private formatCurrency(value: number): string {
+        return value.toFixed(2);
+    }
+
+    private findFriendEdge(userId: string, otherUserId: string) {
+        return db
+            .select()
+            .from(paymentFriends)
+            .where(
+                or(
+                    and(eq(paymentFriends.requesterId, userId), eq(paymentFriends.addresseeId, otherUserId)),
+                    and(eq(paymentFriends.requesterId, otherUserId), eq(paymentFriends.addresseeId, userId)),
+                )
+            )
+            .limit(1);
+    }
+
     /**
      * GROUP MANAGEMENT
      */
@@ -480,6 +500,258 @@ export class PaymentsService {
         }
 
         return suggestions;
+    }
+
+    async searchUsersByName(query: string, excludeUserId?: string) {
+        const q = query.trim();
+        if (!q) return [];
+
+        const rows = await db
+            .select({
+                id: user.id,
+                name: user.name,
+                profilePictureUrl: user.image,
+            })
+            .from(user)
+            .where(
+                and(
+                    ilike(user.name, `%${q}%`),
+                    excludeUserId ? ne(user.id, excludeUserId) : undefined
+                )
+            )
+            .orderBy(asc(user.name))
+            .limit(20);
+
+        return rows;
+    }
+
+    async sendFriendRequest(requesterId: string, targetUserId: string) {
+        if (requesterId === targetUserId) {
+            throw new Error('You cannot add yourself as friend');
+        }
+
+        const existing = await this.findFriendEdge(requesterId, targetUserId);
+        if (existing[0]) {
+            if (existing[0].status === 'accepted') return existing[0];
+            const [updated] = await db
+                .update(paymentFriends)
+                .set({ status: 'accepted', updatedAt: new Date() })
+                .where(eq(paymentFriends.id, existing[0].id))
+                .returning();
+            return updated;
+        }
+
+        const [created] = await db.insert(paymentFriends).values({
+            requesterId,
+            addresseeId: targetUserId,
+            status: 'accepted',
+        }).returning();
+
+        return created;
+    }
+
+    async createDirectExpense(data: {
+        description: string;
+        totalAmount: string;
+        payerId: string;
+        createdBy: string;
+        date?: Date;
+        splits: Array<{ userId: string; shareAmount: string }>;
+    }) {
+        if (!data.splits.length) throw new Error('At least one split is required');
+
+        const total = parseFloat(data.totalAmount);
+        const splitSum = data.splits.reduce((sum, s) => sum + parseFloat(s.shareAmount), 0);
+        if (Math.abs(total - splitSum) > 0.01) {
+            throw new Error(`Split total (${splitSum.toFixed(2)}) must equal total amount (${total.toFixed(2)})`);
+        }
+
+        const participantIds = new Set(data.splits.map(s => s.userId));
+        participantIds.add(data.payerId);
+        if (!participantIds.has(data.createdBy)) {
+            throw new Error('Creator must be part of the expense');
+        }
+
+        const [expense] = await db.insert(directExpenses).values({
+            description: data.description,
+            totalAmount: data.totalAmount,
+            payerId: data.payerId,
+            createdBy: data.createdBy,
+            date: data.date || new Date(),
+        }).returning();
+
+        const splitRows = data.splits
+            .filter((s) => parseFloat(s.shareAmount) > 0)
+            .map((s) => ({
+                expenseId: expense.id,
+                owedByUserId: s.userId,
+                owedToUserId: data.payerId,
+                shareAmount: s.shareAmount,
+                isSettled: s.userId === data.payerId,
+            }));
+
+        const insertedSplits = splitRows.length
+            ? await db.insert(directExpenseSplits).values(splitRows).returning()
+            : [];
+
+        return { expense, splits: insertedSplits };
+    }
+
+    async getSummary(userId: string) {
+        const [owedBy] = await db
+            .select({ total: sql<string>`COALESCE(SUM(${directExpenseSplits.shareAmount}), 0)` })
+            .from(directExpenseSplits)
+            .where(and(
+                eq(directExpenseSplits.owedByUserId, userId),
+                ne(directExpenseSplits.owedToUserId, userId),
+                eq(directExpenseSplits.isSettled, false),
+            ));
+
+        const [owedTo] = await db
+            .select({ total: sql<string>`COALESCE(SUM(${directExpenseSplits.shareAmount}), 0)` })
+            .from(directExpenseSplits)
+            .where(and(
+                eq(directExpenseSplits.owedToUserId, userId),
+                ne(directExpenseSplits.owedByUserId, userId),
+                eq(directExpenseSplits.isSettled, false),
+            ));
+
+        const totalOwedByUser = parseFloat(owedBy?.total || '0');
+        const totalOwedToUser = parseFloat(owedTo?.total || '0');
+
+        return {
+            total_owed_by_user: this.formatCurrency(totalOwedByUser),
+            total_owed_to_user: this.formatCurrency(totalOwedToUser),
+            net_balance: this.formatCurrency(totalOwedToUser - totalOwedByUser),
+        };
+    }
+
+    async getFriendBalances(userId: string) {
+        const friends = await db
+            .select({
+                requesterId: paymentFriends.requesterId,
+                addresseeId: paymentFriends.addresseeId,
+                status: paymentFriends.status,
+            })
+            .from(paymentFriends)
+            .where(and(
+                eq(paymentFriends.status, 'accepted'),
+                or(eq(paymentFriends.requesterId, userId), eq(paymentFriends.addresseeId, userId))
+            ));
+
+        const friendIds = Array.from(new Set(friends.map((f) => f.requesterId === userId ? f.addresseeId : f.requesterId)));
+        if (friendIds.length === 0) return [];
+
+        const friendUsers = await db
+            .select({
+                id: user.id,
+                name: user.name,
+                profilePictureUrl: user.image,
+            })
+            .from(user)
+            .where(inArray(user.id, friendIds));
+
+        const balances = await Promise.all(friendUsers.map(async (f) => {
+            const [theyOwe] = await db
+                .select({ total: sql<string>`COALESCE(SUM(${directExpenseSplits.shareAmount}), 0)` })
+                .from(directExpenseSplits)
+                .where(and(
+                    eq(directExpenseSplits.owedByUserId, f.id),
+                    eq(directExpenseSplits.owedToUserId, userId),
+                    eq(directExpenseSplits.isSettled, false),
+                ));
+
+            const [youOwe] = await db
+                .select({ total: sql<string>`COALESCE(SUM(${directExpenseSplits.shareAmount}), 0)` })
+                .from(directExpenseSplits)
+                .where(and(
+                    eq(directExpenseSplits.owedByUserId, userId),
+                    eq(directExpenseSplits.owedToUserId, f.id),
+                    eq(directExpenseSplits.isSettled, false),
+                ));
+
+            const theyOweValue = parseFloat(theyOwe?.total || '0');
+            const youOweValue = parseFloat(youOwe?.total || '0');
+            const net = theyOweValue - youOweValue;
+            const relation = net > 0 ? `owes you ₹${Math.abs(net).toFixed(2)}` : net < 0 ? `you owe ₹${Math.abs(net).toFixed(2)}` : 'settled up';
+
+            return {
+                id: f.id,
+                name: f.name,
+                profile_picture_url: f.profilePictureUrl,
+                net_balance: this.formatCurrency(net),
+                balance_text: relation,
+            };
+        }));
+
+        return balances.sort((a, b) => Math.abs(parseFloat(b.net_balance)) - Math.abs(parseFloat(a.net_balance)));
+    }
+
+    async settleWithFriend(userId: string, friendId: string) {
+        const updated = await db
+            .update(directExpenseSplits)
+            .set({ isSettled: true, settledAt: new Date(), updatedAt: new Date() })
+            .where(and(
+                eq(directExpenseSplits.isSettled, false),
+                or(
+                    and(eq(directExpenseSplits.owedByUserId, userId), eq(directExpenseSplits.owedToUserId, friendId)),
+                    and(eq(directExpenseSplits.owedByUserId, friendId), eq(directExpenseSplits.owedToUserId, userId)),
+                )
+            ))
+            .returning({ id: directExpenseSplits.id });
+
+        return { settledCount: updated.length };
+    }
+
+    async getRecentDirectExpenses(userId: string, page: number, pageSize: number) {
+        const offset = (page - 1) * pageSize;
+        const splitRows = await db
+            .select({ expenseId: directExpenseSplits.expenseId })
+            .from(directExpenseSplits)
+            .where(or(eq(directExpenseSplits.owedByUserId, userId), eq(directExpenseSplits.owedToUserId, userId)));
+        const splitExpenseIds = Array.from(new Set(splitRows.map((r) => r.expenseId)));
+
+        const rows = await db
+            .select({
+                id: directExpenses.id,
+                description: directExpenses.description,
+                totalAmount: directExpenses.totalAmount,
+                date: directExpenses.date,
+                payerId: user.id,
+                payerName: user.name,
+                payerProfilePictureUrl: user.image,
+            })
+            .from(directExpenses)
+            .innerJoin(user, eq(directExpenses.payerId, user.id))
+            .where(or(
+                eq(directExpenses.payerId, userId),
+                splitExpenseIds.length ? inArray(directExpenses.id, splitExpenseIds) : undefined
+            ))
+            .orderBy(desc(directExpenses.date))
+            .limit(pageSize)
+            .offset(offset);
+
+        const mapped = await Promise.all(rows.map(async (row) => {
+            const [splitCount] = await db
+                .select({ count: sql<number>`cast(count(*) as integer)` })
+                .from(directExpenseSplits)
+                .where(eq(directExpenseSplits.expenseId, row.id));
+
+            return {
+                id: row.id,
+                description: row.description,
+                total_amount: row.totalAmount,
+                payer: {
+                    id: row.payerId,
+                    name: row.payerName,
+                    profile_picture_url: row.payerProfilePictureUrl,
+                },
+                date: row.date,
+                split_count: splitCount?.count || 0,
+            };
+        }));
+
+        return mapped;
     }
 }
 
